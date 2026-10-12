@@ -1,0 +1,42 @@
+   Compiling craft-ai-model v0.1.0 (%USERPROFILE%\Apps\ArtCraft\craft-ai-model\crates\ai-model)
+   Compiling craft-ai-native v0.1.0 (%USERPROFILE%\Apps\ArtCraft\craft-ai-model\crates\ai-native)
+   Compiling craft-ai-media v0.1.0 (%USERPROFILE%\Apps\ArtCraft\craft-ai-model\crates\ai-media)
+   Compiling craft-ai-features v0.1.0 (%USERPROFILE%\Apps\ArtCraft\craft-ai-model\crates\ai-features)
+   Compiling craft-ai-bfl v0.1.0 (%USERPROFILE%\Apps\ArtCraft\craft-ai-model\crates\ai-bfl)
+   Compiling craft-ai-artcraft v0.1.0 (%USERPROFILE%\Apps\ArtCraft\craft-ai-model\crates\ai-artcraft)
+   Compiling craft-ai-seedance v0.1.0 (%USERPROFILE%\Apps\ArtCraft\craft-ai-model\crates\ai-seedance)
+   Compiling craft-ai-vertex v0.1.0 (%USERPROFILE%\Apps\ArtCraft\craft-ai-model\crates\ai-vertex)
+   Compiling craft-ai-comfyui v0.1.0 (%USERPROFILE%\Apps\ArtCraft\craft-ai-model\crates\ai-comfyui)
+   Compiling craft-ai-openai v0.1.0 (%USERPROFILE%\Apps\ArtCraft\craft-ai-model\crates\ai-openai)
+   Compiling craft-ai-sam3 v0.1.0 (%USERPROFILE%\Apps\ArtCraft\craft-ai-model\crates\ai-sam3)
+   Compiling craft-ai-client v0.1.0 (%USERPROFILE%\Apps\ArtCraft\craft-ai-model\crates\ai-client)
+   Compiling craft-ai-egui v0.1.0 (%USERPROFILE%\Apps\ArtCraft\craft-ai-model\crates\ai-egui)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.79s
+     Running tests\picker_view.rs (target\debug\deps\picker_view-2e45bf85fe653812.exe)
+
+running 7 tests
+test with_nothing_to_show_it_says_so ... ok
+test each_provider_shows_its_name_and_each_model_its_one_line ... ok
+test the_model_in_use_is_marked_and_choosing_it_again_does_nothing ... ok
+test clicking_a_model_under_a_ready_provider_chooses_it ... ok
+test a_greyed_provider_cannot_be_picked_from_but_its_set_up_link_works ... FAILED
+test the_set_up_button_says_what_it_will_do_for_each_state ... ok
+test a_choice_that_stopped_working_says_why_and_a_working_one_says_nothing ... ok
+
+failures:
+
+---- a_greyed_provider_cannot_be_picked_from_but_its_set_up_link_works stdout ----
+
+thread 'a_greyed_provider_cannot_be_picked_from_but_its_set_up_link_works' (16892) panicked at crates\ai-egui\tests\picker_view.rs:124:5:
+assertion `left == right` failed: a model under a greyed provider is not pickable
+  left: Some(Choose { connection: ConnectionId("cloud"), model: ModelId("b") })
+ right: None
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    a_greyed_provider_cannot_be_picked_from_but_its_set_up_link_works
+
+test result: FAILED. 6 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+error: test failed, to rerun pass `-p craft-ai-egui --test picker_view`

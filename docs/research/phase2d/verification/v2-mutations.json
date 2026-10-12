@@ -1,0 +1,164 @@
+[
+  {
+    "mutation": "fits-ignores-inputs",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "fits-ignores-capability",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "switched-off-counts-as-ready",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "missing-key-counts-as-ready",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "ready-group-offers-a-fix",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "service-listed-twice",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "local-listed-twice",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "unusable-option-offered",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "other-tools-options-offered",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "own-choice-ignored",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "selected-never-marked",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "groups-unsorted",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "problem-never-reported",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "input-order-changed",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "local-reads-as-hosted",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "metered-reads-as-free",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "greyed-models-pickable",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "current-model-re-chosen",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "add-key-reads-as-set-up",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "new-reads-as-add-key",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "set-up-click-dropped",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "empty-says-nothing",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "in-use-not-marked",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "problem-banner-silent",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "locality-badge-hidden",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "note-hidden",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "picker-launcher-default-ignored",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  }
+]

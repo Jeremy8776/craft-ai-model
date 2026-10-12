@@ -45,6 +45,9 @@ mod client;
 mod factory;
 mod history;
 mod manage;
+mod picker;
+mod picker_groups;
+mod popup;
 mod runner;
 mod tools;
 
@@ -54,5 +57,7 @@ pub use manage::{
     Confirmed, ConnectionManager, ConnectionView, KeyState, MAX_DECLARED, ModelChoice, ProbeReport,
     ProbedModel, Removed, SaveError, Saved, TestReport, Unconfirmed, declare_models,
 };
+pub use picker::{CurrentChoice, GroupState, PickerGroup, PickerModel, PickerView, SetupLink};
+pub use popup::MissingModel;
 pub use runner::{TestRunner, TestTarget};
 pub use tools::{SampleReport, TestStart, ToolDesk, ToolView};

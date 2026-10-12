@@ -155,6 +155,12 @@ records backend capabilities and limits, not a promise that every audited featur
    `select-subject` binding with no per-app setup, and that a tool with no model reports "no model
    is chosen" rather than a fault. No app reads the role yet; the picker and popup (v2, v3) and
    bring your own anywhere (v4) are proposed, not approved.
+   **Phase 2e v2 (12/10/2026):** the provider-grouped model picker is built as data
+   (`AiClient::picker`) and a theme-neutral widget (`craft_ai_egui::model_picker`), shown on
+   sample data with `cargo run -p craft-ai-egui --example picker_demo`. No app uses it yet; the
+   in-app missing-model popup (v3) is built the same way: `ToolDesk::missing_model` returns why a
+   tool cannot run and the picker data, `craft_ai_egui::missing_model_popup` is a neutral fallback,
+   and a choice binds for every app through `ToolDesk::choose`. Each host draws its own view.
 6. **sg4/sg5:** per-app object picking, layer-mask/extraction/edit destinations and cropped detail
    selection with explicit coordinate mapping. Other apps remain proposed until adopted.
 7. **sg6/sg7/sg8:** native SAM 3.1 evaluation, separate soft-alpha matting, then bounded video

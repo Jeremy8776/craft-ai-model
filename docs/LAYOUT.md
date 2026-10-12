@@ -12,7 +12,7 @@ data, consent and jobs. It does not own any app's interface. Each app decides ho
 | Core | `ai-model`, `ai-native`, `ai-client`, `ai-features` | The data model and provider trait (wasm-safe), secret stores, the shared store and its location, history and consent files, the app-facing client and tool desk, the tool catalogue and setup options. |
 | Adapters | `ai-openai`, `ai-bfl`, `ai-vertex`, `ai-artcraft`, `ai-seedance`, `ai-comfyui`, `ai-sam3` | One crate per provider API shape. Each is registered in `ai-client`'s `ProviderFactory`. |
 | Local runtime | `ai-comfy-env`, `ai-media` | Finding an existing ComfyUI, model sources and checksummed downloads, node packs, and durable media transfer. |
-| Widgets | `ai-egui` | Theme-neutral egui widgets (status, consent, progress, connection panel, history, and later the picker) for apps that have no chrome of their own. |
+| Widgets | `ai-egui` | Theme-neutral egui widgets (status, consent, progress, connection panel, history, model picker) for apps that have no chrome of their own. |
 
 Crates keep the flat `crates/` folder on purpose. PhotoCraft and the launcher reach into it by
 path today, so moving a crate breaks their builds.

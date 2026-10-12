@@ -32,6 +32,10 @@ pub struct SetupOption {
     /// Apps can run it today. False for a model that can be downloaded but has no workflow to run it
     /// yet; the screen says so rather than promising a tool.
     pub usable: bool,
+    /// How much a local model downloads, in bytes, so a popup can say so before it asks. `None`
+    /// for a hosted service, which downloads nothing.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub size_bytes: Option<u64>,
 }
 
 /// Every local model first, then hosted services in the order the features first name them.
@@ -49,6 +53,7 @@ pub fn setup_options(features: &[Feature]) -> Vec<SetupOption> {
                 },
                 unlocks: vec![feature.id.clone()],
                 usable: recipe.usable,
+                size_bytes: Some(recipe.total_bytes()),
             });
         }
         for option in &feature.cloud {
@@ -71,6 +76,7 @@ pub fn setup_options(features: &[Feature]) -> Vec<SetupOption> {
                     },
                     unlocks: vec![feature.id.clone()],
                     usable: true,
+                    size_bytes: None,
                 }),
             }
         }

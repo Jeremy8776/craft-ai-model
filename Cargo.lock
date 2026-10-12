@@ -725,6 +725,7 @@ name = "craft-ai-egui"
 version = "0.1.0"
 dependencies = [
  "craft-ai-client",
+ "craft-ai-features",
  "craft-ai-model",
  "craft-ai-native",
  "eframe",

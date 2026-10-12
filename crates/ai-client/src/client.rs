@@ -173,8 +173,8 @@ impl Job {
 /// The app's connection to the AI layer.
 pub struct AiClient {
     app: AppId,
-    shared: SharedStore,
-    secrets: Arc<dyn SecretStore>,
+    pub(crate) shared: SharedStore,
+    pub(crate) secrets: Arc<dyn SecretStore>,
     factory: ProviderFactory,
     history: Option<Arc<HistoryFile>>,
     keep_prompts: bool,

@@ -1,0 +1,329 @@
+   Compiling craft-ai-egui v0.1.0 (%USERPROFILE%\Apps\ArtCraft\craft-ai-model\crates\ai-egui)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.83s
+     Running tests\popup_view.rs (target\debug\deps\popup_view-703ae78b3c993008.exe)
+
+running 5 tests
+test it_says_which_tool_needs_a_model_and_why ... ok
+test not_now_leaves_the_tool_off ... ok
+test a_connection_with_no_key_can_be_fixed_from_the_popup ... ok
+test a_provider_to_install_says_how_much_it_downloads_and_can_be_set_up ... FAILED
+test picking_a_model_reports_it_so_the_app_can_bind_it_for_every_app ... ok
+
+failures:
+
+---- a_provider_to_install_says_how_much_it_downloads_and_can_be_set_up stdout ----
+
+thread 'a_provider_to_install_says_how_much_it_downloads_and_can_be_set_up' (52292) panicked at crates\ai-egui\tests\popup_view.rs:90:7:
+No nodes found matching the query:
+By {
+    label: "Download 3.4 GB",
+}
+
+On node:
+Node {
+    id: NodeId(
+        TreeIndex(
+            0,
+        ),
+        #13826925289788388,
+    ),
+    role: Window,
+    focused: true,
+    hidden: false,
+    disabled: false,
+    children: [
+        Node {
+            id: NodeId(
+                TreeIndex(
+                    0,
+                ),
+                #18356943641707106210,
+            ),
+            role: GenericContainer,
+            focused: false,
+            hidden: false,
+            disabled: false,
+            children: [
+                Node {
+                    id: NodeId(
+                        TreeIndex(
+                            0,
+                        ),
+                        #17717534622495252412,
+                    ),
+                    role: GenericContainer,
+                    focused: false,
+                    hidden: false,
+                    disabled: false,
+                    children: [
+                        Node {
+                            id: NodeId(
+                                TreeIndex(
+                                    0,
+                                ),
+                                #15707054694645992835,
+                            ),
+                            role: GenericContainer,
+                            focused: false,
+                            hidden: false,
+                            disabled: false,
+                            children: [
+                                Node {
+                                    id: NodeId(
+                                        TreeIndex(
+                                            0,
+                                        ),
+                                        #17970341196664973444,
+                                    ),
+                                    role: GenericContainer,
+                                    focused: false,
+                                    hidden: false,
+                                    disabled: false,
+                                    children: [
+                                        Node {
+                                            id: NodeId(
+                                                TreeIndex(
+                                                    0,
+                                                ),
+                                                #11830556613808507354,
+                                            ),
+                                            role: Label,
+                                            value: "Select subject needs a model",
+                                            focused: false,
+                                            hidden: false,
+                                            disabled: false,
+                                            children: [
+                                                Node {
+                                                    id: NodeId(
+                                                        TreeIndex(
+                                                            0,
+                                                        ),
+                                                        #11448958627200295308,
+                                                    ),
+                                                    role: TextRun,
+                                                    value: "Select subject needs a model",
+                                                    focused: false,
+                                                    hidden: false,
+                                                    disabled: false,
+                                                    children: [],
+                                                },
+                                            ],
+                                        },
+                                        Node {
+                                            id: NodeId(
+                                                TreeIndex(
+                                                    0,
+                                                ),
+                                                #13043090184002317183,
+                                            ),
+                                            role: Label,
+                                            value: "no model is chosen for 'select-subject'",
+                                            focused: false,
+                                            hidden: false,
+                                            disabled: false,
+                                            children: [
+                                                Node {
+                                                    id: NodeId(
+                                                        TreeIndex(
+                                                            0,
+                                                        ),
+                                                        #17446720644000691953,
+                                                    ),
+                                                    role: TextRun,
+                                                    value: "no model is chosen for 'select-subject'",
+                                                    focused: false,
+                                                    hidden: false,
+                                                    disabled: false,
+                                                    children: [],
+                                                },
+                                            ],
+                                        },
+                                        Node {
+                                            id: NodeId(
+                                                TreeIndex(
+                                                    0,
+                                                ),
+                                                #12366205669632734715,
+                                            ),
+                                            role: GenericContainer,
+                                            focused: false,
+                                            hidden: false,
+                                            disabled: false,
+                                            children: [
+                                                Node {
+                                                    id: NodeId(
+                                                        TreeIndex(
+                                                            0,
+                                                        ),
+                                                        #11007735626424900454,
+                                                    ),
+                                                    role: GenericContainer,
+                                                    focused: false,
+                                                    hidden: false,
+                                                    disabled: false,
+                                                    children: [
+                                                        Node {
+                                                            id: NodeId(
+                                                                TreeIndex(
+                                                                    0,
+                                                                ),
+                                                                #16256560129058349100,
+                                                            ),
+                                                            role: GenericContainer,
+                                                            focused: false,
+                                                            hidden: false,
+                                                            disabled: false,
+                                                            children: [
+                                                                Node {
+                                                                    id: NodeId(
+                                                                        TreeIndex(
+                                                                            0,
+                                                                        ),
+                                                                        #7257243581579559712,
+                                                                    ),
+                                                                    role: Label,
+                                                                    value: "SAM 3",
+                                                                    focused: false,
+                                                                    hidden: false,
+                                                                    disabled: false,
+                                                                    children: [
+                                                                        Node {
+                                                                            id: NodeId(
+                                                                                TreeIndex(
+                                                                                    0,
+                                                                                ),
+                                                                                #14024512104543952137,
+                                                                            ),
+                                                                            role: TextRun,
+                                                                            value: "SAM 3",
+                                                                            focused: false,
+                                                                            hidden: false,
+                                                                            disabled: false,
+                                                                            children: [],
+                                                                        },
+                                                                    ],
+                                                                },
+                                                                Node {
+                                                                    id: NodeId(
+                                                                        TreeIndex(
+                                                                            0,
+                                                                        ),
+                                                                        #348273449813001446,
+                                                                    ),
+                                                                    role: Label,
+                                                                    value: "Stays on this computer",
+                                                                    focused: false,
+                                                                    hidden: false,
+                                                                    disabled: false,
+                                                                    children: [
+                                                                        Node {
+                                                                            id: NodeId(
+                                                                                TreeIndex(
+                                                                                    0,
+                                                                                ),
+                                                                                #15468836788522816200,
+                                                                            ),
+                                                                            role: TextRun,
+                                                                            value: "Stays on this computer",
+                                                                            focused: false,
+                                                                            hidden: false,
+                                                                            disabled: false,
+                                                                            children: [],
+                                                                        },
+                                                                    ],
+                                                                },
+                                                                Node {
+                                                                    id: NodeId(
+                                                                        TreeIndex(
+                                                                            0,
+                                                                        ),
+                                                                        #4461811563768148136,
+                                                                    ),
+                                                                    role: Label,
+                                                                    value: "Download 3.4 MB",
+                                                                    focused: false,
+                                                                    hidden: false,
+                                                                    disabled: false,
+                                                                    children: [
+                                                                        Node {
+                                                                            id: NodeId(
+                                                                                TreeIndex(
+                                                                                    0,
+                                                                                ),
+                                                                                #6578843752028516379,
+                                                                            ),
+                                                                            role: TextRun,
+                                                                            value: "Download 3.4 MB",
+                                                                            focused: false,
+                                                                            hidden: false,
+                                                                            disabled: false,
+                                                                            children: [],
+                                                                        },
+                                                                    ],
+                                                                },
+                                                                Node {
+                                                                    id: NodeId(
+                                                                        TreeIndex(
+                                                                            0,
+                                                                        ),
+                                                                        #17571574204158864831,
+                                                                    ),
+                                                                    role: Button,
+                                                                    label: "Set up",
+                                                                    focused: false,
+                                                                    hidden: false,
+                                                                    disabled: false,
+                                                                    children: [],
+                                                                },
+                                                            ],
+                                                        },
+                                                        Node {
+                                                            id: NodeId(
+                                                                TreeIndex(
+                                                                    0,
+                                                                ),
+                                                                #5548902355364856888,
+                                                            ),
+                                                            role: GenericContainer,
+                                                            focused: false,
+                                                            hidden: false,
+                                                            disabled: false,
+                                                            children: [],
+                                                        },
+                                                    ],
+                                                },
+                                            ],
+                                        },
+                                        Node {
+                                            id: NodeId(
+                                                TreeIndex(
+                                                    0,
+                                                ),
+                                                #7123360378141140640,
+                                            ),
+                                            role: Button,
+                                            label: "Not now",
+                                            focused: false,
+                                            hidden: false,
+                                            disabled: false,
+                                            children: [],
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        },
+    ],
+}
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    a_provider_to_install_says_how_much_it_downloads_and_can_be_set_up
+
+test result: FAILED. 4 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+error: test failed, to rerun pass `-p craft-ai-egui --test popup_view`

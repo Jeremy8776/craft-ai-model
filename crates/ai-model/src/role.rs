@@ -127,14 +127,22 @@ pub fn resolve<'a>(
     })
 }
 
+/// What `model` can do for `role`: its spec for the role's capability, if it takes every input the
+/// role sends. `None` means the model cannot fill the role.
+pub fn fits<'a>(role: &Role, model: &'a ModelInfo) -> Option<&'a CapabilitySpec> {
+    let spec = model.spec_for(&role.capability)?;
+    role.inputs
+        .iter()
+        .all(|i| spec.accepts.contains_key(i))
+        .then_some(spec)
+}
+
 /// Every enabled connection's models that could fill `role`. This is the model picker's list.
 pub fn eligible<'a>(role: &Role, connections: &'a [Connection]) -> Vec<Resolved<'a>> {
     let mut out = Vec::new();
     for connection in connections.iter().filter(|c| c.enabled) {
         for model in &connection.models {
-            if let Some(spec) = model.spec_for(&role.capability)
-                && role.inputs.iter().all(|i| spec.accepts.contains_key(i))
-            {
+            if let Some(spec) = fits(role, model) {
                 out.push(Resolved {
                     connection,
                     model,

@@ -1,0 +1,92 @@
+[
+  {
+    "mutation": "size-not-carried",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "service-claims-a-download",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "size-dropped-in-the-picker",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "fix-group-claims-a-download",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "choose-skips-the-check",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "popup-shown-when-ready",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "popup-without-ways-to-set-up",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "popup-reason-blank",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "popup-heading-loses-the-need",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "popup-reason-hidden",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "popup-choice-dropped",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "popup-set-up-dropped",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "popup-not-now-dropped",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "size-hidden",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "size-in-the-wrong-unit",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  }
+]

@@ -10,6 +10,7 @@
 use std::time::{Duration, Instant};
 
 use craft_ai_model::job::Event;
+use craft_ai_model::role::resolve;
 use craft_ai_model::{
     AiError, AppId, Billing, Binding, ConnectionId, ConsentLedger, Disclosure, JobState, Locality,
     ModelId, Payload, Request, Role, RoleId, StoreFile,
@@ -17,7 +18,10 @@ use craft_ai_model::{
 use craft_ai_native::ConsentFile;
 use craft_ai_native::shared::SharedStore;
 
+use craft_ai_features::{Feature, setup_options};
+
 use crate::client::{AiClient, Choice, Job, RoleStatus};
+use crate::popup::MissingModel;
 
 /// What the launcher shows for one tool.
 #[derive(Clone, Debug)]
@@ -68,6 +72,26 @@ impl ToolDesk {
         AppId::new("launcher").map_err(|e| AiError::invalid(e.to_string()))
     }
 
+    /// What the app's popup shows when `role` cannot run, or `None` when it can. `features` is the
+    /// tool catalogue (`craft_ai_features::builtin`), so the real ways to set the tool up are the
+    /// ones the launcher offers.
+    pub fn missing_model(
+        &self,
+        role: &Role,
+        features: &[Feature],
+    ) -> Result<Option<MissingModel>, AiError> {
+        let RoleStatus::Unavailable { reason } = self.client.status(role) else {
+            return Ok(None);
+        };
+        let picker = self.client.picker(role, &setup_options(features))?;
+        Ok(Some(MissingModel {
+            tool: role.id.clone(),
+            title: role.label.clone(),
+            reason,
+            picker,
+        }))
+    }
+
     pub fn view(&self, role: &Role) -> Result<ToolView, AiError> {
         let store = self.shared.load()?;
         let bound = store
@@ -95,10 +119,10 @@ impl ToolDesk {
             connection: connection.clone(),
             model: model.clone(),
         };
-        let mut candidate = self.shared.load()?;
-        set_default(&mut candidate, binding.clone());
-        candidate
-            .resolve(self.client.app(), role)
+        // Check the chosen model on its own. Resolving for the calling app would read that app's
+        // own choice first and pass a model that cannot do the tool.
+        let store = self.shared.load()?;
+        resolve(role, &[std::slice::from_ref(&binding)], &store.connections)
             .map_err(|e| AiError::invalid(e.to_string()))?;
         self.shared.update(|store| set_default(store, binding))?;
         Ok(())

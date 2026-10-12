@@ -17,6 +17,7 @@ egui = "0.36"
 egui_kittest = "0.36"
 eframe = { version = "0.36", default-features = false, features = ["default_fonts", "glow"] }
 craft-ai-native = { path = "../ai-native", package = "craft-ai-native" }
+craft-ai-features = { path = "../ai-features", package = "craft-ai-features" }
 tempfile = "3"
 serde_json.workspace = true
 

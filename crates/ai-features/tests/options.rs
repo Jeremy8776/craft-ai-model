@@ -83,3 +83,19 @@ fn a_feature_with_nothing_to_set_up_unlocks_from_nothing() {
 fn an_empty_catalogue_has_no_options() {
     assert!(setup_options(&[]).is_empty());
 }
+
+#[test]
+fn a_local_model_says_how_much_it_downloads_and_a_hosted_service_downloads_nothing() {
+    let options = setup_options(&builtin());
+    let sam3 = options
+        .iter()
+        .find(|o| o.id == "local:select-subject")
+        .unwrap();
+    assert_eq!(sam3.size_bytes, Some(3_449_860_632));
+    for service in options
+        .iter()
+        .filter(|o| matches!(o.route, Route::Service { .. }))
+    {
+        assert_eq!(service.size_bytes, None, "{}", service.id);
+    }
+}

@@ -12,7 +12,10 @@ use craft_ai_model::{ConnectionDraft, ConnectionId, PRESETS, Request};
 use craft_ai_native::secrets::MemoryStore;
 use craft_ai_native::shared::SharedStore;
 use serde_json::json;
-use support::{Reply, Server};
+use support::{Reply, Server, http_bytes};
+
+/// A real PNG header: the adapter checks an output by its first bytes, not by its file name.
+const PNG: &[u8] = b"\x89PNG\r\n\x1a\nimage body";
 
 const GRAPH: &str = r#"{
   "1": {"class_type": "CLIPTextEncode", "inputs": {"text": "template"}},
@@ -101,7 +104,7 @@ fn the_factory_builds_a_comfyui_provider_that_runs_a_library_workflow() {
               "outputs":{"2":{"images":[{"filename":"out.png","type":"output"}]}}}})
             .to_string(),
         ),
-        "/view?filename=out.png&type=output" => Reply::Json(200, "png bytes".into()),
+        "/view?filename=out.png&type=output" => http_bytes(200, &[], PNG),
         _ => Reply::Json(404, "{}".into()),
     }));
     let mut d = ConnectionDraft::from_preset(
@@ -150,7 +153,7 @@ fn the_factory_builds_a_comfyui_provider_that_runs_a_library_workflow() {
         .unwrap()
         .unwrap()
         .path();
-    assert_eq!(std::fs::read(saved).unwrap(), b"png bytes");
+    assert_eq!(std::fs::read(saved).unwrap(), PNG);
     let body = s.lock().unwrap().recorded();
     let prompt = body
         .iter()

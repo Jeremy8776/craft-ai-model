@@ -29,6 +29,8 @@ mod form;
 mod history;
 pub mod history_text;
 mod panel;
+mod picker;
+mod popup;
 mod progress;
 mod status;
 pub mod text;
@@ -40,5 +42,9 @@ pub use history::{
     REFRESH, Range, TAB_DAYS, TAB_JOBS, TAB_MONTHS, Tab, history_view,
 };
 pub use panel::{ConnectionPanel, PanelEvent};
+pub use picker::{
+    ADD_KEY, HEADING, IN_USE, NOTHING, PickerAction, SET_UP, SWITCH_ON, model_picker,
+};
+pub use popup::{HEADING_SUFFIX, NOT_NOW, PopupAction, missing_model_popup};
 pub use progress::{CANCEL, ProgressAction, job_progress};
 pub use status::{ADD_CONNECTION, OPEN_LAUNCHER, StatusAction, StatusView, USE_DEFAULT, ai_status};

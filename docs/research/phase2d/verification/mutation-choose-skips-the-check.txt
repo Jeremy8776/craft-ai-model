@@ -1,0 +1,27 @@
+   Compiling craft-ai-client v0.1.0 (%USERPROFILE%\Apps\ArtCraft\craft-ai-model\crates\ai-client)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.54s
+     Running tests\popup.rs (target\debug\deps\popup-e8e3943a1af84a4a.exe)
+
+running 6 tests
+test a_tool_with_no_model_gets_the_reason_and_the_real_ways_to_set_it_up ... ok
+test a_tool_that_can_run_has_no_popup ... ok
+test a_choice_made_from_one_app_is_the_choice_every_app_reads ... ok
+test a_choice_that_stopped_working_brings_the_popup_back_with_the_reason ... ok
+test picking_a_model_in_the_popup_closes_it_for_every_app ... ok
+test choosing_for_everyone_checks_the_chosen_model_not_what_the_calling_app_already_uses ... FAILED
+
+failures:
+
+---- choosing_for_everyone_checks_the_chosen_model_not_what_the_calling_app_already_uses stdout ----
+
+thread 'choosing_for_everyone_checks_the_chosen_model_not_what_the_calling_app_already_uses' (14952) panicked at crates\ai-client\tests\popup.rs:103:5:
+a model that cannot do the tool is refused
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    choosing_for_everyone_checks_the_chosen_model_not_what_the_calling_app_already_uses
+
+test result: FAILED. 5 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+error: test failed, to rerun pass `-p craft-ai-client --test popup`

@@ -6,7 +6,7 @@ source back. A case is CAUGHT only if the mutated code compiled and the test run
 does not compile counts as NOT CAUGHT (a bad mutant), so every survivor is either a test gap or a
 mutant to fix. Cargo runs serially, targeted with -p, with -j 8.
 
-Usage: mutation_check.py u1|u3|u4|p4|p10|v1 [name-substring]
+Usage: mutation_check.py u1|u3|u4|p4|p10|v1|v2|v3 [name-substring]
 Saved logs pass through sam3-headless/scrub.py so no Windows account name is written.
 """
 import json
@@ -285,7 +285,65 @@ V1 = [
     ('choose-writes-nothing', TOOLS, 'self.shared.update(|store| set_default(store, binding))?;', 'let _ = binding;', CL, 'one_binding', ''),
 ]
 
-GROUPS = {'u1': U1, 'u3': U3, 'u4': U4, 'p4': P4, 'p10': P10, 'v1': V1}
+PICK_G = C + 'ai-client/src/picker_groups.rs'
+PICK_C = C + 'ai-client/src/picker.rs'
+PICK_E = C + 'ai-egui/src/picker.rs'
+EG = 'craft-ai-egui'
+# v2: the tool-first model picker (ai-client/tests/picker.rs, ai-egui/tests/picker_view.rs)
+V2 = [
+    ('fits-ignores-inputs', ROLE, '.all(|i| spec.accepts.contains_key(i))', '.all(|_| true)', CL, 'picker', ''),
+    ('fits-ignores-capability', ROLE, 'let spec = model.spec_for(&role.capability)?;', 'let spec = model.capabilities.first()?;', CL, 'picker', ''),
+    ('switched-off-counts-as-ready', PICK_G, 'let (state, note) = if !connection.enabled {', 'let (state, note) = if false {', CL, 'picker', ''),
+    ('missing-key-counts-as-ready', PICK_G, '} else if secret_for(&*client.secrets, connection).is_err() {', '} else if false {', CL, 'picker', ''),
+    ('ready-group-offers-a-fix', PICK_G, 'setup: (state != GroupState::Ready).then(|| SetupLink::Fix {', 'setup: (state == GroupState::Ready).then(|| SetupLink::Fix {', CL, 'picker', ''),
+    ('service-listed-twice', PICK_G, '.any(|c| c.provider == preset.provider)', '.any(|_| false)', CL, 'picker', ''),
+    ('local-listed-twice', PICK_G, 'if have_local {', 'if false {', CL, 'picker', ''),
+    ('unusable-option-offered', PICK_G, '.filter(|o| o.usable && o.unlocks', '.filter(|o| o.unlocks', CL, 'picker', ''),
+    ('other-tools-options-offered', PICK_G, 'o.unlocks.iter().any(|u| u == role.id.as_str())', 'true', CL, 'picker', ''),
+    ('own-choice-ignored', PICK_G, '.get(app)', '.get(&AppId::new("zzz-other").unwrap_or_else(|_| app.clone()))', CL, 'picker', ''),
+    ('picker-launcher-default-ignored', PICK_G, '.or_else(|| store.defaults.iter().find(|b| &b.role == role))', '.or_else(|| None)', CL, 'picker', ''),
+    ('selected-never-marked', PICK_G, 'selected\n                    .is_some_and(|b| b.connection == connection.id && b.model == m.id),', 'false,', CL, 'picker', ''),
+    ('groups-unsorted', PICK_C, 'groups.sort_by_key(|g| g.state);', 'groups.sort_by_key(|_| 0);', CL, 'picker', ''),
+    ('problem-never-reported', PICK_C, 'RoleStatus::Unavailable { reason } => Some(reason),', 'RoleStatus::Unavailable { reason } => { let _ = reason; None }', CL, 'picker', ''),
+    ('input-order-changed', PICK_G, 'InputRole::Source => 0,', 'InputRole::Source => 9,', CL, 'picker', ''),
+    ('local-reads-as-hosted', PICK_G, 'Locality::Local => "Runs on this computer",', 'Locality::Local => "Sent to the service",', CL, 'picker', ''),
+    ('metered-reads-as-free', PICK_G, 'Billing::Metered => Some("billed per use"),', 'Billing::Metered => Some("free"),', CL, 'picker', ''),
+    ('greyed-models-pickable', PICK_E, 'ui.add_enabled_ui(ready, |ui| {', 'ui.add_enabled_ui(true, |ui| {', EG, 'picker_view', ''),
+    ('current-model-re-chosen', PICK_E, '(clicked && !model.selected).then(', 'clicked.then(', EG, 'picker_view', ''),
+    ('add-key-reads-as-set-up', PICK_E, '(Some(SetupLink::Fix { .. }), GroupState::NeedsKey) => Some(ADD_KEY),', '(Some(SetupLink::Fix { .. }), GroupState::NeedsKey) => Some(SET_UP),', EG, 'picker_view', ''),
+    ('new-reads-as-add-key', PICK_E, '(Some(SetupLink::New { .. }), _) => Some(SET_UP),', '(Some(SetupLink::New { .. }), _) => Some(ADD_KEY),', EG, 'picker_view', ''),
+    ('set-up-click-dropped', PICK_E, 'action = Some(PickerAction::SetUp(link.clone()));', 'action = None;', EG, 'picker_view', ''),
+    ('empty-says-nothing', PICK_E, 'if view.groups.is_empty() {', 'if false {', EG, 'picker_view', ''),
+    ('in-use-not-marked', PICK_E, '    if model.selected {\n        name.push_str', '    if false {\n        name.push_str', EG, 'picker_view', ''),
+    ('problem-banner-silent', PICK_E, 'is not working: {problem}', 'has been changed', EG, 'picker_view', ''),
+    ('locality-badge-hidden', PICK_E, 'if let Some(locality) = group.locality {', 'if let Some(locality) = group.locality.filter(|_| false) {', EG, 'picker_view', ''),
+    ('note-hidden', PICK_E, 'if !group.note.is_empty() {', 'if false {', EG, 'picker_view', ''),
+]
+
+OPT = C + 'ai-features/src/options.rs'
+POPUP_E = C + 'ai-egui/src/popup.rs'
+TOOLS_RS = C + 'ai-client/src/tools.rs'
+FE = 'craft-ai-features'
+# v3: the in-app missing-model popup (ai-client/tests/popup.rs, ai-egui/tests/popup_view.rs)
+V3 = [
+    ('size-not-carried', OPT, 'size_bytes: Some(recipe.total_bytes()),', 'size_bytes: None,', FE, 'options', ''),
+    ('service-claims-a-download', OPT, 'usable: true,\n                    size_bytes: None,', 'usable: true,\n                    size_bytes: Some(1),', FE, 'options', ''),
+    ('size-dropped-in-the-picker', PICK_G, 'size_bytes: option.size_bytes,', 'size_bytes: None,', CL, 'picker', ''),
+    ('fix-group-claims-a-download', PICK_G, '            size_bytes: None,', '            size_bytes: Some(1),', CL, 'picker', ''),
+    ('choose-skips-the-check', TOOLS_RS, '            .map_err(|e| AiError::invalid(e.to_string()))?;\n        self.shared.update(|store| set_default(store, binding))?;', '            .ok();\n        self.shared.update(|store| set_default(store, binding))?;', CL, 'popup', ''),
+    ('popup-shown-when-ready', TOOLS_RS, 'let RoleStatus::Unavailable { reason } = self.client.status(role) else {\n            return Ok(None);\n        };', 'let reason = match self.client.status(role) {\n            RoleStatus::Unavailable { reason } => reason,\n            RoleStatus::Ready(_) => String::new(),\n        };', CL, 'popup', ''),
+    ('popup-without-ways-to-set-up', TOOLS_RS, 'self.client.picker(role, &setup_options(features))?', 'self.client.picker(role, &[])?', CL, 'popup', ''),
+    ('popup-reason-blank', TOOLS_RS, 'title: role.label.clone(),\n            reason,', 'title: role.label.clone(),\n            reason: String::new(),', CL, 'popup', ''),
+    ('popup-heading-loses-the-need', POPUP_E, 'ui.heading(format!("{} {HEADING_SUFFIX}", popup.title));', 'ui.heading(popup.title.clone());', EG, 'popup_view', ''),
+    ('popup-reason-hidden', POPUP_E, 'ui.colored_label(ui.visuals().warn_fg_color, &popup.reason);', 'let _ = &popup.reason;', EG, 'popup_view', ''),
+    ('popup-choice-dropped', POPUP_E, 'action = Some(PopupAction::Choose { connection, model });', 'let _ = (connection, model);', EG, 'popup_view', ''),
+    ('popup-set-up-dropped', POPUP_E, 'Some(PickerAction::SetUp(link)) => action = Some(PopupAction::SetUp(link)),', 'Some(PickerAction::SetUp(_)) => {}', EG, 'popup_view', ''),
+    ('popup-not-now-dropped', POPUP_E, 'action = Some(PopupAction::NotNow);', 'action = None;', EG, 'popup_view', ''),
+    ('size-hidden', PICK_E, 'if let Some(size) = group.size_bytes {', 'if let Some(size) = group.size_bytes.filter(|_| false) {', EG, 'picker_view', ''),
+    ('size-in-the-wrong-unit', PICK_E, 'text::bytes(size)', 'text::bytes(size / 1000)', EG, 'popup_view', ''),
+]
+
+GROUPS = {'u1': U1, 'u3': U3, 'u4': U4, 'p4': P4, 'p10': P10, 'v1': V1, 'v2': V2, 'v3': V3}
 # Mutants whose effect is also refused by a second, independent check on this machine. They are
 # recorded as equivalent here, with the reason, and are never counted as caught.
 EQUIVALENT = {
