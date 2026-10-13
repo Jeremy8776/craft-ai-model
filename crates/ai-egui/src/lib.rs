@@ -45,6 +45,9 @@ pub use panel::{ConnectionPanel, PanelEvent};
 pub use picker::{
     ADD_KEY, HEADING, IN_USE, NOTHING, PickerAction, SET_UP, SWITCH_ON, model_picker,
 };
-pub use popup::{HEADING_SUFFIX, NOT_NOW, PopupAction, missing_model_popup};
+pub use popup::{
+    HEADING_SUFFIX, NOT_NOW, PopupAction, PopupInstallState, missing_model_popup,
+    missing_model_popup_with_install,
+};
 pub use progress::{CANCEL, ProgressAction, job_progress};
 pub use status::{ADD_CONNECTION, OPEN_LAUNCHER, StatusAction, StatusView, USE_DEFAULT, ai_status};

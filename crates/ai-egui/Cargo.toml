@@ -11,6 +11,7 @@ publish = false
 [dependencies]
 craft-ai-model.workspace = true
 craft-ai-client = { path = "../ai-client" }
+craft-ai-features = { path = "../ai-features" }
 egui = "0.36"
 
 [dev-dependencies]

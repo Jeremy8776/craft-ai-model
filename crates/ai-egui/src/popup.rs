@@ -6,6 +6,7 @@
 //! link by opening the launcher or its own connection panel.
 
 use craft_ai_client::{MissingModel, SetupLink};
+use craft_ai_features::{PortableBuild, SetupOffer, SetupRoute, gigabytes};
 use craft_ai_model::{ConnectionId, ModelId};
 use egui::Ui;
 
@@ -28,6 +29,79 @@ pub enum PopupAction {
     SetUp(SetupLink),
     /// Close the popup and leave the tool off for now.
     NotNow,
+    /// The person approved downloading just ComfyUI, not the model or add-ons.
+    InstallComfyUi(PortableBuild),
+}
+
+/// State of the optional install section, owned by the host window.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct PopupInstallState {
+    pub open: bool,
+    pub accepted: bool,
+    selected_asset: Option<String>,
+}
+
+/// Draws the popup with an optional ComfyUI install offer. This only reports a choice;
+/// the host must start the install in a background task after receiving the action.
+pub fn missing_model_popup_with_install(
+    ui: &mut Ui,
+    popup: &MissingModel,
+    offer: Option<&SetupOffer>,
+    install: &mut PopupInstallState,
+) -> Option<PopupAction> {
+    let action = missing_model_popup(ui, popup);
+    let Some(offer) =
+        offer.filter(|o| o.feature == popup.tool.as_str() && o.route == SetupRoute::ComfyUi)
+    else {
+        install.open = false;
+        install.accepted = false;
+        install.selected_asset = None;
+        return action;
+    };
+    let Some(build) = offer.portable.as_ref().filter(|_| offer.can_install()) else {
+        for step in &offer.manual_steps {
+            ui.label(step);
+        }
+        for reason in &offer.blockers {
+            ui.colored_label(ui.visuals().warn_fg_color, reason);
+        }
+        return action;
+    };
+    if install.selected_asset.as_deref() != Some(&build.asset) {
+        install.open = false;
+        install.accepted = false;
+        install.selected_asset = Some(build.asset.clone());
+    }
+    ui.separator();
+    if ui.button("Install ComfyUI on this computer").clicked() {
+        install.open = !install.open;
+        install.accepted = false;
+    }
+    if install.open {
+        ui.label(format!(
+            "Download {} from the ComfyUI authors.",
+            gigabytes(build.size_bytes)
+        ));
+        ui.label("This installs ComfyUI only. The model and its add-ons are separate.");
+        ui.hyperlink_to(
+            "Read ComfyUI's licence (GPL-3.0)",
+            "https://github.com/Comfy-Org/ComfyUI/blob/v0.39.0/LICENSE",
+        );
+        ui.label("A copy is kept in this app's folder. It can be removed later.");
+        ui.checkbox(
+            &mut install.accepted,
+            "I agree to install ComfyUI from its authors",
+        );
+        if ui
+            .add_enabled(install.accepted, egui::Button::new("Install ComfyUI"))
+            .clicked()
+        {
+            install.open = false;
+            install.accepted = false;
+            return Some(PopupAction::InstallComfyUi(build.clone()));
+        }
+    }
+    action
 }
 
 /// Draws the popup content for one tool.

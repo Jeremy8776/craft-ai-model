@@ -12,6 +12,7 @@
 mod detect;
 mod download;
 mod hardware;
+pub mod portable;
 mod scan;
 pub mod source;
 pub mod system;

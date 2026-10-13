@@ -19,6 +19,7 @@ mod plan;
 mod png;
 mod recipe;
 mod sample;
+mod setup;
 
 pub use catalogue::builtin;
 pub use engine::{
@@ -29,3 +30,7 @@ pub use options::{Route, SetupOption, setup_options};
 pub use plan::{Blocker, InstalledFile, Inventory, Plan, State, plan};
 pub use recipe::{CloudOption, Licence, LocalRecipe, ModelFile, NativeRoute, NodePack, Source};
 pub use sample::{sample_is_costly, sample_request};
+pub use setup::{
+    Agreement, COMFYUI_TAG, PortableBuild, SetupOffer, SetupRoute, SetupStep, StepKind, agreement,
+    gigabytes, is_official_build, portable_for, setup_offer,
+};

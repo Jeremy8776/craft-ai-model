@@ -209,6 +209,9 @@ impl Demo {
                 self.note = format!("Would open the launcher to fix {connection}.");
             }
             Some(PopupAction::NotNow) => self.dismissed = true,
+            Some(PopupAction::InstallComfyUi(_)) => {
+                self.note = "This sample does not install software.".into();
+            }
             None => {}
         }
     }

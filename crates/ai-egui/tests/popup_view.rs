@@ -1,13 +1,21 @@
 //! The missing-model popup driven like a person would: real layout, real clicks, no window.
 
 use craft_ai_client::{GroupState, MissingModel, PickerGroup, PickerModel, PickerView, SetupLink};
-use craft_ai_egui::{ADD_KEY, HEADING_SUFFIX, NOT_NOW, PopupAction, SET_UP, missing_model_popup};
+use craft_ai_egui::{
+    ADD_KEY, HEADING_SUFFIX, NOT_NOW, PopupAction, PopupInstallState, SET_UP,
+    missing_model_popup_with_install,
+};
+use craft_ai_features::{
+    Gpu, GpuVendor, Inventory, Os, SetupOffer, SetupRoute, SystemProfile, setup_offer,
+};
 use craft_ai_model::{ConnectionId, Locality, ModelId, RoleId};
 use egui_kittest::Harness;
 use egui_kittest::kittest::Queryable;
 
 struct State {
     popup: MissingModel,
+    offer: Option<SetupOffer>,
+    install: PopupInstallState,
     last: Option<PopupAction>,
 }
 
@@ -39,13 +47,24 @@ fn group(title: &str, state: GroupState) -> PickerGroup {
 }
 
 fn harness(popup: MissingModel) -> Harness<'static, State> {
+    harness_with_offer(popup, None)
+}
+
+fn harness_with_offer(popup: MissingModel, offer: Option<SetupOffer>) -> Harness<'static, State> {
     let mut h = Harness::new_ui_state(
         |ui, st: &mut State| {
-            if let Some(a) = missing_model_popup(ui, &st.popup) {
+            if let Some(a) =
+                missing_model_popup_with_install(ui, &st.popup, st.offer.as_ref(), &mut st.install)
+            {
                 st.last = Some(a);
             }
         },
-        State { popup, last: None },
+        State {
+            popup,
+            offer,
+            install: PopupInstallState::default(),
+            last: None,
+        },
     );
     h.run();
     h
@@ -122,4 +141,92 @@ fn not_now_leaves_the_tool_off() {
     h.get_by_label(NOT_NOW).click();
     h.run();
     assert_eq!(h.state().last, Some(PopupAction::NotNow));
+}
+
+fn install_offer() -> SetupOffer {
+    let feature = craft_ai_features::builtin()
+        .into_iter()
+        .find(|f| f.id == "select-subject")
+        .unwrap();
+    setup_offer(
+        &feature,
+        &SystemProfile {
+            os: Os::Windows,
+            gpus: vec![Gpu {
+                name: "RTX 3090".into(),
+                vendor: GpuVendor::Nvidia,
+                vram_mb: Some(24576),
+            }],
+            comfyui_found: false,
+        },
+        &Inventory {
+            free_disk_bytes: Some(100_000_000_000),
+            ..Inventory::default()
+        },
+        SetupRoute::ComfyUi,
+    )
+    .unwrap()
+}
+
+#[test]
+fn installing_is_optional_and_requires_a_separate_approval() {
+    let offer = install_offer();
+    let build = offer.portable.clone().unwrap();
+    let mut h = harness_with_offer(
+        popup(vec![group("SAM 3", GroupState::NotSetUp)]),
+        Some(offer),
+    );
+    assert_eq!(h.state().last, None);
+    h.get_by_label("Install ComfyUI on this computer").click();
+    h.run();
+    h.get_by_label("Download 2.0 GB from the ComfyUI authors.");
+    h.get_by_label("This installs ComfyUI only. The model and its add-ons are separate.");
+    h.get_by_label("Read ComfyUI's licence (GPL-3.0)");
+    h.get_by_label("Install ComfyUI").click();
+    h.run();
+    assert_eq!(
+        h.state().last,
+        None,
+        "the first click must not start downloading"
+    );
+    h.get_by_label("I agree to install ComfyUI from its authors")
+        .click();
+    h.run();
+    h.get_by_label("Install ComfyUI").click();
+    h.run();
+    assert_eq!(h.state().last, Some(PopupAction::InstallComfyUi(build)));
+}
+
+#[test]
+fn no_offer_means_no_install_button() {
+    let h = harness(popup(vec![group("SAM 3", GroupState::NotSetUp)]));
+    assert!(
+        h.query_by_label("Install ComfyUI on this computer")
+            .is_none()
+    );
+}
+
+#[test]
+fn other_computers_get_plain_steps_instead_of_a_dead_install_button() {
+    let feature = craft_ai_features::builtin()
+        .into_iter()
+        .find(|f| f.id == "select-subject")
+        .unwrap();
+    let offer = setup_offer(
+        &feature,
+        &SystemProfile {
+            os: Os::Linux,
+            gpus: vec![],
+            comfyui_found: false,
+        },
+        &Inventory::default(),
+        SetupRoute::ComfyUi,
+    )
+    .unwrap();
+    let h = harness_with_offer(popup(vec![]), Some(offer));
+    assert!(
+        h.query_by_label("Install ComfyUI on this computer")
+            .is_none()
+    );
+    h.get_by_label("Install ComfyUI from comfy.org, open it once, then come back here.");
 }

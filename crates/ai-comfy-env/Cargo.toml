@@ -21,8 +21,11 @@ sha2 = "0.11"
 dirs = "7"
 url = "2"
 fs4 = { version = "1", default-features = false, features = ["sync"] }
+sevenz-rust2 = { version = "0.24", default-features = false, features = ["bzip2", "ppmd", "util"] }
+tempfile = "3"
 
 [dev-dependencies]
+sevenz-rust2 = { version = "0.24", default-features = false, features = ["compress", "util"] }
 flate2 = "1"
 tempfile = "3"
 sha2 = "0.11"
