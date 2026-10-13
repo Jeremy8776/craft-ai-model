@@ -20,6 +20,11 @@ passphrase-encrypted file, environment, layered) and the reader and locked atomi
 launcher's shared store file. The model never depends on it, so the model stays wasm-safe. Real
 keychain test: `cargo test -p craft-ai-native -- --ignored keychain_round_trip`.
 
+The encrypted file store is not in the default chain yet. `ConnectionManager::standard()` layers the
+environment and the OS keychain only, and the launcher has no passphrase prompt, so on a machine
+with no keychain (a bare Linux session, say) a key cannot be saved. An app that supplies its own
+passphrase can build a `LayeredStore` with `EncryptedFileStore` today.
+
 A third crate, `craft-ai-openai`, is the first real provider: an OpenAI-compatible adapter (text with
 streaming, tools and structured output; image generate, edit and inpaint). It passes the shared
 conformance checks against a scripted localhost server. Not yet run against a live server or TLS.
