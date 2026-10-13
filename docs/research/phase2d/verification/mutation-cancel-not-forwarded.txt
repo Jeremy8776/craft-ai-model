@@ -1,0 +1,24 @@
+   Compiling craft-ai-client v0.1.0 (%USERPROFILE%\Apps\ArtCraft\craft-ai-model\crates\ai-client)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.56s
+     Running tests\custom_tool_conformance.rs (target\debug\deps\custom_tool_conformance-f82f0218e8ec04b8.exe)
+
+running 1 test
+test cancelling_one_apps_job_leaves_the_other_apps_job_alone ... FAILED
+
+failures:
+
+---- cancelling_one_apps_job_leaves_the_other_apps_job_alone stdout ----
+
+thread 'cancelling_one_apps_job_leaves_the_other_apps_job_alone' (46504) panicked at crates\ai-client\tests\custom_tool_conformance.rs:186:5:
+assertion `left == right` failed
+  left: Succeeded
+ right: Cancelled
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    cancelling_one_apps_job_leaves_the_other_apps_job_alone
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.02s
+
+error: test failed, to rerun pass `-p craft-ai-client --test custom_tool_conformance`
