@@ -215,3 +215,26 @@ fn which_picks_are_judgements_and_which_are_computed() {
     let keys: std::collections::HashSet<_> = Pick::ALL.into_iter().map(Pick::key).collect();
     assert_eq!(keys.len(), 6);
 }
+
+#[test]
+fn a_newer_catalog_wins_over_the_built_in_one_and_the_rest_still_applies() {
+    let newer = catalog(&[("text.complete", "recommended", "openrouter", "model-new")]);
+    let built_in = catalog(&[
+        ("text.complete", "recommended", "openrouter", "model-old"),
+        ("text.complete", "best_result", "openrouter", "model-best"),
+    ]);
+    let merged = newer.over(built_in);
+    let models = [
+        ("openrouter", model("model-old", None, None), false),
+        ("openrouter", model("model-new", None, None), false),
+        ("openrouter", model("model-best", None, None), false),
+    ];
+    let picks = choose(&cap("text.complete"), &cands(&models), &merged);
+    let by = |p: Pick| picks.iter().find(|x| x.pick == p).map(|x| x.candidate);
+    assert_eq!(by(Pick::Recommended), Some(1), "the newer entry wins");
+    assert_eq!(
+        by(Pick::BestResult),
+        Some(2),
+        "an entry only the old one had still counts"
+    );
+}

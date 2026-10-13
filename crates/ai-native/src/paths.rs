@@ -22,6 +22,8 @@ pub const STORE_FILE: &str = "connections.json";
 pub const SECRETS_FILE: &str = "secrets.enc.json";
 /// The shared request log, one JSON line per record.
 pub const HISTORY_FILE: &str = "jobs.jsonl";
+/// The curated model picks, when updated without an app release.
+pub const CATALOG_FILE: &str = "catalog.json";
 /// The ComfyUI workflow library, one JSON file per imported workflow.
 pub const WORKFLOW_DIR: &str = "workflows";
 
@@ -48,6 +50,11 @@ pub fn store_path() -> Option<PathBuf> {
 /// Full path of the encrypted secret file.
 pub fn secrets_path() -> Option<PathBuf> {
     ai_dir().map(|d| d.join(SECRETS_FILE))
+}
+
+/// Full path of the curated picks file that sits over the one built into the apps.
+pub fn catalog_path() -> Option<PathBuf> {
+    ai_dir().map(|d| d.join(CATALOG_FILE))
 }
 
 /// Full path of the request log.

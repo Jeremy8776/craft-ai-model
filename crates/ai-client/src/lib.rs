@@ -64,4 +64,4 @@ pub use manage::{
 pub use picker::{CurrentChoice, GroupState, PickerGroup, PickerModel, PickerView, SetupLink};
 pub use popup::MissingModel;
 pub use runner::{TestRunner, TestTarget};
-pub use tools::{SampleReport, TestStart, ToolDesk, ToolView};
+pub use tools::{Accepted, SampleReport, Skipped, TestStart, ToolDesk, ToolView};

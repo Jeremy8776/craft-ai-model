@@ -114,6 +114,15 @@ impl Catalog {
         serde_json::from_str(text).map_err(|e| CatalogError::Syntax(e.to_string()))
     }
 
+    /// This catalog on top of `base`: where both name a model for the same job and tag, this one
+    /// wins, and anything only `base` has still applies. That is how a catalog file updated
+    /// without an app release sits over the one built into the app.
+    pub fn over(mut self, base: Catalog) -> Catalog {
+        self.version = self.version.max(base.version);
+        self.entries.extend(base.entries);
+        self
+    }
+
     fn lookup<'a>(
         &self,
         capability: &CapabilityId,

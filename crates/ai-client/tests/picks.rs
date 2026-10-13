@@ -234,3 +234,34 @@ fn billing_free_connections_are_the_ones_that_count_as_free() {
     let c = connection("x", "p", true, &[]);
     assert_eq!(c.billing, Billing::Free);
 }
+
+#[test]
+fn a_catalog_file_in_the_shared_folder_changes_the_picks_without_a_new_app() {
+    let hosted = connection(
+        "or",
+        "openrouter",
+        false,
+        &[
+            text_model("gpt-4o-mini", None, None),
+            text_model("gpt-4o", None, None),
+        ],
+    );
+    let (dir, client) = client(vec![hosted], Vec::new(), Catalog::default());
+    let file = craft_ai_native::CatalogFile::new(dir.path().join("catalog.json"));
+    let recommended = |c: &AiClient| {
+        c.picks(&rewrite())
+            .unwrap()
+            .into_iter()
+            .find(|p| p.pick == Pick::Recommended)
+            .map(|p| p.choice.model.to_string())
+    };
+    assert_eq!(recommended(&client), None, "nothing curated yet");
+
+    std::fs::write(
+        file.path(),
+        r#"{"version":2,"entries":[{"capability":"text.complete","pick":"recommended","provider":"openrouter","model":"gpt-4o"}]}"#,
+    )
+    .unwrap();
+    let client = client.with_catalog_file(&file);
+    assert_eq!(recommended(&client).as_deref(), Some("gpt-4o"));
+}

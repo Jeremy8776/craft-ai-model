@@ -28,9 +28,9 @@ use craft_ai_model::{
     ErrorKind, HistoryLog, JobId, JobSnapshot, JobState, Locality, ModelId, Pick, PickedBy,
     Provider, Request, Role, RoleId, Usage,
 };
-use craft_ai_native::HistoryFile;
 use craft_ai_native::secrets::{EnvStore, KeychainStore, LayeredStore, SecretStore, secret_for};
 use craft_ai_native::shared::SharedStore;
+use craft_ai_native::{CatalogFile, HistoryFile};
 
 use crate::factory::ProviderFactory;
 use crate::history::{self, Recorder};
@@ -219,6 +219,13 @@ impl AiClient {
     pub fn with_catalog(mut self, catalog: Catalog) -> Self {
         self.catalog = catalog;
         self
+    }
+
+    /// Uses the curated picks in the shared folder's catalog file over the built-in ones, so a
+    /// newer list reaches every app without a release. A missing or damaged file leaves the
+    /// built-in picks (call [`CatalogFile::load`] to show a person why).
+    pub fn with_catalog_file(self, file: &CatalogFile) -> Self {
+        self.with_catalog(file.load().catalog)
     }
 
     /// Stops logging jobs.

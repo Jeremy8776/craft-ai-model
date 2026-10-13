@@ -30,6 +30,7 @@
     clippy::unreachable
 )]
 
+mod catalog_file;
 mod consent_file;
 mod fsutil;
 mod history_file;
@@ -37,5 +38,6 @@ pub mod paths;
 pub mod secrets;
 pub mod shared;
 
+pub use catalog_file::{CatalogFile, CatalogLoad};
 pub use consent_file::ConsentFile;
 pub use history_file::{DEFAULT_MAX_BYTES, HistoryFile, HistoryRead};

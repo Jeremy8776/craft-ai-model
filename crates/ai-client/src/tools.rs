@@ -52,6 +52,22 @@ pub enum SampleReport {
     Failed { message: String },
 }
 
+/// What saying yes to the recommended models did.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct Accepted {
+    /// The tools that now have the launcher's default set.
+    pub bound: Vec<RoleId>,
+    /// The tools left alone, each with a reason a person can read.
+    pub skipped: Vec<Skipped>,
+}
+
+/// A recommended model that was not applied.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct Skipped {
+    pub tool: RoleId,
+    pub why: String,
+}
+
 pub struct ToolDesk {
     pub(crate) client: AiClient,
     pub(crate) shared: SharedStore,
@@ -155,6 +171,43 @@ impl ToolDesk {
             }
         }
         Ok(bound)
+    }
+
+    /// The person said yes to "use the recommended models for N features?": makes each offered
+    /// model the launcher's choice for its tool. `offer` is what [`AiClient::recommended`]
+    /// returned, so what is applied is what was shown.
+    ///
+    /// A tool the person has since chosen a model for keeps their choice, a model that has gone
+    /// away is skipped, and one tool failing never stops the others. Each skipped tool says why.
+    pub fn accept_recommended(
+        &self,
+        roles: &[Role],
+        offer: &[(RoleId, Choice)],
+    ) -> Result<Accepted, AiError> {
+        let mut done = Accepted::default();
+        for (tool, choice) in offer {
+            let skip = |why: &str| Skipped {
+                tool: tool.clone(),
+                why: why.to_owned(),
+            };
+            let Some(role) = roles.iter().find(|r| &r.id == tool) else {
+                done.skipped
+                    .push(skip("This app no longer has that feature."));
+                continue;
+            };
+            if self.view(role)?.bound.is_some() {
+                done.skipped
+                    .push(skip("A model was chosen for this feature in the meantime."));
+                continue;
+            }
+            match self.choose(role, &choice.connection, &choice.model) {
+                Ok(()) => done.bound.push(tool.clone()),
+                Err(_) => done
+                    .skipped
+                    .push(skip("That model is no longer available.")),
+            }
+        }
+        Ok(done)
     }
 
     /// Custom tool declarations shared with every Craft app; declaring one does not install an adapter.
