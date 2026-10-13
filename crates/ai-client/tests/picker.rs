@@ -151,7 +151,7 @@ fn models_are_listed_under_their_provider_and_only_if_they_can_do_the_tool() {
             ),
             connection(
                 "cloud",
-                "segment-co",
+                "openai",
                 true,
                 vec![segmenter("seg-xl", "Segment XL")],
             ),
@@ -189,7 +189,7 @@ fn each_model_says_what_is_known_about_it_in_one_line() {
             connection("box", "comfyui", false, vec![segmenter("sam3", "SAM 3")]),
             connection(
                 "cloud",
-                "segment-co",
+                "openai",
                 true,
                 vec![segmenter("seg-xl", "Segment XL")],
             ),
@@ -223,7 +223,7 @@ fn a_provider_with_no_key_or_switched_off_is_greyed_and_can_be_fixed_not_hidden(
     off.enabled = false;
     let w = World::new(
         vec![
-            connection("nokey", "other-co", true, vec![segmenter("b", "Beta")]),
+            connection("nokey", "openai", true, vec![segmenter("b", "Beta")]),
             off,
             connection("ok", "comfyui", false, vec![segmenter("c", "Gamma")]),
         ],
@@ -364,7 +364,7 @@ fn the_model_in_use_is_marked_and_a_choice_that_stopped_working_says_why() {
     let w = World::new(
         vec![connection(
             "cloud",
-            "segment-co",
+            "openai",
             true,
             vec![segmenter("x", "X")],
         )],
@@ -393,7 +393,7 @@ fn with_no_choice_nothing_is_current_and_a_picker_never_carries_a_key() {
     let w = World::new(
         vec![connection(
             "cloud",
-            "segment-co",
+            "openai",
             true,
             vec![segmenter("x", "X")],
         )],

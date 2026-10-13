@@ -267,6 +267,10 @@ impl AiClient {
         &self.app
     }
 
+    pub(crate) fn has_adapter(&self, provider: &str) -> bool {
+        self.factory.knows(provider)
+    }
+
     /// Where this app's consent ledger is kept by default.
     pub fn consent_file(&self) -> Option<craft_ai_native::ConsentFile> {
         craft_ai_native::ConsentFile::at_default_location(&self.app)
@@ -283,6 +287,12 @@ impl AiClient {
             Ok(r) => r,
             Err(e) => return unavailable(e.to_string()),
         };
+        if !self.factory.knows(&resolved.connection.provider) {
+            return unavailable(format!(
+                "this app has no adapter for the chosen {} model",
+                resolved.connection.provider
+            ));
+        }
         if let Err(e) = secret_for(&*self.secrets, resolved.connection) {
             return unavailable(e.message);
         }

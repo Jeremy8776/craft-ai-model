@@ -62,6 +62,11 @@ pub(crate) fn connection_groups(
         }
         let (state, note) = if !connection.enabled {
             (GroupState::SwitchedOff, "Switched off.".to_owned())
+        } else if !client.has_adapter(&connection.provider) {
+            (
+                GroupState::NeedsAdapter,
+                format!("This app has no adapter for {}.", connection.provider),
+            )
         } else if secret_for(&*client.secrets, connection).is_err() {
             let note = match connection.auth {
                 Auth::Subscription { .. } => "Not signed in.",
@@ -77,8 +82,10 @@ pub(crate) fn connection_groups(
             state,
             note,
             models,
-            setup: (state != GroupState::Ready).then(|| SetupLink::Fix {
-                connection: connection.id.clone(),
+            setup: (state != GroupState::Ready && state != GroupState::NeedsAdapter).then(|| {
+                SetupLink::Fix {
+                    connection: connection.id.clone(),
+                }
             }),
             size_bytes: None,
         });

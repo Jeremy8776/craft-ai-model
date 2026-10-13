@@ -19,6 +19,8 @@ use crate::picker_groups::{binding_for, connection_groups, model_label, unset_gr
 pub enum GroupState {
     /// Its models can be picked now.
     Ready,
+    /// This app has no adapter able to run this connection's backend.
+    NeedsAdapter,
     /// Connected, but no key is saved for it.
     NeedsKey,
     /// Connected, but switched off.

@@ -44,6 +44,7 @@
 mod client;
 mod factory;
 mod history;
+mod local;
 mod manage;
 mod picker;
 mod picker_groups;
@@ -53,6 +54,7 @@ mod tools;
 
 pub use client::{AiClient, Choice, Finished, Job, PickedChoice, Plan, RoleReady, RoleStatus};
 pub use factory::{BuildFn, ProviderFactory};
+pub use local::{LocalEnabled, LocalRoute};
 pub use manage::{
     Confirmed, ConnectionManager, ConnectionView, KeyState, MAX_DECLARED, ModelChoice, ProbeReport,
     ProbedModel, Removed, SaveError, Saved, TestReport, Unconfirmed, declare_models,

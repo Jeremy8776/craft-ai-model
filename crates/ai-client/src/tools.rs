@@ -53,8 +53,8 @@ pub enum SampleReport {
 }
 
 pub struct ToolDesk {
-    client: AiClient,
-    shared: SharedStore,
+    pub(crate) client: AiClient,
+    pub(crate) shared: SharedStore,
     consent: Option<ConsentFile>,
 }
 

@@ -25,7 +25,12 @@ streaming, tools and structured output; image generate, edit and inpaint). It pa
 conformance checks against a scripted localhost server. Not yet run against a live server or TLS.
 
 A fourth crate, `craft-ai-client`, is what an app holds: `AiClient` with `status`, `plan`, consent,
-`start` and `Job`, plus a `ProviderFactory` that new adapters register into.
+`start` and `Job`, plus a `ProviderFactory` that new adapters register into. For local Select subject,
+`local_route_for` resolves the suite binding to the selected connection, model, provider (ComfyUI or
+Candle) and optional address. `endpoint_for` serves ComfyUI only and fails if another backend is
+selected; an unavailable adapter is never presented as Ready. This is shared route resolution,
+not PhotoCraft or LightCraft inference adoption. Neither app executes its Select subject command
+through this binding yet; Candle has no shared production adapter registered in this crate.
 
 Connections are added, edited, tested and removed through `ConnectionDraft` (rules, in the model crate) and
 `ConnectionManager` plus `TestRunner` (in the client crate); the launcher's Connections screen and the
