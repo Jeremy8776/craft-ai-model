@@ -72,12 +72,20 @@ fn sam3() -> LocalRecipe {
             folder_names: vec!["comfyui-sam3".to_owned()],
         }],
         min_vram_mb: None,
-        // LightCraft's Candle runtime reads this same file (it understands Meta's layout).
-        native: Some(NativeRoute {
-            provider: "candle".to_owned(),
-            model: "sam3".to_owned(),
-            label: "SAM 3 (built-in runtime)".to_owned(),
-        }),
+        // LightCraft's Candle runtime reads this same file (it understands Meta's layout). Burn is
+        // a listed slot: no app has a Burn adapter yet, so apps report it as unavailable.
+        native: vec![
+            NativeRoute {
+                provider: "candle".to_owned(),
+                model: "sam3".to_owned(),
+                label: "SAM 3, built in (Nvidia or Apple graphics)".to_owned(),
+            },
+            NativeRoute {
+                provider: "burn".to_owned(),
+                model: "sam3".to_owned(),
+                label: "SAM 3, built in (any graphics card)".to_owned(),
+            },
+        ],
     }
 }
 

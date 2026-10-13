@@ -59,6 +59,9 @@ pub struct PickerGroup {
     /// Why a greyed provider is greyed, in a sentence. Empty when it is ready.
     pub note: String,
     pub models: Vec<PickerModel>,
+    /// Engine advice suggests this provider for this computer. Only set by
+    /// [`AiClient::picker_with_advice`]; a suggestion, never a choice.
+    pub suggested: bool,
     pub setup: Option<SetupLink>,
     /// What setting it up downloads, in bytes. Only a local model that is not installed has one.
     pub size_bytes: Option<u64>,

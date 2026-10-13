@@ -65,7 +65,7 @@ pub(crate) fn connection_groups(
         } else if !client.has_adapter(&connection.provider) {
             (
                 GroupState::NeedsAdapter,
-                format!("This app has no adapter for {}.", connection.provider),
+                "This app can't use this option yet.".to_owned(),
             )
         } else if secret_for(&*client.secrets, connection).is_err() {
             let note = match connection.auth {
@@ -82,6 +82,7 @@ pub(crate) fn connection_groups(
             state,
             note,
             models,
+            suggested: false,
             setup: (state != GroupState::Ready && state != GroupState::NeedsAdapter).then(|| {
                 SetupLink::Fix {
                     connection: connection.id.clone(),
@@ -139,6 +140,7 @@ pub(crate) fn unset_groups(
             state: GroupState::NotSetUp,
             note: note.trim_end().to_owned(),
             models: Vec::new(),
+            suggested: false,
             setup: Some(SetupLink::New {
                 option: option.id.clone(),
             }),

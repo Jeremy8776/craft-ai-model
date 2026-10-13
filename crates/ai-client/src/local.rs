@@ -97,20 +97,43 @@ impl ToolDesk {
 }
 
 impl ToolDesk {
-    /// Registers the built-in runtime of `feature` (its recipe's [`NativeRoute`](craft_ai_features::NativeRoute))
+    /// Registers the first built-in runtime of `feature` (its recipe's [`NativeRoute`](craft_ai_features::NativeRoute))
     /// reading the weights at `weights`, and binds the tool to it if nothing is chosen yet.
     pub fn enable_native(
         &self,
         feature: &Feature,
         weights: &Path,
     ) -> Result<LocalEnabled, AiError> {
+        let first = feature
+            .local
+            .as_ref()
+            .and_then(|r| r.native.first())
+            .map(|n| n.provider.clone())
+            .ok_or_else(|| {
+                AiError::unsupported(format!("{} has no built-in runtime", feature.title))
+            })?;
+        self.enable_native_with(feature, &first, weights)
+    }
+
+    /// Registers the built-in runtime named `provider` (`candle`, `burn`) from the feature's recipe.
+    /// Only a runtime the recipe lists is accepted, matched exactly. Every runtime reads the same
+    /// weights file and gets its own connection; the tool is bound only if nothing is chosen yet.
+    pub fn enable_native_with(
+        &self,
+        feature: &Feature,
+        provider: &str,
+        weights: &Path,
+    ) -> Result<LocalEnabled, AiError> {
         let native = feature
             .local
             .as_ref()
             .filter(|r| r.usable)
-            .and_then(|r| r.native.as_ref())
+            .and_then(|r| r.native.iter().find(|n| n.provider == provider))
             .ok_or_else(|| {
-                AiError::unsupported(format!("{} has no built-in runtime", feature.title))
+                AiError::unsupported(format!(
+                    "{} has no built-in {provider} runtime",
+                    feature.title
+                ))
             })?;
         let role = feature
             .role()
@@ -136,20 +159,17 @@ impl AiClient {
             return Ok(None);
         };
         if route.provider != provider {
-            return Err(AiError::unsupported(format!(
-                "the selected {} model cannot run through {provider}",
-                route.provider
-            )));
+            return Err(AiError::unsupported(
+                "The model you chose can't be run by this app yet. Choose another in Set up AI.",
+            ));
         }
         let file = route.file.ok_or_else(|| {
-            AiError::invalid(format!(
-                "the selected {provider} connection has no weights file"
-            ))
+            AiError::invalid("The model you chose isn't fully set up. Open Set up AI to fix it.")
         })?;
         let path = PathBuf::from(file);
         if !path.is_file() {
             return Err(AiError::unsupported(
-                "the weights file of the selected model is no longer there",
+                "The file for the model you chose is no longer there. Open Set up AI to fix it.",
             ));
         }
         Ok(Some(path))
@@ -166,7 +186,7 @@ impl AiClient {
         };
         if resolved.connection.locality != Locality::Local {
             return Err(AiError::unsupported(
-                "the chosen model is remote; use the client job and consent flow",
+                "The model you chose runs online, not on this computer.",
             ));
         }
         Ok(Some(LocalRoute {
@@ -186,15 +206,13 @@ impl AiClient {
             return Ok(None);
         };
         if route.provider != "comfyui" {
-            return Err(AiError::unsupported(format!(
-                "the selected {} model cannot run through comfyui",
-                route.provider
-            )));
+            return Err(AiError::unsupported(
+                "The model you chose can't be run by this app yet. Choose another in Set up AI.",
+            ));
         }
-        route
-            .endpoint
-            .map(Some)
-            .ok_or_else(|| AiError::invalid("the selected comfyui connection has no address"))
+        route.endpoint.map(Some).ok_or_else(|| {
+            AiError::invalid("The model you chose isn't fully set up. Open Set up AI to fix it.")
+        })
     }
 }
 

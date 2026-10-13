@@ -12,6 +12,7 @@
 #![deny(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 mod catalogue;
+mod engine;
 mod feature;
 mod options;
 mod plan;
@@ -20,6 +21,9 @@ mod recipe;
 mod sample;
 
 pub use catalogue::builtin;
+pub use engine::{
+    EngineAdvice, EngineOffer, Gpu, GpuVendor, Os, Pace, SystemProfile, advise, gpu_route,
+};
 pub use feature::{AppStatus, AppUse, Feature};
 pub use options::{Route, SetupOption, setup_options};
 pub use plan::{Blocker, InstalledFile, Inventory, Plan, State, plan};

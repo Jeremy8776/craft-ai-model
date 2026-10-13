@@ -15,6 +15,7 @@ use std::time::Duration;
 use craft_ai_artcraft::{ArtCraftConfig, ArtCraftProvider};
 use craft_ai_bfl::{BflConfig, BflProvider};
 use craft_ai_comfyui::{ComfyConfig, ComfyProvider, WorkflowLibrary};
+use craft_ai_features::GpuVendor;
 use craft_ai_media::{MediaStore, MediaStoreConfig, PersistingProvider};
 use craft_ai_model::{AiError, Connection, Locality, Provider, SecretString};
 use craft_ai_openai::{OpenAiConfig, OpenAiProvider};
@@ -41,6 +42,8 @@ const OPENAI_FAMILY: &[&str] = &[
 #[derive(Clone)]
 pub struct ProviderFactory {
     builders: HashMap<String, Arc<BuildFn>>,
+    /// The card makers an app states its build of an engine can use (see `declare_accelerators`).
+    accelerators: HashMap<String, Vec<GpuVendor>>,
     /// Where the ComfyUI builder reads workflow files; the shared default when `None`.
     comfyui_library: Option<std::path::PathBuf>,
     /// App-owned directory for durable ComfyUI outputs. Opt-in; no implicit shared output path.
@@ -79,6 +82,7 @@ impl ProviderFactory {
     ) -> Self {
         let mut f = Self {
             builders: HashMap::new(),
+            accelerators: HashMap::new(),
             comfyui_library,
             comfyui_output_dir: None,
             media: None,
@@ -269,6 +273,21 @@ impl ProviderFactory {
         self.builders.contains_key(&name.to_ascii_lowercase())
     }
 
+    /// States which card makers this app's build of the engine `name` can use, so engine advice
+    /// does not assume. Say `&[]` for a build that only runs on the processor. Call it where the
+    /// adapter is registered, because that is where the build's features are known.
+    pub fn declare_accelerators(&mut self, name: &str, vendors: &[GpuVendor]) {
+        self.accelerators
+            .insert(name.to_ascii_lowercase(), vendors.to_vec());
+    }
+
+    /// What [`declare_accelerators`](Self::declare_accelerators) was told for `name`, if anything.
+    pub fn accelerators(&self, name: &str) -> Option<&[GpuVendor]> {
+        self.accelerators
+            .get(&name.to_ascii_lowercase())
+            .map(Vec::as_slice)
+    }
+
     pub fn build(
         &self,
         connection: &Connection,
@@ -279,7 +298,7 @@ impl ProviderFactory {
             .get(&connection.provider.to_ascii_lowercase())
             .ok_or_else(|| {
                 AiError::unsupported(format!(
-                    "this app has no adapter for the \"{}\" provider of connection \"{}\"",
+                    "This app can't use \"{}\" yet (connection \"{}\")",
                     connection.provider, connection.label
                 ))
             })?;

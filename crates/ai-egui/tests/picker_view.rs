@@ -30,6 +30,7 @@ fn group(title: &str, state: GroupState, models: Vec<PickerModel>) -> PickerGrou
         state,
         note: String::new(),
         models,
+        suggested: false,
         setup: None,
         size_bytes: None,
     }
@@ -229,4 +230,30 @@ fn a_provider_to_install_says_how_much_it_downloads() {
         None,
     ));
     assert!(h.query_by_label_contains("Download").is_none());
+}
+
+#[test]
+fn a_suggested_provider_says_so_and_the_others_do_not() {
+    let mut suggested = group(
+        "Box",
+        GroupState::Ready,
+        vec![row("box", "a", "Alpha", false)],
+    );
+    suggested.suggested = true;
+    let h = harness(view(
+        vec![
+            suggested,
+            group(
+                "Cloud",
+                GroupState::Ready,
+                vec![row("cloud", "b", "Beta", false)],
+            ),
+        ],
+        None,
+    ));
+    h.get_by_label("Suggested for this computer");
+    assert_eq!(
+        h.query_all_by_label("Suggested for this computer").count(),
+        1
+    );
 }

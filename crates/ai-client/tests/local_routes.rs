@@ -109,7 +109,10 @@ fn a_selected_native_model_without_an_adapter_is_not_reported_ready() {
     for app in ["photocraft", "lightcraft"] {
         let client = w.client(app);
         match client.status(&role()) {
-            RoleStatus::Unavailable { reason } => assert!(reason.contains("candle"), "{reason}"),
+            RoleStatus::Unavailable { reason } => assert_eq!(
+                reason,
+                "This app can't run the chosen model yet. Choose another in Set up AI."
+            ),
             RoleStatus::Ready(_) => panic!("{app} has no native adapter registered"),
         }
         let view = client.picker(&role(), &[]).unwrap();
@@ -119,7 +122,7 @@ fn a_selected_native_model_without_an_adapter_is_not_reported_ready() {
             .find(|g| g.models.iter().any(|m| m.connection.as_str() == "native"))
             .unwrap();
         assert_ne!(native.state, craft_ai_client::GroupState::Ready);
-        assert!(native.note.contains("adapter"), "{}", native.note);
+        assert_eq!(native.note, "This app can't use this option yet.");
         assert!(
             native.setup.is_none(),
             "No setup button can install an app adapter"
@@ -132,8 +135,10 @@ fn an_endpoint_cannot_masquerade_as_a_different_selected_backend() {
     let w = World::new();
     w.choose("native", "sam3-official");
     let error = w.client("photocraft").endpoint_for(&role()).unwrap_err();
-    assert!(error.message.contains("candle"), "{error:?}");
-    assert!(error.message.contains("comfyui"), "{error:?}");
+    assert_eq!(
+        error.message,
+        "The model you chose can't be run by this app yet. Choose another in Set up AI."
+    );
 }
 
 #[test]
@@ -199,5 +204,8 @@ fn a_remote_choice_is_not_exposed_as_a_local_route() {
         .unwrap();
     w.choose("comfy", "sam3-node");
     let error = w.client("photocraft").local_route_for(&role()).unwrap_err();
-    assert!(error.message.contains("remote"), "{error:?}");
+    assert_eq!(
+        error.message,
+        "The model you chose runs online, not on this computer."
+    );
 }

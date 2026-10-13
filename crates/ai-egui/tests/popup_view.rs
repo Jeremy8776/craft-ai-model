@@ -32,6 +32,7 @@ fn group(title: &str, state: GroupState) -> PickerGroup {
         state,
         note: String::new(),
         models: Vec::new(),
+        suggested: false,
         setup: None,
         size_bytes: None,
     }

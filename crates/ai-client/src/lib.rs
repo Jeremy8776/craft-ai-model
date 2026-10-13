@@ -42,6 +42,7 @@
 )]
 
 mod client;
+mod engine;
 mod factory;
 mod history;
 mod local;

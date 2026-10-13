@@ -101,7 +101,10 @@ fn the_comfyui_route_has_no_file_and_is_not_a_native_one() {
         .local_file_for(&role(), "candle")
         .unwrap_err()
         .message;
-    assert!(error.contains("comfyui"), "{error}");
+    assert_eq!(
+        error,
+        "The model you chose can't be run by this app yet. Choose another in Set up AI."
+    );
 }
 
 #[test]
@@ -110,12 +113,12 @@ fn a_native_route_is_not_offered_as_a_comfyui_address() {
     w.desk("launcher")
         .enable_native(&feature("select-subject"), &w.weights("sam3.safetensors"))
         .unwrap();
-    assert!(
+    assert_eq!(
         w.client("photocraft")
             .endpoint_for(&role())
             .unwrap_err()
-            .message
-            .contains("candle")
+            .message,
+        "The model you chose can't be run by this app yet. Choose another in Set up AI."
     );
 }
 
@@ -219,7 +222,7 @@ fn a_runtime_that_is_not_ready_to_use_is_refused() {
             .is_err()
     );
     let mut f = feature("select-subject");
-    f.local.as_mut().unwrap().native = None;
+    f.local.as_mut().unwrap().native.clear();
     assert!(
         w.desk("launcher")
             .enable_native(&f, &w.weights("sam3.safetensors"))
@@ -258,7 +261,10 @@ fn a_file_that_vanished_is_an_error_not_unbound() {
         .local_file_for(&role(), "candle")
         .unwrap_err()
         .message;
-    assert!(error.contains("no longer"), "{error}");
+    assert_eq!(
+        error,
+        "The file for the model you chose is no longer there. Open Set up AI to fix it."
+    );
 }
 
 #[test]
@@ -277,7 +283,7 @@ fn the_picker_offers_the_two_runtimes_of_one_model_side_by_side() {
         titles[0], titles[1],
         "the person must be able to tell them apart"
     );
-    assert!(titles.iter().any(|t| t.contains("built-in")), "{titles:?}");
+    assert!(titles.iter().any(|t| t.contains("built in")), "{titles:?}");
 }
 
 #[test]

@@ -103,6 +103,13 @@ fn group_ui(ui: &mut Ui, group: &PickerGroup) -> Option<PickerAction> {
         if let Some(locality) = group.locality {
             ui.label(RichText::new(text::locality_badge(locality)).small().weak());
         }
+        if group.suggested {
+            ui.label(
+                RichText::new("Suggested for this computer")
+                    .small()
+                    .strong(),
+            );
+        }
         if let Some(size) = group.size_bytes {
             ui.label(
                 RichText::new(format!("Download {}", text::bytes(size)))

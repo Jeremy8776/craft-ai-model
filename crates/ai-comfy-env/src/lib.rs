@@ -14,6 +14,7 @@ mod download;
 mod hardware;
 mod scan;
 pub mod source;
+pub mod system;
 mod verify;
 
 pub use detect::{ComfyInstall, parse_extra_paths};

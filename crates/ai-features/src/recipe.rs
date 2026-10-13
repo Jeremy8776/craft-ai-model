@@ -74,10 +74,11 @@ pub struct NodePack {
 
 /// The same model run by an app's own built-in runtime instead of ComfyUI, from the same weights
 /// file. The file is found by the launcher (it is the one in the ComfyUI models folder) and
-/// recorded on the connection; the app that owns the runtime reads it from there.
+/// recorded on the connection; the app that owns the runtime reads it from there. A recipe may
+/// list several runtimes (Candle, Burn); each is its own connection and its own choice.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct NativeRoute {
-    /// Adapter name on the connection, such as `candle`.
+    /// Adapter name on the connection, such as `candle` or `burn`.
     pub provider: String,
     /// Model id on that connection.
     pub model: String,
@@ -100,9 +101,10 @@ pub struct LocalRecipe {
     /// Graphics memory the workflow needs, when known.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub min_vram_mb: Option<u32>,
-    /// A built-in runtime that reads the same weights file, where an app has one.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub native: Option<NativeRoute>,
+    /// Built-in runtimes that read the same weights file, where an app has one. The first is the
+    /// one [`ToolDesk::enable_native`] registers; none means the tool has no built-in runtime.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub native: Vec<NativeRoute>,
 }
 
 fn yes() -> bool {

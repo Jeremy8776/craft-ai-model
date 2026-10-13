@@ -271,6 +271,13 @@ impl AiClient {
         self.factory.knows(provider)
     }
 
+    pub(crate) fn declared_accelerators(
+        &self,
+        provider: &str,
+    ) -> Option<Vec<craft_ai_features::GpuVendor>> {
+        self.factory.accelerators(provider).map(<[_]>::to_vec)
+    }
+
     /// Where this app's consent ledger is kept by default.
     pub fn consent_file(&self) -> Option<craft_ai_native::ConsentFile> {
         craft_ai_native::ConsentFile::at_default_location(&self.app)
@@ -288,10 +295,9 @@ impl AiClient {
             Err(e) => return unavailable(e.to_string()),
         };
         if !self.factory.knows(&resolved.connection.provider) {
-            return unavailable(format!(
-                "this app has no adapter for the chosen {} model",
-                resolved.connection.provider
-            ));
+            return unavailable(
+                "This app can't run the chosen model yet. Choose another in Set up AI.".to_owned(),
+            );
         }
         if let Err(e) = secret_for(&*self.secrets, resolved.connection) {
             return unavailable(e.message);
