@@ -81,6 +81,8 @@ starts, installs or repairs ComfyUI. Only select subject (SAM 3) has a local rec
 No model download from Hugging Face or automatic node-pack installation has been verified.
 The SAM 3 recipe is usable for the current PhotoCraft integration; other app uses and unused
 audited capabilities are not automatically shipped features.
+For the exact custom-connection, model-source and node-pack behavior, see
+[docs/custom-connections-and-sources.md](docs/custom-connections-and-sources.md).
 
 ## Media-provider coverage
 
