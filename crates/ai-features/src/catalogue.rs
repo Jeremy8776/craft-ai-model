@@ -199,8 +199,8 @@ fn try_builtin() -> Option<Vec<Feature>> {
         ),
         cloud(
             "seedance",
-            "Seedance (Volcengine Ark)",
-            "Text to video with your Ark key.",
+            "Seedance (BytePlus ModelArk)",
+            "Text to video with your BytePlus ModelArk key.",
         ),
         cloud(
             "artcraft-omni",

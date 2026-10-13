@@ -593,7 +593,7 @@ fn new_provider_presets_store_keys_separately_and_probe_where_safe() {
     );
     assert_eq!(
         r.manager
-            .test_saved(&id("seedance-volcengine-ark"), true)
+            .test_saved(&id("seedance-byteplus-modelark"), true)
             .unwrap()
             .models
             .len(),

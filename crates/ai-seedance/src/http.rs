@@ -1,4 +1,4 @@
-//! Bounded bearer-auth requests to the configured Ark origin. Never follow redirects.
+//! Bounded bearer-auth requests to the configured ModelArk origin. Never follow redirects.
 use craft_ai_model::{AiError, ErrorKind, SecretString};
 use serde_json::Value;
 use std::{io::Read, time::Duration};
@@ -35,7 +35,7 @@ impl Http {
                 400 | 404 | 405 | 413 | 422 => ErrorKind::InvalidRequest,
                 _ => ErrorKind::Provider,
             };
-            return Err(AiError::new(kind, format!("Ark answered {status}")));
+            return Err(AiError::new(kind, format!("ModelArk answered {status}")));
         }
         let mut bytes = Vec::new();
         response
@@ -43,12 +43,15 @@ impl Http {
             .into_reader()
             .take(1024 * 1024 + 1)
             .read_to_end(&mut bytes)
-            .map_err(|_| AiError::new(ErrorKind::Network, "Ark reply ended early"))?;
+            .map_err(|_| AiError::new(ErrorKind::Network, "ModelArk reply ended early"))?;
         if bytes.len() > 1024 * 1024 {
-            return Err(AiError::new(ErrorKind::Provider, "Ark reply is too large"));
+            return Err(AiError::new(
+                ErrorKind::Provider,
+                "ModelArk reply is too large",
+            ));
         }
         serde_json::from_slice(&bytes)
-            .map_err(|_| AiError::new(ErrorKind::Provider, "Ark returned invalid JSON"))
+            .map_err(|_| AiError::new(ErrorKind::Provider, "ModelArk returned invalid JSON"))
     }
     pub fn get(&self, path: &str) -> Result<Value, AiError> {
         self.response(

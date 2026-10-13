@@ -298,3 +298,12 @@ fn hostile_text_never_panics() {
         }
     }
 }
+
+#[test]
+fn seedance_connects_through_byteplus_modelark_with_an_api_key() {
+    let p = PRESETS.iter().find(|p| p.key == "seedance").unwrap();
+    assert_eq!(p.endpoint, "https://ark.ap-southeast.bytepluses.com/api/v3");
+    assert!(p.name.contains("BytePlus"), "{}", p.name);
+    assert!(!p.name.contains("Volcengine"), "{}", p.name);
+    assert!(p.needs_key);
+}

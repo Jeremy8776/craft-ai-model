@@ -79,12 +79,12 @@ pub const PRESETS: &[Preset] = &[
     },
     Preset {
         key: "seedance",
-        name: "Seedance (Volcengine Ark)",
+        name: "Seedance (BytePlus ModelArk)",
         provider: "seedance",
-        endpoint: "https://ark.cn-beijing.volces.com/api/v3",
+        endpoint: "https://ark.ap-southeast.bytepluses.com/api/v3",
         billing: Billing::Metered,
         needs_key: true,
-        note: "Seedance 2.0 text-to-video with your Ark API key.",
+        note: "Seedance 2.0 text-to-video with your BytePlus ModelArk API key.",
     },
     Preset {
         key: "vertex-express",

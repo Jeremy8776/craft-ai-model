@@ -124,9 +124,12 @@ impl ProviderFactory {
             let base = c
                 .endpoint
                 .as_deref()
-                .ok_or_else(|| AiError::invalid("Ark address is required"))?;
+                .ok_or_else(|| AiError::invalid("ModelArk address is required"))?;
             let key = s.ok_or_else(|| {
-                AiError::new(craft_ai_model::ErrorKind::Auth, "Ark API key is required")
+                AiError::new(
+                    craft_ai_model::ErrorKind::Auth,
+                    "ModelArk API key is required",
+                )
             })?;
             let mut cfg = SeedanceConfig::new(base, key);
             if let Some((connect, request)) = timeouts {

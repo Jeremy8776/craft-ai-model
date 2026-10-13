@@ -91,7 +91,7 @@ audited capabilities are not automatically shipped features.
 
 The provider contract accepts open capability IDs, typed prompts, sources, masks and references,
 large-media handles, and asynchronous jobs. Scripted-server adapters now cover OpenAI-compatible
-text/image, BFL FLUX image/video, Volcengine Ark Seedance video, and Vertex express-mode Gemini
+text/image, BFL FLUX image/video, BytePlus ModelArk Seedance video, and Vertex express-mode Gemini
 image generation. The older direct SAM 3 detector bridge remains fake-predictor tested.
 Separately, `Sam3Point` and `Sam3Session` execute the installed SAM 3 checkpoint through real
 headless ComfyUI and are used by PhotoCraft dev. Local ComfyUI workflows

@@ -1,4 +1,4 @@
-//! Seedance text-to-video through Volcengine Ark asynchronous tasks.
+//! Seedance text-to-video through BytePlus ModelArk asynchronous tasks.
 //! Result URLs expire; callers must download or persist assets they wish to keep.
 #![deny(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 mod http;
@@ -11,7 +11,7 @@ use http::Http;
 use serde_json::{Value, json};
 use std::{collections::HashMap, sync::Mutex, time::Duration};
 
-const MODEL: &str = "doubao-seedance-2-0-260128";
+const MODEL: &str = "dreamina-seedance-2-0-260128";
 #[derive(Clone, Debug)]
 pub struct SeedanceConfig {
     pub base_url: String,
@@ -51,16 +51,18 @@ impl SeedanceProvider {
                 .chars()
                 .any(|c| c.is_control() || c.is_whitespace())
         {
-            return Err(AiError::invalid("a single-line Ark API key is required"));
+            return Err(AiError::invalid(
+                "a single-line ModelArk API key is required",
+            ));
         }
         let base = config.base_url.trim_end_matches('/');
         let endpoint =
-            Endpoint::parse(base).map_err(|_| AiError::invalid("invalid Ark API address"))?;
+            Endpoint::parse(base).map_err(|_| AiError::invalid("invalid ModelArk API address"))?;
         if base.contains(['?', '#'])
-            || (!endpoint.is_loopback() && base != "https://ark.cn-beijing.volces.com/api/v3")
+            || (!endpoint.is_loopback() && base != "https://ark.ap-southeast.bytepluses.com/api/v3")
         {
             return Err(AiError::invalid(
-                "Seedance must use the official Ark API address",
+                "Seedance must use the official BytePlus ModelArk address",
             ));
         }
         Ok(Self {
@@ -141,9 +143,13 @@ impl Provider for SeedanceProvider {
                     && s.len() <= 96
                     && s.bytes().all(|c| c.is_ascii_alphanumeric() || c == b'-')
             })
-            .ok_or_else(|| AiError::new(ErrorKind::Provider, "Ark task ID is invalid"))?;
-        let id = JobId::new(format!("ark-{remote}"))
-            .map_err(|_| AiError::new(ErrorKind::Provider, "Ark task ID cannot be represented"))?;
+            .ok_or_else(|| AiError::new(ErrorKind::Provider, "ModelArk task ID is invalid"))?;
+        let id = JobId::new(format!("ark-{remote}")).map_err(|_| {
+            AiError::new(
+                ErrorKind::Provider,
+                "ModelArk task ID cannot be represented",
+            )
+        })?;
         self.lock()?.insert(
             id.clone(),
             Job {
@@ -172,7 +178,7 @@ impl Provider for SeedanceProvider {
         if reply.get("id").and_then(Value::as_str) != Some(remote.as_str()) {
             return Err(AiError::new(
                 ErrorKind::Provider,
-                "Ark returned a different task ID",
+                "ModelArk returned a different task ID",
             ));
         }
         let mut snap = match reply.get("status").and_then(Value::as_str).unwrap_or("") {
@@ -208,7 +214,7 @@ impl Provider for SeedanceProvider {
             _ => {
                 return Err(AiError::new(
                     ErrorKind::Provider,
-                    "Ark returned an unknown status",
+                    "ModelArk returned an unknown status",
                 ));
             }
         };

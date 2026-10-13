@@ -6,7 +6,7 @@ source back. A case is CAUGHT only if the mutated code compiled and the test run
 does not compile counts as NOT CAUGHT (a bad mutant), so every survivor is either a test gap or a
 mutant to fix. Cargo runs serially, targeted with -p, with -j 8.
 
-Usage: mutation_check.py u1|u3|u4|p4|p10|v1|v2|v3|lc|lr|nr [name-substring]
+Usage: mutation_check.py u1|u3|u4|p4|p10|v1|v2|v3|sd|lc|lr|nr [name-substring]
 Saved logs pass through sam3-headless/scrub.py so no Windows account name is written.
 """
 import json
@@ -343,6 +343,20 @@ V3 = [
     ('size-in-the-wrong-unit', PICK_E, 'text::bytes(size)', 'text::bytes(size / 1000)', EG, 'popup_view', ''),
 ]
 
+SD_LIB = C + 'ai-seedance/src/lib.rs'
+DRAFT_RS = C + 'ai-model/src/draft.rs'
+SDC = 'craft-ai-seedance'
+BYTEPLUS = 'https://ark.ap-southeast.bytepluses.com/api/v3'
+# sd: Seedance connects through BytePlus ModelArk (ai-seedance/tests/provider.rs, draft tests)
+SD = [
+    ('any-address-accepted', SD_LIB, '(!endpoint.is_loopback() && base != "' + BYTEPLUS + '")', '(!endpoint.is_loopback() && false)', SDC, 'provider', ''),
+    ('volcengine-address-accepted', SD_LIB, 'base != "' + BYTEPLUS + '"', 'base != "https://ark.cn-beijing.volces.com/api/v3"', SDC, 'provider', ''),
+    ('query-string-allowed', SD_LIB, "base.contains(['?', '#'])", 'false', SDC, 'provider', ''),
+    ('old-model-served', SD_LIB, 'const MODEL: &str = "dreamina-seedance-2-0-260128";', 'const MODEL: &str = "doubao-seedance-2-0-260128";', SDC, 'provider', ''),
+    ('preset-points-at-volcengine', DRAFT_RS, 'endpoint: "' + BYTEPLUS + '",', 'endpoint: "https://ark.cn-beijing.volces.com/api/v3",', M, 'lib', 'seedance_connects'),
+    ('preset-named-volcengine', DRAFT_RS, 'name: "Seedance (BytePlus ModelArk)",', 'name: "Seedance (Volcengine Ark)",', M, 'lib', 'seedance_connects'),
+]
+
 LOCAL_RS = C + 'ai-client/src/local.rs'
 # lc: a tool's local model as a connection an app can read (ai-client/tests/local.rs)
 LC = [
@@ -386,7 +400,7 @@ NR = [
     ('native-connection-id-shared-with-comfyui', LOCAL_RS, 'format!("local-{}-{}", feature.id, native.provider)', 'format!("local-{}", feature.id)', CL, 'local_native', 'left_alone'),
 ]
 
-GROUPS = {'nr': NR, 'u1': U1, 'u3': U3, 'u4': U4, 'p4': P4, 'p10': P10, 'v1': V1, 'v2': V2, 'v3': V3, 'lc': LC, 'lr': LR}
+GROUPS = {'nr': NR, 'u1': U1, 'u3': U3, 'u4': U4, 'p4': P4, 'p10': P10, 'v1': V1, 'v2': V2, 'v3': V3, 'sd': SD, 'lc': LC, 'lr': LR}
 # Mutants whose effect is also refused by a second, independent check on this machine. They are
 # recorded as equivalent here, with the reason, and are never counted as caught.
 EQUIVALENT = {
