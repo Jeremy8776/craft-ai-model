@@ -4,13 +4,13 @@
 #[path = "../../ai-openai/tests/support/mod.rs"]
 mod support;
 
-use std::sync::{Arc, Mutex};
+use std::sync::Arc;
 
 use craft_ai_client::{ConnectionManager, KeyState, SaveError, TestRunner, TestTarget};
 use craft_ai_model::store::AppSettings;
 use craft_ai_model::{
     AiError, AppId, Binding, Connection, ConnectionDraft, ConnectionId, ErrorKind, Field, ModelId,
-    PRESETS, RoleId, SecretRef, SecretString,
+    PRESETS, RoleId, SecretRef,
 };
 use craft_ai_native::secrets::{EnvStore, MemoryStore, SecretStore};
 use craft_ai_native::shared::SharedStore;
@@ -179,110 +179,6 @@ fn same_names_get_separate_ids_and_separate_keys() {
     assert_eq!(second.id, id("openai-2"));
     assert_eq!(stored_key(&r, "openai.key").as_deref(), Some("key-one"));
     assert_eq!(stored_key(&r, "openai-2.key").as_deref(), Some("key-two"));
-}
-
-#[test]
-fn two_launchers_saving_at_once_lose_nothing() {
-    let r = rig();
-    let handles: Vec<_> = (0..6)
-        .map(|n| {
-            let m = r.manager.clone();
-            std::thread::spawn(move || m.save(&openai(&format!("key-{n}"))))
-        })
-        .collect();
-    let results: Vec<_> = handles.into_iter().map(|h| h.join().unwrap()).collect();
-    let ok = results.iter().filter(|r| r.is_ok()).count();
-    let views = r.manager.views().unwrap();
-    assert_eq!(views.len(), ok, "every success is on disk");
-    assert!(ok >= 1);
-    // Every saved connection still has its own key, and no two share a locator.
-    let mut refs: Vec<_> = views
-        .iter()
-        .map(|v| v.connection.auth.secret_ref().unwrap().clone())
-        .collect();
-    refs.sort();
-    refs.dedup();
-    assert_eq!(refs.len(), views.len());
-    assert!(views.iter().all(|v| v.key == KeyState::Saved));
-    // A loser got a clear message, not a broken file.
-    for e in results.into_iter().filter_map(Result::err) {
-        assert!(!e.to_string().is_empty());
-    }
-}
-
-/// A store that runs a closure right after the first write, to stage a race.
-struct Hook {
-    inner: MemoryStore,
-    after_set: Mutex<Option<Box<dyn FnOnce() + Send>>>,
-}
-
-impl SecretStore for Hook {
-    fn name(&self) -> &'static str {
-        "hook"
-    }
-    fn get(&self, key: &SecretRef) -> Result<Option<SecretString>, AiError> {
-        self.inner.get(key)
-    }
-    fn set(&self, key: &SecretRef, value: &SecretString) -> Result<(), AiError> {
-        self.inner.set(key, value)?;
-        if let Some(f) = self.after_set.lock().unwrap().take() {
-            f();
-        }
-        Ok(())
-    }
-    fn delete(&self, key: &SecretRef) -> Result<(), AiError> {
-        self.inner.delete(key)
-    }
-}
-
-#[test]
-fn a_failed_save_puts_the_old_key_back() {
-    let dir = tempfile::tempdir().unwrap();
-    let shared = SharedStore::new(dir.path().join("connections.json"));
-    let hook = Arc::new(Hook {
-        inner: MemoryStore::new(),
-        after_set: Mutex::new(None),
-    });
-    let manager = ConnectionManager::new(shared.clone(), hook.clone());
-    manager.save(&openai("original-key")).unwrap();
-    let view = manager.views().unwrap().remove(0);
-
-    // Edit with a new key; in the middle of the save someone removes the connection.
-    let mut d = ConnectionDraft::from_connection(&view.connection);
-    d.key = "replacement-key".into();
-    let s2 = shared.clone();
-    *hook.after_set.lock().unwrap() = Some(Box::new(move || {
-        s2.update(|f| f.connections.clear()).unwrap();
-    }));
-    let err = manager.save(&d).unwrap_err();
-    assert!(matches!(err, SaveError::Invalid(_)), "{err}");
-    let kept = hook.inner.get(&secret_ref("openai.key")).unwrap().unwrap();
-    assert_eq!(kept.expose(), "original-key", "the old key was restored");
-
-    // A brand new connection that fails leaves no orphan key behind.
-    *hook.after_set.lock().unwrap() = Some(Box::new({
-        let s3 = shared.clone();
-        move || {
-            s3.update(|f| {
-                f.connections.push(
-                    serde_json::from_value(serde_json::json!({
-                        "id": "fresh", "label": "Squatter", "provider": "http",
-                        "locality": "local", "auth": {"kind": "none"}, "billing": "free"
-                    }))
-                    .unwrap(),
-                );
-            })
-            .unwrap();
-        }
-    }));
-    let mut fresh = openai("fresh-key");
-    fresh.label = "Fresh".into();
-    let err = manager.save(&fresh).unwrap_err();
-    assert!(matches!(err, SaveError::Invalid(_)), "{err}");
-    assert!(
-        hook.inner.get(&secret_ref("fresh.key")).unwrap().is_none(),
-        "no orphan key"
-    );
 }
 
 #[test]

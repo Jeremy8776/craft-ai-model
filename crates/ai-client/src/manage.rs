@@ -6,8 +6,9 @@
 //! [`ConnectionDraft`](craft_ai_model::ConnectionDraft); this adds the parts that touch disk and the
 //! keychain, in an order that cannot lose a key:
 //!
-//! - **Save** writes the new key first, then the connection under the file lock, and puts the old
-//!   key back if the second step fails. Either both are saved or neither changed.
+//! - **Save** takes the file lock, writes the new key, then the connection, and puts the old key
+//!   back if the file cannot be written. Either both are saved or neither changed, and two saves
+//!   at once can never share or delete each other's key.
 //! - **Delete** removes the connection and every default or app choice that pointed at it in one
 //!   locked write, then its key (unless another connection still uses that locator).
 //! - **Test** asks the server for its models with short timeouts, without saving anything.
@@ -176,28 +177,31 @@ impl ConnectionManager {
             .map_err(SaveError::Invalid)?;
         let key_ref = prepared.connection.auth.secret_ref().cloned();
 
-        // 1. The new key, remembering what it replaces.
-        let mut undo = None;
-        if let (KeyChange::Set(key), Some(r)) = (&prepared.key, &key_ref) {
-            let previous = self.secrets.get(r).ok().flatten();
-            self.secrets
-                .set(r, key)
-                .map_err(|_| SaveError::Failed(key_not_saved(r)))?;
-            undo = Some((r.clone(), previous));
-        }
-
-        // 2. The connection, re-checked against the file as it is now.
+        // 1. Under the file lock, the connection is re-checked against the file as it is now, then
+        // the key is written, then the connection. Holding the lock across the key write means two
+        // saves can never pick the same key slot and overwrite (or, on undo, delete) each other's key.
         let wanted = key_ref.clone();
+        let secrets = &self.secrets;
+        let mut undo = None;
         let result = self
             .shared
-            .update(|file| -> Result<ConnectionId, DraftError> {
-                let again = draft.prepare(&file.connections)?;
+            .update(|file| -> Result<ConnectionId, SaveError> {
+                let again = draft
+                    .prepare(&file.connections)
+                    .map_err(SaveError::Invalid)?;
                 if again.connection.auth.secret_ref() != wanted.as_ref() {
-                    return Err(DraftError {
+                    return Err(SaveError::Invalid(DraftError {
                         field: craft_ai_model::Field::Label,
                         message: "Another change was saved at the same moment. Try again."
                             .to_owned(),
-                    });
+                    }));
+                }
+                if let (KeyChange::Set(key), Some(r)) = (&again.key, &wanted) {
+                    let previous = secrets.get(r).ok().flatten();
+                    secrets
+                        .set(r, key)
+                        .map_err(|_| SaveError::Failed(key_not_saved(r)))?;
+                    undo = Some((r.clone(), previous));
                 }
                 let id = again.connection.id.clone();
                 match file.connections.iter_mut().find(|c| c.id == id) {
@@ -207,10 +211,12 @@ impl ConnectionManager {
                 Ok(id)
             });
         let outcome = match result {
-            Ok(Ok(id)) => Ok(id),
-            Ok(Err(form)) => Err(SaveError::Invalid(form)),
+            Ok(done) => done,
             Err(e) => Err(SaveError::Failed(e.into())),
         };
+
+        // 2. If the file could not be written after the key was, put the old key back. This is the
+        // only failure left after the key write, and it is rare (a full or read-only disk).
         let id = match outcome {
             Ok(id) => id,
             Err(e) => {
