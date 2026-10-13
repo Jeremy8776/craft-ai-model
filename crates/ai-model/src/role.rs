@@ -61,6 +61,7 @@ pub enum ResolveError {
         model: ModelId,
         input: InputRole,
     },
+    ToolMismatch(RoleId),
 }
 
 impl std::fmt::Display for ResolveError {
@@ -78,6 +79,7 @@ impl std::fmt::Display for ResolveError {
             Self::InputUnsupported { model, input } => {
                 write!(f, "model {model} does not accept a '{input}' input")
             }
+            Self::ToolMismatch(id) => write!(f, "tool {id} does not match its shared definition"),
         }
     }
 }

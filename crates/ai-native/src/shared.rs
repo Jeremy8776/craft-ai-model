@@ -191,7 +191,13 @@ impl SharedStore {
 
 /// Top-level keys of the document that `StoreFile` has no field for.
 fn unknown_fields(text: &str) -> Map<String, Value> {
-    const KNOWN: [&str; 4] = ["schema_version", "connections", "defaults", "apps"];
+    const KNOWN: [&str; 5] = [
+        "schema_version",
+        "connections",
+        "defaults",
+        "apps",
+        "custom_tools",
+    ];
     match serde_json::from_str::<Value>(text) {
         Ok(Value::Object(map)) => map
             .into_iter()

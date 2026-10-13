@@ -16,7 +16,7 @@ use std::collections::BTreeMap;
 use serde::{Deserialize, Serialize};
 
 use crate::connection::{Connection, ConnectionError};
-use crate::ids::{AppId, ConnectionId};
+use crate::ids::{AppId, ConnectionId, RoleId};
 use crate::role::{Binding, ResolveError, Resolved, Role, resolve};
 
 /// The schema this build reads and writes.
@@ -43,6 +43,9 @@ pub struct StoreFile {
     pub defaults: Vec<Binding>,
     #[serde(default)]
     pub apps: BTreeMap<AppId, AppSettings>,
+    /// User-declared tool contracts, shared across the suite. A declaration does not install an adapter.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub custom_tools: Vec<Role>,
 }
 
 /// Why a store file was refused.
@@ -60,6 +63,9 @@ pub enum StoreError {
     },
     BadVersion(u32),
     DuplicateConnection(ConnectionId),
+    DuplicateTool(RoleId),
+    TooManyTools(usize),
+    InvalidTool(RoleId),
     Invalid {
         connection: ConnectionId,
         why: ConnectionError,
@@ -81,6 +87,9 @@ impl std::fmt::Display for StoreError {
             }
             Self::BadVersion(v) => write!(f, "store file has schema version {v}"),
             Self::DuplicateConnection(id) => write!(f, "connection {id} appears twice"),
+            Self::DuplicateTool(id) => write!(f, "tool {id} appears twice"),
+            Self::TooManyTools(count) => write!(f, "{count} custom tools exceeds the limit of 64"),
+            Self::InvalidTool(id) => write!(f, "tool {id} needs a short name and valid inputs"),
             Self::Invalid { connection, why } => write!(f, "connection {connection}: {why}"),
         }
     }
@@ -95,6 +104,7 @@ impl Default for StoreFile {
             connections: Vec::new(),
             defaults: Vec::new(),
             apps: BTreeMap::new(),
+            custom_tools: Vec::new(),
         }
     }
 }
@@ -131,8 +141,34 @@ impl StoreFile {
         Ok(store)
     }
 
-    /// Checks every connection and that ids are unique.
+    /// Checks every connection and custom tool before anything is written.
     pub fn validate(&self) -> Result<(), StoreError> {
+        if self.custom_tools.len() > 64 {
+            return Err(StoreError::TooManyTools(self.custom_tools.len()));
+        }
+        for (i, tool) in self.custom_tools.iter().enumerate() {
+            if self
+                .custom_tools
+                .iter()
+                .skip(i + 1)
+                .any(|other| other.id == tool.id)
+            {
+                return Err(StoreError::DuplicateTool(tool.id.clone()));
+            }
+            if tool.label.trim().is_empty()
+                || tool.label.len() > 120
+                || tool.label.chars().any(char::is_control)
+                || tool.inputs.is_empty()
+                || tool.inputs.len() > 8
+                || tool
+                    .inputs
+                    .iter()
+                    .enumerate()
+                    .any(|(i, input)| tool.inputs.iter().skip(i + 1).any(|other| other == input))
+            {
+                return Err(StoreError::InvalidTool(tool.id.clone()));
+            }
+        }
         for (i, c) in self.connections.iter().enumerate() {
             if self.connections.iter().skip(i + 1).any(|o| o.id == c.id) {
                 return Err(StoreError::DuplicateConnection(c.id.clone()));
@@ -149,8 +185,22 @@ impl StoreFile {
         serde_json::to_string_pretty(self).map_err(|e| StoreError::Syntax(e.to_string()))
     }
 
+    /// A custom id is one suite-wide contract. An app may localise its label, but cannot change
+    /// the capability or input set while using the same id.
+    pub fn check_tool(&self, role: &Role) -> Result<(), ResolveError> {
+        if let Some(saved) = self.custom_tools.iter().find(|tool| tool.id == role.id)
+            && (saved.capability != role.capability
+                || saved.inputs.len() != role.inputs.len()
+                || !saved.inputs.iter().all(|input| role.inputs.contains(input)))
+        {
+            return Err(ResolveError::ToolMismatch(role.id.clone()));
+        }
+        Ok(())
+    }
+
     /// Resolves an app's role through its overrides, then the launcher defaults.
     pub fn resolve(&self, app: &AppId, role: &Role) -> Result<Resolved<'_>, ResolveError> {
+        self.check_tool(role)?;
         let empty: &[Binding] = &[];
         let overrides = self.apps.get(app).map_or(empty, |a| a.overrides.as_slice());
         resolve(

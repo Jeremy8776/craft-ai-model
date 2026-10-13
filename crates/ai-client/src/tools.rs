@@ -119,12 +119,17 @@ impl ToolDesk {
             connection: connection.clone(),
             model: model.clone(),
         };
-        // Check the chosen model on its own. Resolving for the calling app would read that app's
-        // own choice first and pass a model that cannot do the tool.
-        let store = self.shared.load()?;
-        resolve(role, &[std::slice::from_ref(&binding)], &store.connections)
-            .map_err(|e| AiError::invalid(e.to_string()))?;
-        self.shared.update(|store| set_default(store, binding))?;
+        // Check inside the same store lock as the write: another app may change the tool or
+        // connection between an unlocked read and the update.
+        self.shared.update(|store| {
+            store
+                .check_tool(role)
+                .map_err(|e| AiError::invalid(e.to_string()))?;
+            resolve(role, &[std::slice::from_ref(&binding)], &store.connections)
+                .map_err(|e| AiError::invalid(e.to_string()))?;
+            set_default(store, binding);
+            Ok::<(), AiError>(())
+        })??;
         Ok(())
     }
 
@@ -150,6 +155,48 @@ impl ToolDesk {
             }
         }
         Ok(bound)
+    }
+
+    /// Custom tool declarations shared with every Craft app; declaring one does not install an adapter.
+    pub fn custom_tools(&self) -> Result<Vec<Role>, AiError> {
+        Ok(self.shared.load()?.custom_tools)
+    }
+
+    /// Register a user-defined tool across the suite, without changing the built-in catalogue.
+    /// A name collision is refused rather than replacing a tool or its existing binding.
+    pub fn register_tool(&self, role: Role) -> Result<(), AiError> {
+        if craft_ai_features::builtin()
+            .iter()
+            .any(|f| f.id == role.id.as_str())
+        {
+            return Err(AiError::invalid(
+                "that tool name is already used by a built-in tool",
+            ));
+        }
+        self.shared.update(|store| {
+            if store.custom_tools.iter().any(|old| old.id == role.id) {
+                return Err(AiError::invalid("that tool name is already in use"));
+            }
+            store.custom_tools.push(role);
+            Ok(())
+        })??;
+        Ok(())
+    }
+
+    /// Remove a custom tool and its stored choices from every app. Built-in tools cannot be removed.
+    pub fn remove_tool(&self, id: &RoleId) -> Result<(), AiError> {
+        self.shared.update(|store| {
+            if !store.custom_tools.iter().any(|tool| &tool.id == id) {
+                return Err(AiError::invalid("that custom tool does not exist"));
+            }
+            store.custom_tools.retain(|tool| &tool.id != id);
+            store.defaults.retain(|binding| &binding.role != id);
+            for app in store.apps.values_mut() {
+                app.overrides.retain(|binding| &binding.role != id);
+            }
+            Ok(())
+        })??;
+        Ok(())
     }
 
     /// Forgets the launcher's choice for a tool.

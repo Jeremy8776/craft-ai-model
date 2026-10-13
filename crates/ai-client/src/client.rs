@@ -315,6 +315,9 @@ impl AiClient {
     /// Every model that could fill `role`, for a picker.
     pub fn choices(&self, role: &Role) -> Result<Vec<Choice>, AiError> {
         let store = self.shared.load()?;
+        store
+            .check_tool(role)
+            .map_err(|e| AiError::invalid(e.to_string()))?;
         Ok(eligible(role, &store.connections)
             .into_iter()
             .map(|r| Choice {
@@ -333,6 +336,9 @@ impl AiClient {
     /// Nothing is bound; the app offers these and binds only when the person agrees.
     pub fn picks(&self, role: &Role) -> Result<Vec<PickedChoice>, AiError> {
         let store = self.shared.load()?;
+        store
+            .check_tool(role)
+            .map_err(|e| AiError::invalid(e.to_string()))?;
         let eligible = eligible(role, &store.connections);
         let candidates: Vec<Candidate<'_>> = eligible
             .iter()
@@ -395,13 +401,19 @@ impl AiClient {
             connection: connection.clone(),
             model: model.clone(),
         };
-        let mut candidate = self.shared.load()?;
-        set_override(&mut candidate, &self.app, binding.clone());
-        candidate
-            .resolve(&self.app, role)
+        self.shared.update(|store| {
+            store
+                .check_tool(role)
+                .map_err(|e| AiError::invalid(e.to_string()))?;
+            craft_ai_model::role::resolve(
+                role,
+                &[std::slice::from_ref(&binding)],
+                &store.connections,
+            )
             .map_err(|e| AiError::invalid(e.to_string()))?;
-        self.shared
-            .update(|store| set_override(store, &self.app, binding))?;
+            set_override(store, &self.app, binding);
+            Ok::<(), AiError>(())
+        })??;
         Ok(())
     }
 

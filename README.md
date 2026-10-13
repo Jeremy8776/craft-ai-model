@@ -71,7 +71,7 @@ no unsafe). This is a public first-draft repository on `Jeremy8776/craft-ai-mode
 craft-libs. PhotoCraft dev consumes the dedicated SAM 3 client, not the complete shared
 role/connection/consent flow; adoption by the other apps remains open.
 
-Which crate does what, what stays in the apps, and how apps consume this repo: [docs/LAYOUT.md](docs/LAYOUT.md).
+Which crate does what, what stays in the apps, and how apps consume this repo: [docs/LAYOUT.md](docs/LAYOUT.md). The provisional shared-tool contract and its limits are in [docs/PLATFORM-CONTRACT.md](docs/PLATFORM-CONTRACT.md). App-specific work is parked separately in `../ai-framework-handoff/app-work/README.md`.
 
 ## Tools and the local runtime
 

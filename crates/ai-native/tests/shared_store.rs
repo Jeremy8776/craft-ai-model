@@ -168,3 +168,24 @@ fn shared_error_maps_to_ai_error_kinds() {
     let other: AiError = SharedError::NoLocation.into();
     assert_eq!(other.kind, ErrorKind::Internal);
 }
+
+#[test]
+fn deleting_a_custom_tool_does_not_resurrect_it_as_an_unknown_field() {
+    use craft_ai_model::{CapabilityId, InputRole, Role, RoleId};
+    let dir = tempfile::tempdir().unwrap();
+    let s = store_at(&dir);
+    s.update(|st| {
+        st.custom_tools.push(Role {
+            id: RoleId::new("describe-photo").unwrap(),
+            label: "Describe photo".into(),
+            capability: CapabilityId::parse("image.describe").unwrap(),
+            inputs: vec![InputRole::Source],
+        })
+    })
+    .unwrap();
+    assert_eq!(s.load().unwrap().custom_tools.len(), 1);
+    s.update(|st| st.custom_tools.clear()).unwrap();
+    assert!(s.load().unwrap().custom_tools.is_empty());
+    let raw = std::fs::read_to_string(s.path()).unwrap();
+    assert!(!raw.contains("describe-photo"));
+}

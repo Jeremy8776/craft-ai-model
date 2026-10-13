@@ -92,6 +92,9 @@ impl AiClient {
     /// holder; sends nothing and never reads a key's value.
     pub fn picker(&self, role: &Role, options: &[SetupOption]) -> Result<PickerView, AiError> {
         let store = self.shared.load()?;
+        store
+            .check_tool(role)
+            .map_err(|e| AiError::invalid(e.to_string()))?;
         let binding = binding_for(&store, self.app(), &role.id);
         let mut groups = connection_groups(self, &store, role, binding);
         groups.extend(unset_groups(&store, role, options));
