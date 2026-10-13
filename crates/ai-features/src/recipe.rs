@@ -72,6 +72,19 @@ pub struct NodePack {
     pub folder_names: Vec<String>,
 }
 
+/// The same model run by an app's own built-in runtime instead of ComfyUI, from the same weights
+/// file. The file is found by the launcher (it is the one in the ComfyUI models folder) and
+/// recorded on the connection; the app that owns the runtime reads it from there.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub struct NativeRoute {
+    /// Adapter name on the connection, such as `candle`.
+    pub provider: String,
+    /// Model id on that connection.
+    pub model: String,
+    /// What the person sees next to the ComfyUI route.
+    pub label: String,
+}
+
 /// Running a feature on this computer through ComfyUI.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct LocalRecipe {
@@ -87,6 +100,9 @@ pub struct LocalRecipe {
     /// Graphics memory the workflow needs, when known.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub min_vram_mb: Option<u32>,
+    /// A built-in runtime that reads the same weights file, where an app has one.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub native: Option<NativeRoute>,
 }
 
 fn yes() -> bool {

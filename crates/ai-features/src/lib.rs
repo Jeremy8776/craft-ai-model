@@ -23,5 +23,5 @@ pub use catalogue::builtin;
 pub use feature::{AppStatus, AppUse, Feature};
 pub use options::{Route, SetupOption, setup_options};
 pub use plan::{Blocker, InstalledFile, Inventory, Plan, State, plan};
-pub use recipe::{CloudOption, Licence, LocalRecipe, ModelFile, NodePack, Source};
+pub use recipe::{CloudOption, Licence, LocalRecipe, ModelFile, NativeRoute, NodePack, Source};
 pub use sample::{sample_is_costly, sample_request};

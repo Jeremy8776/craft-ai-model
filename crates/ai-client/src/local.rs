@@ -6,6 +6,8 @@
 //! the missing piece: a local connection that offers the recipe's model for the tool, and binds
 //! the tool to it unless a person has already chosen something else.
 
+use std::path::{Path, PathBuf};
+
 use craft_ai_features::Feature;
 use craft_ai_model::endpoint::Endpoint;
 use craft_ai_model::role::ResolveError;
@@ -24,6 +26,8 @@ pub struct LocalRoute {
     pub model: ModelId,
     pub provider: String,
     pub endpoint: Option<String>,
+    /// The weights file of a model an app runs itself, as recorded by whoever registered it.
+    pub file: Option<String>,
 }
 
 /// What [`ToolDesk::enable_local`] did.
@@ -53,27 +57,25 @@ impl ToolDesk {
             .map_err(|e| AiError::invalid(e.to_string()))?;
         let model_id =
             ModelId::new(&recipe.workflow).map_err(|e| AiError::invalid(e.to_string()))?;
-        // What the model takes is what the tool sends, as the catalogue declares it.
-        let mut spec = CapabilitySpec::new(feature.capability.clone());
-        for input in &feature.inputs {
-            spec = spec.accepting(input.clone(), 1);
-        }
-        let connection = Connection {
-            id: id.clone(),
-            label: format!("{} on this computer", recipe.label),
-            provider: "comfyui".to_owned(),
-            endpoint: Some(address),
-            locality: Locality::Local,
-            auth: Auth::None,
-            billing: Billing::Free,
-            models: vec![ModelInfo::new(model_id.clone(), recipe.label.clone()).with(spec)],
-            enabled: true,
-            key_header: None,
-        };
+        let model = tool_model(feature, model_id.clone(), &recipe.label);
+        let label = format!("{} on this computer", recipe.label);
+        let connection = local_connection(id, label, "comfyui", Some(address), model);
+        self.register(connection, role.id, model_id)
+    }
+
+    /// Saves `connection` (replacing one with the same id) and binds `role` to it unless a choice
+    /// is already made. A choice already made, even one that no longer works, is never replaced.
+    fn register(
+        &self,
+        connection: Connection,
+        role: craft_ai_model::RoleId,
+        model: ModelId,
+    ) -> Result<LocalEnabled, AiError> {
+        let id = connection.id.clone();
         let binding = Binding {
-            role: role.id,
+            role,
             connection: id.clone(),
-            model: model_id.clone(),
+            model: model.clone(),
         };
         let mut bound = false;
         self.shared.update(|store| {
@@ -81,7 +83,6 @@ impl ToolDesk {
                 Some(existing) => *existing = connection,
                 None => store.connections.push(connection),
             }
-            // A choice already made, even one that no longer works, is never replaced.
             if !store.defaults.iter().any(|b| b.role == binding.role) {
                 store.defaults.push(binding);
                 bound = true;
@@ -89,13 +90,71 @@ impl ToolDesk {
         })?;
         Ok(LocalEnabled {
             connection: id,
-            model: model_id,
+            model,
             bound,
         })
     }
 }
 
+impl ToolDesk {
+    /// Registers the built-in runtime of `feature` (its recipe's [`NativeRoute`](craft_ai_features::NativeRoute))
+    /// reading the weights at `weights`, and binds the tool to it if nothing is chosen yet.
+    pub fn enable_native(
+        &self,
+        feature: &Feature,
+        weights: &Path,
+    ) -> Result<LocalEnabled, AiError> {
+        let native = feature
+            .local
+            .as_ref()
+            .filter(|r| r.usable)
+            .and_then(|r| r.native.as_ref())
+            .ok_or_else(|| {
+                AiError::unsupported(format!("{} has no built-in runtime", feature.title))
+            })?;
+        let role = feature
+            .role()
+            .ok_or_else(|| AiError::invalid("the tool id is not valid"))?;
+        let file = weights_file(weights)?;
+        let id = ConnectionId::new(format!("local-{}-{}", feature.id, native.provider))
+            .map_err(|e| AiError::invalid(e.to_string()))?;
+        let model_id = ModelId::new(&native.model).map_err(|e| AiError::invalid(e.to_string()))?;
+        let mut model = tool_model(feature, model_id.clone(), &native.label);
+        model.local_file = Some(file);
+        let connection = local_connection(id, native.label.clone(), &native.provider, None, model);
+        self.register(connection, role.id, model_id)
+    }
+}
+
 impl AiClient {
+    /// The weights file for a tool whose chosen model an app runs itself with `provider`.
+    ///
+    /// `None` only when nothing is bound. A choice run by another adapter, one with no file
+    /// recorded, or a file that is gone is an error, never a cue to look elsewhere.
+    pub fn local_file_for(&self, role: &Role, provider: &str) -> Result<Option<PathBuf>, AiError> {
+        let Some(route) = self.local_route_for(role)? else {
+            return Ok(None);
+        };
+        if route.provider != provider {
+            return Err(AiError::unsupported(format!(
+                "the selected {} model cannot run through {provider}",
+                route.provider
+            )));
+        }
+        let file = route.file.ok_or_else(|| {
+            AiError::invalid(format!(
+                "the selected {provider} connection has no weights file"
+            ))
+        })?;
+        let path = PathBuf::from(file);
+        if !path.is_file() {
+            return Err(AiError::unsupported(
+                "the weights file of the selected model is no longer there",
+            ));
+        }
+        Ok(Some(path))
+    }
+
     /// The selected local inference route, with the exact adapter name and model. An unbound
     /// tool returns `None`; a broken or remote choice is an error, never a cue to fall back.
     pub fn local_route_for(&self, role: &Role) -> Result<Option<LocalRoute>, AiError> {
@@ -115,6 +174,7 @@ impl AiClient {
             model: resolved.model.id.clone(),
             provider: resolved.connection.provider.clone(),
             endpoint: resolved.connection.endpoint.clone(),
+            file: resolved.model.local_file.clone(),
         }))
     }
 
@@ -136,6 +196,54 @@ impl AiClient {
             .map(Some)
             .ok_or_else(|| AiError::invalid("the selected comfyui connection has no address"))
     }
+}
+
+/// The model as the tool sees it: what it takes is what the tool sends, as the catalogue declares it.
+fn tool_model(feature: &Feature, id: ModelId, label: &str) -> ModelInfo {
+    let mut spec = CapabilitySpec::new(feature.capability.clone());
+    for input in &feature.inputs {
+        spec = spec.accepting(input.clone(), 1);
+    }
+    ModelInfo::new(id, label).with(spec)
+}
+
+/// A connection to a model on this computer: free, and no key.
+fn local_connection(
+    id: ConnectionId,
+    label: String,
+    provider: &str,
+    endpoint: Option<String>,
+    model: ModelInfo,
+) -> Connection {
+    Connection {
+        id,
+        label,
+        provider: provider.to_owned(),
+        endpoint,
+        locality: Locality::Local,
+        auth: Auth::None,
+        billing: Billing::Free,
+        models: vec![model],
+        enabled: true,
+        key_header: None,
+    }
+}
+
+/// An absolute path to an existing `.safetensors` file, as text.
+fn weights_file(path: &Path) -> Result<String, AiError> {
+    let text = path
+        .to_str()
+        .filter(|t| !t.contains('\0'))
+        .ok_or_else(|| AiError::invalid("the weights path is not valid text"))?;
+    let safetensors = path
+        .extension()
+        .is_some_and(|e| e.eq_ignore_ascii_case("safetensors"));
+    if !path.is_absolute() || !safetensors || !path.is_file() {
+        return Err(AiError::invalid(
+            "the weights must be an existing .safetensors file, given by its full path",
+        ));
+    }
+    Ok(text.to_owned())
 }
 
 /// A loopback address with nothing after the port, or an error. A local model is only ever

@@ -6,7 +6,7 @@
 //! run against its real service.
 
 use crate::feature::{AppStatus, AppUse, Feature};
-use crate::recipe::{CloudOption, Licence, LocalRecipe, ModelFile, NodePack, Source};
+use crate::recipe::{CloudOption, Licence, LocalRecipe, ModelFile, NativeRoute, NodePack, Source};
 use craft_ai_model::{CapabilityId, InputRole};
 
 fn uses(list: &[(&str, &str)]) -> Vec<AppUse> {
@@ -72,6 +72,12 @@ fn sam3() -> LocalRecipe {
             folder_names: vec!["comfyui-sam3".to_owned()],
         }],
         min_vram_mb: None,
+        // LightCraft's Candle runtime reads this same file (it understands Meta's layout).
+        native: Some(NativeRoute {
+            provider: "candle".to_owned(),
+            model: "sam3".to_owned(),
+            label: "SAM 3 (built-in runtime)".to_owned(),
+        }),
     }
 }
 

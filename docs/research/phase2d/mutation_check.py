@@ -6,7 +6,7 @@ source back. A case is CAUGHT only if the mutated code compiled and the test run
 does not compile counts as NOT CAUGHT (a bad mutant), so every survivor is either a test gap or a
 mutant to fix. Cargo runs serially, targeted with -p, with -j 8.
 
-Usage: mutation_check.py u1|u3|u4|p4|p10|v1|v2|v3 [name-substring]
+Usage: mutation_check.py u1|u3|u4|p4|p10|v1|v2|v3|lc|lr|nr [name-substring]
 Saved logs pass through sam3-headless/scrub.py so no Windows account name is written.
 """
 import json
@@ -343,10 +343,54 @@ V3 = [
     ('size-in-the-wrong-unit', PICK_E, 'text::bytes(size)', 'text::bytes(size / 1000)', EG, 'popup_view', ''),
 ]
 
-GROUPS = {'u1': U1, 'u3': U3, 'u4': U4, 'p4': P4, 'p10': P10, 'v1': V1, 'v2': V2, 'v3': V3}
+LOCAL_RS = C + 'ai-client/src/local.rs'
+# lc: a tool's local model as a connection an app can read (ai-client/tests/local.rs)
+LC = [
+    ('non-local-address-accepted', LOCAL_RS, "if !endpoint.is_loopback() || trimmed.contains(['?', '#']) {", "if trimmed.contains(['?', '#']) {", CL, 'local', ''),
+    ('query-in-address-accepted', LOCAL_RS, "if !endpoint.is_loopback() || trimmed.contains(['?', '#']) {", 'if !endpoint.is_loopback() {', CL, 'local', ''),
+    ('trailing-slash-kept', LOCAL_RS, "input.trim_end_matches('/')", "input.trim_end_matches('~')", CL, 'local', ''),
+    ('unrunnable-recipe-accepted', LOCAL_RS, '.filter(|r| r.usable)', '.filter(|_| true)', CL, 'local', ''),
+    ('replaces-a-choice-made', LOCAL_RS, 'if !store.defaults.iter().any(|b| b.role == binding.role) {', 'if true {', CL, 'local', ''),
+    ('never-binds', LOCAL_RS, 'if !store.defaults.iter().any(|b| b.role == binding.role) {', 'if false {', CL, 'local', ''),
+    ('moved-address-kept-old', LOCAL_RS, 'Some(existing) => *existing = connection,', 'Some(_) => {}', CL, 'local', ''),
+    ('local-model-billed', LOCAL_RS, 'billing: Billing::Free,', 'billing: Billing::Metered,', CL, 'local', ''),
+    ('local-model-needs-a-key', LOCAL_RS, 'auth: Auth::None,', 'auth: Auth::ApiKey { secret: craft_ai_model::SecretRef::new("k").unwrap_or_else(|_| unreachable!()) },', CL, 'local', ''),
+    ('tool-inputs-dropped', LOCAL_RS, 'for input in &feature.inputs {', 'for input in feature.inputs.iter().take(1) {', CL, 'local', ''),
+    ('address-not-given-to-apps', LOCAL_RS, 'route\n            .endpoint\n            .map(Some)', 'None', CL, 'local', 'it_binds_the_tool'),
+]
+
+# lr: the chosen connection, model and inference backend are one route (local_routes tests).
+LR = [
+    ('wrong-backend-selected', LOCAL_RS, 'provider: resolved.connection.provider.clone(),', 'provider: "comfyui".to_owned(),', CL, 'local_routes', 'every_app_reads'),
+    ('wrong-model-selected', LOCAL_RS, 'model: resolved.model.id.clone(),', 'model: ModelId::new("other").unwrap_or_else(|_| resolved.model.id.clone()),', CL, 'local_routes', 'every_app_reads'),
+    ('broken-choice-looks-unbound', LOCAL_RS, 'Err(error) => return Err(AiError::unsupported(error.to_string())),', 'Err(_error) => return Ok(None),', CL, 'local_routes', 'a_broken_choice'),
+    ('remote-route-leaked', LOCAL_RS, 'if resolved.connection.locality != Locality::Local {', 'if false {', CL, 'local_routes', 'a_remote_choice'),
+    ('native-route-treated-as-comfyui', LOCAL_RS, 'if route.provider != "comfyui" {', 'if false {', CL, 'local_routes', 'an_endpoint_cannot'),
+    ('unsupported-native-looks-ready', CLIENT, 'if !self.factory.knows(&resolved.connection.provider) {', 'if false {', CL, 'local_routes', 'a_selected_native'),
+    ('picker-offers-uninstalled-adapter', ROOT / 'crates/ai-client/src/picker_groups.rs', '} else if !client.has_adapter(&connection.provider) {', '} else if false {', CL, 'local_routes', 'a_selected_native'),
+    ('picker-false-setup-for-adapter', ROOT / 'crates/ai-client/src/picker_groups.rs', 'state != GroupState::Ready && state != GroupState::NeedsAdapter', 'state != GroupState::Ready', CL, 'local_routes', 'a_selected_native'),
+]
+
+# nr: the built-in runtime route reads one weights file (ai-client/tests/local_native.rs)
+NR = [
+    ('relative-path-accepted', LOCAL_RS, '!path.is_absolute() || !safetensors || !path.is_file()', '!safetensors || !path.is_file()', CL, 'local_native', 'relative_path'),
+    ('any-extension-accepted', LOCAL_RS, '!path.is_absolute() || !safetensors || !path.is_file()', '!path.is_absolute() || !path.is_file()', CL, 'local_native', 'cannot_be_the_weights'),
+    ('missing-file-accepted', LOCAL_RS, '!path.is_absolute() || !safetensors || !path.is_file()', '!path.is_absolute() || !safetensors', CL, 'local_native', 'cannot_be_the_weights'),
+    ('unusable-recipe-accepted', LOCAL_RS, '.filter(|r| r.usable)\n            .and_then(|r| r.native.as_ref())', '.and_then(|r| r.native.as_ref())', CL, 'local_native', 'not_ready_to_use'),
+    ('file-not-given-to-apps', LOCAL_RS, 'file: resolved.model.local_file.clone(),', 'file: None,', CL, 'local_native', 'registered_bound'),
+    ('file-not-stored', LOCAL_RS, 'model.local_file = Some(file);', 'model.local_file = None;', CL, 'local_native', 'registered_bound'),
+    ('other-backend-file-served', LOCAL_RS, 'if route.provider != provider {', 'if false {', CL, 'local_native', 'comfyui_route_has_no_file'),
+    ('vanished-file-served', LOCAL_RS, 'if !path.is_file() {', 'if false {', CL, 'local_native', 'vanished'),
+    ('unbound-is-an-error', LOCAL_RS, 'let Some(route) = self.local_route_for(role)? else {\n            return Ok(None);\n        };\n        if route.provider != provider', 'let Some(route) = self.local_route_for(role)? else {\n            return Err(AiError::unsupported("unbound"));\n        };\n        if route.provider != provider', CL, 'local_native', 'nothing_bound'),
+    ('native-replaces-a-choice', LOCAL_RS, 'if !store.defaults.iter().any(|b| b.role == binding.role) {', 'if true {', CL, 'local_native', 'left_alone'),
+    ('native-connection-id-shared-with-comfyui', LOCAL_RS, 'format!("local-{}-{}", feature.id, native.provider)', 'format!("local-{}", feature.id)', CL, 'local_native', 'left_alone'),
+]
+
+GROUPS = {'nr': NR, 'u1': U1, 'u3': U3, 'u4': U4, 'p4': P4, 'p10': P10, 'v1': V1, 'v2': V2, 'v3': V3, 'lc': LC, 'lr': LR}
 # Mutants whose effect is also refused by a second, independent check on this machine. They are
 # recorded as equivalent here, with the reason, and are never counted as caught.
 EQUIVALENT = {
+    'non-local-address-accepted': 'SharedStore::update calls write, which validates every connection; a non-loopback Local endpoint is refused even without the earlier local_address check (local.rs test confirms nothing written)',
     'input-folder-read': 'a directory cannot be opened on Windows, and where it can be opened reading it fails with the same message; the check exists for pipes and devices, which cannot be made here (not proven on Linux or macOS)',
     'directory-taken-as-local-file': 'on Windows a directory reports length 0, which the size check also refuses; elsewhere the is_file check is what refuses it',
 }

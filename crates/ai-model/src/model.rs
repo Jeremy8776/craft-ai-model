@@ -122,6 +122,10 @@ pub struct ModelInfo {
     /// Labels from the curated catalog, such as `recommended`.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub tags: Vec<String>,
+    /// Where the weights are on this computer, for a model an app runs itself (a native adapter
+    /// reads this file). Absent for hosted models and for ones a server such as ComfyUI keeps.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub local_file: Option<String>,
 }
 
 impl ModelInfo {
@@ -133,6 +137,7 @@ impl ModelInfo {
             pricing: None,
             released: None,
             tags: Vec::new(),
+            local_file: None,
         }
     }
 
