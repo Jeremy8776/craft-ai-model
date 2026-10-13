@@ -252,6 +252,8 @@ fn a_job_id_the_service_returns_must_be_short_and_plain() {
         json!(""),
         json!({"id": 1}),
         json!("a b"),
+        json!(".."),
+        json!("."),
     ] {
         let reply = json!({ "id": bad }).to_string();
         let server = Server::start(move |_| Reply::Json(200, reply.clone()));

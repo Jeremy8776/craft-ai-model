@@ -139,7 +139,7 @@ impl MediaStore {
             .map_err(|_| AiError::new(ErrorKind::Provider, "media link is not a valid URL"))?;
         let mut hops = 0u8;
         let response = loop {
-            url_rules::check(&url, self.config.allow_loopback)?;
+            url_rules::check_resolved(&url, self.config.allow_loopback)?;
             let response =
                 self.agent.get(url.as_str()).call().map_err(|_| {
                     AiError::new(ErrorKind::Network, "could not download the media")

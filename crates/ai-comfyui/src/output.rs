@@ -102,10 +102,13 @@ pub(crate) fn fetch(
         let uri = url::Url::from_file_path(temp.path())
             .map_err(|_| AiError::new(ErrorKind::Internal, "could not name media output"))?
             .to_string();
+        // Build the payload first: if it is refused, the temp file is still ours and is removed
+        // when `temp` drops, instead of being left behind by an earlier `keep`.
+        let payload = Payload::handle(&uri, media, Some(size))?;
         let _ = temp
             .keep()
             .map_err(|_| AiError::new(ErrorKind::Internal, "could not retain media output"))?;
-        Payload::handle(&uri, media, Some(size))?
+        payload
     } else {
         let bytes = http.get_media_limited(&path, max_bytes.min(32 * 1024 * 1024))?;
         if bytes.is_empty() {

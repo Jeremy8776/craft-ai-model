@@ -53,7 +53,9 @@ pub(crate) fn job_id(reply: &Value, at: &str, label: &str) -> Result<String, AiE
         Some(Value::Number(n)) if n.is_u64() || n.is_i64() => n.to_string(),
         _ => return Err(provider(label, "did not give a job id")),
     };
+    // `.` and `..` are made of allowed characters but name a folder, not a job.
     let plain = !id.is_empty()
+        && !id.bytes().all(|b| b == b'.')
         && id.len() <= 128
         && id
             .bytes()
