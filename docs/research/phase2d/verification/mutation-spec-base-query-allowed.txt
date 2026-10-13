@@ -1,0 +1,22 @@
+   Compiling craft-ai-model v0.1.0 (%USERPROFILE%\Apps\ArtCraft\craft-ai-model\crates\ai-model)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.17s
+     Running tests\spec_rules.rs (target\debug\deps\spec_rules-a81b1de624a03b02.exe)
+
+running 1 test
+test the_base_address_follows_the_connection_rules ... FAILED
+
+failures:
+
+---- the_base_address_follows_the_connection_rules stdout ----
+
+thread 'the_base_address_follows_the_connection_rules' (55660) panicked at crates\ai-model\tests\spec_support\mod.rs:68:5:
+said "no ? or # in a path (put query values in query)", wanted "no query" (base: no ? or # in a path (put query values in query))
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    the_base_address_follows_the_connection_rules
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 12 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p craft-ai-model --test spec_rules`

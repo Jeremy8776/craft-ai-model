@@ -1,0 +1,22 @@
+   Compiling craft-ai-declarative v0.1.0 (%USERPROFILE%\Apps\ArtCraft\craft-ai-model\crates\ai-declarative)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.11s
+     Running tests\queue.rs (target\debug\deps\queue-bdb282fe10a0faa1.exe)
+
+running 1 test
+test a_cancel_call_the_service_refuses_leaves_the_job_running ... FAILED
+
+failures:
+
+---- a_cancel_call_the_service_refuses_leaves_the_job_running stdout ----
+
+thread 'a_cancel_call_the_service_refuses_leaves_the_job_running' (45864) panicked at crates\ai-declarative\tests\queue.rs:132:5:
+assertion failed: p.cancel(&id).is_err()
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    a_cancel_call_the_service_refuses_leaves_the_job_running
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p craft-ai-declarative --test queue`

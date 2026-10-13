@@ -20,6 +20,7 @@ craft-ai-comfyui = { path = "../ai-comfyui", package = "craft-ai-comfyui" }
 craft-ai-seedance = { path = "../ai-seedance", package = "craft-ai-seedance" }
 craft-ai-vertex = { path = "../ai-vertex", package = "craft-ai-vertex" }
 craft-ai-sam3 = { path = "../ai-sam3", package = "craft-ai-sam3" }
+craft-ai-declarative = { path = "../ai-declarative", package = "craft-ai-declarative" }
 
 [dev-dependencies]
 serde_json.workspace = true

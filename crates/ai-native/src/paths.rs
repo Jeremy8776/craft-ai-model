@@ -61,6 +61,11 @@ pub fn workflow_dir() -> Option<PathBuf> {
     ai_dir().map(|d| d.join(WORKFLOW_DIR))
 }
 
+/// Default folder for the settings files of data-described services (one file per connection).
+pub fn specs_dir() -> Option<PathBuf> {
+    ai_dir().map(|d| d.join("specs"))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

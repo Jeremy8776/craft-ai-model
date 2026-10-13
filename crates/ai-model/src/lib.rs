@@ -25,6 +25,7 @@
 //! | [`consent`] | [`Disclosure`], [`ConsentLedger`] |
 //! | [`store`] | [`StoreFile`], the launcher's versioned shared store |
 //! | [`picks`] | model presets: [`Pick`], the curated [`Catalog`], and [`picks::choose`] |
+//! | [`spec`] | a provider described as data: types, checker and substitutions (task u2) |
 //! | [`provider`] | the [`Provider`] trait |
 //! | [`mock`], [`conformance`] | scripted provider and reusable behaviour checks |
 
@@ -55,6 +56,7 @@ pub mod provider;
 pub mod request;
 pub mod role;
 pub mod secret;
+pub mod spec;
 pub mod store;
 
 pub use capability::{CapabilityId, Modality};

@@ -1,0 +1,24 @@
+   Compiling craft-ai-model v0.1.0 (%USERPROFILE%\Apps\ArtCraft\craft-ai-model\crates\ai-model)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.11s
+     Running tests\spec_template.rs (target\debug\deps\spec_template-0905d3a1c57b8243.exe)
+
+running 1 test
+test a_key_is_never_substituted_even_when_it_looks_like_a_slot ... FAILED
+
+failures:
+
+---- a_key_is_never_substituted_even_when_it_looks_like_a_slot stdout ----
+
+thread 'a_key_is_never_substituted_even_when_it_looks_like_a_slot' (55936) panicked at crates\ai-model\tests\spec_template.rs:91:5:
+assertion `left == right` failed
+  left: Object {"a red door": String("img-1")}
+ right: Object {"{prompt}": String("img-1")}
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    a_key_is_never_substituted_even_when_it_looks_like_a_slot
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p craft-ai-model --test spec_template`

@@ -1,0 +1,22 @@
+   Compiling craft-ai-model v0.1.0 (%USERPROFILE%\Apps\ArtCraft\craft-ai-model\crates\ai-model)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.10s
+     Running tests\spec_template.rs (target\debug\deps\spec_template-0905d3a1c57b8243.exe)
+
+running 1 test
+test the_three_names_are_known_and_nothing_else ... FAILED
+
+failures:
+
+---- the_three_names_are_known_and_nothing_else stdout ----
+
+thread 'the_three_names_are_known_and_nothing_else' (46380) panicked at crates\ai-model\tests\spec_template.rs:23:32:
+called `Result::unwrap_err()` on an `Ok` value: [JobId]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    the_three_names_are_known_and_nothing_else
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p craft-ai-model --test spec_template`

@@ -1,0 +1,22 @@
+   Compiling craft-ai-model v0.1.0 (%USERPROFILE%\Apps\ArtCraft\craft-ai-model\crates\ai-model)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.47s
+     Running tests\spec_rules.rs (target\debug\deps\spec_rules-a81b1de624a03b02.exe)
+
+running 1 test
+test a_feature_this_version_lacks_is_refused_by_name_never_ignored ... FAILED
+
+failures:
+
+---- a_feature_this_version_lacks_is_refused_by_name_never_ignored stdout ----
+
+thread 'a_feature_this_version_lacks_is_refused_by_name_never_ignored' (49940) panicked at crates\ai-model\tests\spec_support\mod.rs:68:5:
+said "not a spec this version can read: missing field `call` at line 1 column 436", wanted "webhook" (spec: not a spec this version can read: missing field `call` at line 1 column 436)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    a_feature_this_version_lacks_is_refused_by_name_never_ignored
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 12 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p craft-ai-model --test spec_rules`

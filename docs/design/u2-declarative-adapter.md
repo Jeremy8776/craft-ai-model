@@ -1,6 +1,6 @@
 # u2 design: a declarative adapter for providers that are not OpenAI-shaped
 
-Written 12/10/2026. Design only: no code for u2 exists, and none is started by this note.
+Written 12/10/2026. **Built 13/10/2026** (see "As built" at the end); the rest of this note is the original design.
 Row: `u2` in `ai-framework-handoff/handoff_tasks.py`. Depends on u1 (built), p1 and p3.
 
 ## What it is
@@ -152,3 +152,33 @@ tests), none above 500.
 3. The pure validator in the wasm-safe model crate (recommended), so the launcher checks as you
    paste, with the runner in a native crate.
 4. Spec sharing, signing and provenance are a later question and are not designed here.
+
+## As built (13/10/2026)
+
+Code: `crates/ai-model/src/spec.rs` and `spec/` (types, checker, substitutions; wasm-safe),
+`crates/ai-declarative` (the runner), `crates/ai-client/src/declarative.rs` (the factory entry).
+Tests: `ai-model/tests/spec_*.rs`, `ai-declarative/tests/{queue,direct}.rs`,
+`ai-client/tests/declarative.rs`. Deliberate-bug cases: group `u2` in
+`docs/research/phase2d/mutation_check.py` (cases in `mutation_u2.py`).
+
+Where it differs from the design above:
+
+- **No `spec` field on `Connection`.** The spec file is `specs/<connection id>.json` beside the
+  connections store, so the shared contract is unchanged. Sharing one spec between connections is
+  left for later.
+- **The connection's address must equal the spec's `base`.** Consent and "on this computer" are
+  decided from the connection's address, so a spec must not be able to send somewhere else.
+- **Prompt only.** Models accept exactly one `prompt`; `{seed}`, `param.<name>`, uploads and any
+  other input are refused by name. Requests with options are refused as Unsupported.
+- **Placeholders:** `{prompt}`, `{model}`, `{job_id}` only; `{job_id}` is the only one allowed in
+  a path; `{{` and `}}` write a brace.
+- **No static headers** and no `poll_interval_ms`. Limits are `max_polls` and `max_seconds`.
+- **Request/response jobs call once, on the first poll,** and a failure ends the job rather than
+  resending a billable call. Queue status checks may be retried.
+- **Cancel** is an optional `DELETE`/`POST` call that must use `{job_id}`; without one a running
+  queue job reports Unsupported.
+- **Finished jobs are forgotten (oldest first) when 128 are tracked;** all-running refuses with
+  Quota before anything paid is sent.
+
+Not run: any live or hosted service, TLS, other operating systems. The runner has only met
+scripted localhost servers.

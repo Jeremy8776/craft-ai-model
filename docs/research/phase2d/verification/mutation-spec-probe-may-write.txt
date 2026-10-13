@@ -1,0 +1,22 @@
+   Compiling craft-ai-model v0.1.0 (%USERPROFILE%\Apps\ArtCraft\craft-ai-model\crates\ai-model)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.15s
+     Running tests\spec_rules.rs (target\debug\deps\spec_rules-a81b1de624a03b02.exe)
+
+running 1 test
+test the_probe_is_a_free_read ... FAILED
+
+failures:
+
+---- the_probe_is_a_free_read stdout ----
+
+thread 'the_probe_is_a_free_read' (54644) panicked at crates\ai-model\tests\spec_support\mod.rs:62:23:
+accepted, wanted probe: GET: Spec { spec_version: 1, id: "example-images", label: "Example Images", base: "https://api.example.com/v2", auth: Header { name: "x-api-key" }, probe: Some(Call { method: Post, path: "/account", query: {}, body: None }), models: [SpecModel { id: "img-1", label: "Image 1", capability: "image.generate", accepts: {"prompt": 1}, requires: ["prompt"], max_outputs: 1 }], flow: Queue { submit: Submit { call: Call { method: Post, path: "/images", query: {}, body: Some(Object {"n": Number(1), "prompt": String("{prompt}")}) }, job_id_at: "/id" }, poll: Poll { call: Call { method: Get, path: "/result", query: {"id": "{job_id}"}, body: None }, status_at: "/status", states: {"Error": Failed, "Pending": Queued, "Ready": Succeeded, "Working": Running}, result: Extract { at: "/result/sample", kind: Url, media_type: Some("image/png") } }, cancel: Some(Call { method: Delete, path: "/jobs/{job_id}", query: {}, body: None }) }, limits: SpecLimits { max_polls: 600, max_seconds: 600 } }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    the_probe_is_a_free_read
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 12 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p craft-ai-model --test spec_rules`

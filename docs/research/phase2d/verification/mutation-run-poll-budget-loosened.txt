@@ -1,0 +1,22 @@
+   Compiling craft-ai-declarative v0.1.0 (%USERPROFILE%\Apps\ArtCraft\craft-ai-model\crates\ai-declarative)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.00s
+     Running tests\queue.rs (target\debug\deps\queue-bdb282fe10a0faa1.exe)
+
+running 1 test
+test a_job_that_never_finishes_is_ended_by_its_poll_budget ... FAILED
+
+failures:
+
+---- a_job_that_never_finishes_is_ended_by_its_poll_budget stdout ----
+
+thread 'a_job_that_never_finishes_is_ended_by_its_poll_budget' (47236) panicked at crates\ai-declarative\tests\queue.rs:197:9:
+expected a failure, got Running { percent: None }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    a_job_that_never_finishes_is_ended_by_its_poll_budget
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `-p craft-ai-declarative --test queue`

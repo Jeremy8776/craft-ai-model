@@ -1,0 +1,22 @@
+   Compiling craft-ai-declarative v0.1.0 (%USERPROFILE%\Apps\ArtCraft\craft-ai-model\crates\ai-declarative)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.09s
+     Running tests\direct.rs (target\debug\deps\direct-0083c9d204f0cd8f.exe)
+
+running 1 test
+test a_reply_over_the_size_limit_is_refused ... FAILED
+
+failures:
+
+---- a_reply_over_the_size_limit_is_refused stdout ----
+
+thread 'a_reply_over_the_size_limit_is_refused' (37936) panicked at crates\ai-declarative\tests\direct.rs:190:5:
+assertion failed: failure(&p, &id).contains("too large")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    a_reply_over_the_size_limit_is_refused
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.17s
+
+error: test failed, to rerun pass `-p craft-ai-declarative --test direct`

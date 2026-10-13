@@ -42,6 +42,7 @@
 )]
 
 mod client;
+mod declarative;
 mod engine;
 mod factory;
 mod history;

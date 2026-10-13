@@ -681,6 +681,7 @@ dependencies = [
  "craft-ai-artcraft",
  "craft-ai-bfl",
  "craft-ai-comfyui",
+ "craft-ai-declarative",
  "craft-ai-features",
  "craft-ai-media",
  "craft-ai-model",
@@ -728,6 +729,16 @@ dependencies = [
  "tempfile",
  "ureq",
  "url",
+]
+
+[[package]]
+name = "craft-ai-declarative"
+version = "0.1.0"
+dependencies = [
+ "craft-ai-media",
+ "craft-ai-model",
+ "serde_json",
+ "ureq",
 ]
 
 [[package]]

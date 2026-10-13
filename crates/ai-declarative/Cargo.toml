@@ -1,0 +1,21 @@
+[package]
+name = "craft-ai-declarative"
+description = "Runs a declarative spec: a provider described by a small data file, for Craft AI"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+repository.workspace = true
+publish = false
+
+[dependencies]
+craft-ai-model.workspace = true
+craft-ai-media = { path = "../ai-media", package = "craft-ai-media" }
+serde_json.workspace = true
+ureq = { version = "3", default-features = false, features = ["rustls"] }
+
+[dev-dependencies]
+serde_json.workspace = true
+
+[lints]
+workspace = true

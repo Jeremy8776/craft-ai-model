@@ -46,6 +46,8 @@ pub struct ProviderFactory {
     accelerators: HashMap<String, Vec<GpuVendor>>,
     /// Where the ComfyUI builder reads workflow files; the shared default when `None`.
     comfyui_library: Option<std::path::PathBuf>,
+    /// Where the settings files for data-described services are read; the shared default when `None`.
+    declarative_specs: Option<std::path::PathBuf>,
     /// App-owned directory for durable ComfyUI outputs. Opt-in; no implicit shared output path.
     comfyui_output_dir: Option<std::path::PathBuf>,
     /// Opt-in: copy hosted result links into an app-owned directory as jobs finish.
@@ -84,6 +86,7 @@ impl ProviderFactory {
             builders: HashMap::new(),
             accelerators: HashMap::new(),
             comfyui_library,
+            declarative_specs: None,
             comfyui_output_dir: None,
             media: None,
             timeouts,
@@ -179,6 +182,7 @@ impl ProviderFactory {
             f.comfyui_output_dir.clone(),
             comfy_timeouts,
         );
+        f.register_declarative();
         f
     }
 
@@ -193,6 +197,22 @@ impl ProviderFactory {
     ) {
         self.builders
             .insert(name.to_ascii_lowercase(), Arc::new(build));
+    }
+
+    /// Points data-described services at a specific folder of settings files (one file per
+    /// connection, named after the connection). Without this the shared default beside the
+    /// connections store is used, so every app reads the same files.
+    fn register_declarative(&mut self) {
+        let dir = self.declarative_specs.clone();
+        let timeouts = self.timeouts;
+        self.register("declarative", move |c, s| {
+            crate::declarative::build(c, s, dir.clone(), timeouts)
+        });
+    }
+
+    pub fn set_declarative_specs(&mut self, dir: impl Into<std::path::PathBuf>) {
+        self.declarative_specs = Some(dir.into());
+        self.register_declarative();
     }
 
     /// Points the ComfyUI adapter at a specific workflow library. Without this it reads the
