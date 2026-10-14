@@ -224,9 +224,9 @@ fn an_app_flow_from_store_to_finished_job() {
     let request = inpaint_request().with_input(InputRole::Prompt, Payload::text("remove the lamp"));
     let disclosure = Disclosure::for_request(&photocraft, resolved.connection, &request);
     let mut ledger = ConsentLedger::default();
-    assert!(ledger.needs_consent(&disclosure));
+    assert!(ledger.needs_consent(&disclosure, 0));
     ledger.grant(&disclosure);
-    assert!(!ledger.needs_consent(&disclosure));
+    assert!(!ledger.needs_consent(&disclosure, 0));
 
     // Run it through a provider built from the same model list.
     let provider = MockProvider::new(

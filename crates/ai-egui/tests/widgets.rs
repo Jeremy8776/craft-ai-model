@@ -7,8 +7,8 @@ use craft_ai_egui::{
 };
 use craft_ai_model::consent::DisclosureItem;
 use craft_ai_model::{
-    AiError, AppId, Billing, ConnectionId, CostEstimate, Disclosure, ErrorKind, InputRole,
-    JobState, Locality, ModelId, PayloadKind,
+    AiError, AppId, Billing, CapabilityId, ConnectionId, CostEstimate, Disclosure, ErrorKind,
+    InputRole, JobState, Locality, ModelId, PayloadKind,
 };
 use egui::accesskit::Role;
 use egui_kittest::Harness;
@@ -18,6 +18,7 @@ fn disclosure(locality: Locality) -> Disclosure {
     Disclosure {
         app: AppId::new("photocraft").unwrap(),
         connection: ConnectionId::new("cloud").unwrap(),
+        capability: CapabilityId::parse("image.inpaint").unwrap(),
         locality,
         destination: "https://api.example.com".into(),
         items: vec![DisclosureItem {

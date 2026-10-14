@@ -2,13 +2,17 @@
 //!
 //! Before a job goes to a remote connection the app shows a [`Disclosure`]: which inputs are
 //! sent (by kind and size, never contents) and which parameter names ride along. Agreement is
-//! recorded per app and per connection in a [`ConsentLedger`], and is bound to the connection's
-//! endpoint fingerprint, so pointing a connection at a different host asks again. Local
+//! recorded in a [`ConsentLedger`] per app, connection, destination and capability, for the kinds
+//! of data it named, and optionally until a time. A configured connection never authorises an app
+//! by itself: pointing a connection at a different host, asking for a different capability or
+//! letting a timed agreement lapse all ask again. Records saved before capabilities were scoped
+//! cover nothing, so they ask once more. The clock is the caller's (unix seconds). Local
 //! connections never need consent. The disclosure names exactly what this app sends, which is why
 //! consent stays in the app even when the key came from the launcher.
 
 use serde::{Deserialize, Serialize};
 
+use crate::capability::CapabilityId;
 use crate::connection::{Connection, Locality};
 use crate::endpoint::Endpoint;
 use crate::ids::{AppId, ConnectionId};
@@ -29,6 +33,8 @@ pub struct DisclosureItem {
 pub struct Disclosure {
     pub app: AppId,
     pub connection: ConnectionId,
+    /// What the request asks the connection to do. Consent is given per capability.
+    pub capability: CapabilityId,
     pub locality: Locality,
     /// `scheme://host[:port]`, or the route name when there is no endpoint.
     pub destination: String,
@@ -48,6 +54,7 @@ impl Disclosure {
         Self {
             app: app.clone(),
             connection: connection.id.clone(),
+            capability: request.capability.clone(),
             locality: connection.locality,
             destination,
             items: request
@@ -79,7 +86,26 @@ pub struct ConsentRecord {
     pub connection: ConnectionId,
     /// The destination agreed to. A different destination needs fresh consent.
     pub destination: String,
+    /// The capability agreed to. A record from before consent was scoped to a capability has
+    /// none and covers nothing, so the person is asked once more.
+    #[serde(default)]
+    pub capability: Option<CapabilityId>,
     pub kinds: Vec<PayloadKind>,
+    /// Unix seconds. The agreement holds while the clock is before this; `None` holds until
+    /// revoked.
+    #[serde(default)]
+    pub expires_at: Option<u64>,
+}
+
+impl ConsentRecord {
+    /// Same app, connection, destination and capability. A record with no capability (from before
+    /// consent was scoped to one) matches nothing.
+    fn covers(&self, d: &Disclosure) -> bool {
+        self.app == d.app
+            && self.connection == d.connection
+            && self.destination == d.destination
+            && self.capability.as_ref() == Some(&d.capability)
+    }
 }
 
 /// An app's saved agreements.
@@ -90,39 +116,52 @@ pub struct ConsentLedger {
 }
 
 impl ConsentLedger {
-    /// True when the user must be asked before this disclosure is sent.
-    pub fn needs_consent(&self, d: &Disclosure) -> bool {
+    /// True when the user must be asked before this disclosure is sent. `now` is unix seconds;
+    /// the model crate has no clock, so the caller supplies it. An agreement covers one app, one
+    /// connection, one destination and one capability, for the kinds of data it named, until it
+    /// lapses.
+    pub fn needs_consent(&self, d: &Disclosure, now: u64) -> bool {
         if d.locality == Locality::Local {
             return false;
         }
         let kinds = d.kinds();
         !self.records.iter().any(|r| {
-            r.app == d.app
-                && r.connection == d.connection
-                && r.destination == d.destination
+            r.covers(d)
+                && r.expires_at.is_none_or(|t| now < t)
                 && kinds.iter().all(|k| r.kinds.contains(k))
         })
     }
 
-    /// Records agreement to the kinds in `d`, merging with any earlier record for the same
-    /// destination.
+    /// Records agreement that holds until revoked.
     pub fn grant(&mut self, d: &Disclosure) {
+        self.record(d, None);
+    }
+
+    /// Like [`grant`](Self::grant), but the agreement lapses at `expires_at` (unix seconds).
+    pub fn grant_until(&mut self, d: &Disclosure, expires_at: u64) {
+        self.record(d, Some(expires_at));
+    }
+
+    /// Merges the kinds in `d` into the record for the same app, connection, destination and
+    /// capability. The latest agreement sets that record's expiry; other capabilities keep theirs.
+    fn record(&mut self, d: &Disclosure, expires_at: Option<u64>) {
         let kinds = d.kinds();
-        if let Some(r) = self.records.iter_mut().find(|r| {
-            r.app == d.app && r.connection == d.connection && r.destination == d.destination
-        }) {
+        if let Some(r) = self.records.iter_mut().find(|r| r.covers(d)) {
             for k in kinds {
                 if !r.kinds.contains(&k) {
                     r.kinds.push(k);
                 }
             }
             r.kinds.sort();
+            r.expires_at = expires_at;
         } else {
             self.records.push(ConsentRecord {
                 app: d.app.clone(),
                 connection: d.connection.clone(),
                 destination: d.destination.clone(),
+                capability: Some(d.capability.clone()),
                 kinds,
+                expires_at,
             });
         }
     }
@@ -168,16 +207,16 @@ mod tests {
     #[test]
     fn local_connections_never_ask() {
         let d = Disclosure::for_request(&app(), &local("a"), &req());
-        assert!(!ConsentLedger::default().needs_consent(&d));
+        assert!(!ConsentLedger::default().needs_consent(&d, 0));
     }
 
     #[test]
     fn remote_asks_until_granted_then_stops() {
         let d = Disclosure::for_request(&app(), &remote("a"), &req());
         let mut ledger = ConsentLedger::default();
-        assert!(ledger.needs_consent(&d));
+        assert!(ledger.needs_consent(&d, 0));
         ledger.grant(&d);
-        assert!(!ledger.needs_consent(&d));
+        assert!(!ledger.needs_consent(&d, 0));
     }
 
     #[test]
@@ -189,9 +228,9 @@ mod tests {
             Payload::handle("file:///v.mp4", "video/mp4", Some(5)).unwrap(),
         );
         let d = Disclosure::for_request(&app(), &remote("a"), &with_video);
-        assert!(ledger.needs_consent(&d));
+        assert!(ledger.needs_consent(&d, 0));
         ledger.grant(&d);
-        assert!(!ledger.needs_consent(&d));
+        assert!(!ledger.needs_consent(&d, 0));
         assert_eq!(ledger.records.len(), 1);
     }
 
@@ -201,7 +240,7 @@ mod tests {
         ledger.grant(&Disclosure::for_request(&app(), &remote("a"), &req()));
         let mut moved = remote("a");
         moved.endpoint = Some("https://other.example.org".into());
-        assert!(ledger.needs_consent(&Disclosure::for_request(&app(), &moved, &req())));
+        assert!(ledger.needs_consent(&Disclosure::for_request(&app(), &moved, &req()), 0));
     }
 
     #[test]
@@ -211,8 +250,110 @@ mod tests {
         ledger.grant(&d);
         let other =
             Disclosure::for_request(&AppId::new("wordcraft").unwrap(), &remote("a"), &req());
-        assert!(ledger.needs_consent(&other));
+        assert!(ledger.needs_consent(&other, 0));
         ledger.revoke(&app(), &remote("a").id);
-        assert!(ledger.needs_consent(&d));
+        assert!(ledger.needs_consent(&d, 0));
+    }
+
+    fn upscale_req() -> Request {
+        Request::new(CapabilityId::parse("image.upscale").unwrap()).with_input(
+            InputRole::Source,
+            Payload::inline("image/png", vec![0; 10]).unwrap(),
+        )
+    }
+
+    fn disclosure_for(r: &Request) -> Disclosure {
+        Disclosure::for_request(&app(), &remote("a"), r)
+    }
+
+    #[test]
+    fn disclosure_names_the_capability() {
+        assert_eq!(
+            disclosure_for(&req()).capability,
+            CapabilityId::parse("image.inpaint").unwrap()
+        );
+    }
+
+    #[test]
+    fn consent_for_one_capability_does_not_cover_another() {
+        let mut ledger = ConsentLedger::default();
+        ledger.grant(&disclosure_for(&req()));
+        let other = disclosure_for(&upscale_req());
+        assert!(ledger.needs_consent(&other, 0));
+        ledger.grant(&other);
+        assert!(!ledger.needs_consent(&other, 0));
+        assert!(!ledger.needs_consent(&disclosure_for(&req()), 0));
+        assert_eq!(ledger.records.len(), 2);
+    }
+
+    #[test]
+    fn a_timed_agreement_lapses_at_its_expiry() {
+        let d = disclosure_for(&req());
+        let mut ledger = ConsentLedger::default();
+        ledger.grant_until(&d, 1_000);
+        assert!(!ledger.needs_consent(&d, 0));
+        assert!(!ledger.needs_consent(&d, 999));
+        assert!(ledger.needs_consent(&d, 1_000));
+        assert!(ledger.needs_consent(&d, 5_000));
+    }
+
+    #[test]
+    fn an_open_agreement_never_lapses() {
+        let d = disclosure_for(&req());
+        let mut ledger = ConsentLedger::default();
+        ledger.grant(&d);
+        assert!(!ledger.needs_consent(&d, u64::MAX));
+    }
+
+    #[test]
+    fn agreeing_again_after_it_lapsed_renews_it() {
+        let d = disclosure_for(&req());
+        let mut ledger = ConsentLedger::default();
+        ledger.grant_until(&d, 1_000);
+        assert!(ledger.needs_consent(&d, 2_000));
+        ledger.grant_until(&d, 3_000);
+        assert!(!ledger.needs_consent(&d, 2_000));
+        assert!(ledger.needs_consent(&d, 3_000));
+        assert_eq!(ledger.records.len(), 1);
+    }
+
+    #[test]
+    fn the_latest_agreement_sets_the_expiry_for_that_capability() {
+        let d = disclosure_for(&req());
+        let mut ledger = ConsentLedger::default();
+        ledger.grant(&d);
+        ledger.grant_until(&d, 1_000);
+        assert!(ledger.needs_consent(&d, 1_000));
+        ledger.grant(&d);
+        assert!(!ledger.needs_consent(&d, u64::MAX));
+    }
+
+    #[test]
+    fn a_timed_agreement_for_one_capability_leaves_another_open() {
+        let mut ledger = ConsentLedger::default();
+        ledger.grant(&disclosure_for(&req()));
+        ledger.grant_until(&disclosure_for(&upscale_req()), 1_000);
+        assert!(!ledger.needs_consent(&disclosure_for(&req()), 5_000));
+        assert!(ledger.needs_consent(&disclosure_for(&upscale_req()), 5_000));
+    }
+
+    #[test]
+    fn a_record_from_before_scoping_loads_but_covers_nothing() {
+        let old = r#"{"records":[{"app":"photocraft","connection":"a","destination":"https://api.example.com","kinds":["text","image"]}]}"#;
+        let ledger: ConsentLedger = serde_json::from_str(old).unwrap();
+        assert_eq!(ledger.records.len(), 1);
+        assert_eq!(ledger.records[0].capability, None);
+        assert_eq!(ledger.records[0].expires_at, None);
+        assert!(ledger.needs_consent(&disclosure_for(&req()), 0));
+    }
+
+    #[test]
+    fn the_capability_and_expiry_survive_a_save() {
+        let mut ledger = ConsentLedger::default();
+        ledger.grant_until(&disclosure_for(&req()), 1_000);
+        let back: ConsentLedger =
+            serde_json::from_str(&serde_json::to_string(&ledger).unwrap()).unwrap();
+        assert_eq!(back, ledger);
+        assert_eq!(back.records[0].expires_at, Some(1_000));
     }
 }

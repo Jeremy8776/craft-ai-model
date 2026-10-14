@@ -132,12 +132,15 @@ pub fn state_label(state: &JobState) -> String {
 mod tests {
     use super::*;
     use craft_ai_client::RoleReady;
-    use craft_ai_model::{AiError, AppId, ConnectionId, ErrorKind, InputRole, ModelId};
+    use craft_ai_model::{
+        AiError, AppId, CapabilityId, ConnectionId, ErrorKind, InputRole, ModelId,
+    };
 
     fn disclosure(items: Vec<DisclosureItem>, params: &[&str]) -> Disclosure {
         Disclosure {
             app: AppId::new("photocraft").unwrap(),
             connection: ConnectionId::new("c").unwrap(),
+            capability: CapabilityId::parse("image.inpaint").unwrap(),
             locality: Locality::Remote,
             destination: "https://api.example.com".into(),
             items,

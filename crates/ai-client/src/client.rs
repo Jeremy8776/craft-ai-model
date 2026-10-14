@@ -85,14 +85,29 @@ pub struct Plan {
     pub(crate) role_label: String,
 }
 
+/// Unix seconds now; 0 if the clock is before 1970, which makes timed agreements read as valid
+/// rather than lapsed, so a broken clock never asks twice.
+fn now_secs() -> u64 {
+    std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map_or(0, |d| d.as_secs())
+}
+
 impl Plan {
     /// What would be sent where. Show this to the user.
     pub fn disclosure(&self) -> &Disclosure {
         &self.disclosure
     }
 
+    /// True when the person must agree first: nothing on file covers this app, connection,
+    /// destination, capability and kind of data, or the agreement has lapsed.
     pub fn needs_consent(&self, ledger: &ConsentLedger) -> bool {
-        ledger.needs_consent(&self.disclosure)
+        self.needs_consent_at(ledger, now_secs())
+    }
+
+    /// [`needs_consent`](Self::needs_consent) at a given time (unix seconds).
+    pub fn needs_consent_at(&self, ledger: &ConsentLedger, now: u64) -> bool {
+        ledger.needs_consent(&self.disclosure, now)
     }
 
     pub fn connection_label(&self) -> &str {

@@ -8,7 +8,7 @@ mod support;
 
 use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::{Arc, Mutex};
-use std::time::Duration;
+use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 use craft_ai_client::{AiClient, ProviderFactory, RoleStatus};
 use craft_ai_model::job::{Event, Output};
@@ -364,6 +364,42 @@ fn remote_use_needs_consent_which_cannot_be_skipped_and_is_bound_to_the_host() {
         .unwrap();
     let moved = client.plan(&role(), prompt("secret draft")).unwrap();
     assert!(moved.needs_consent(&ledger));
+}
+
+#[test]
+fn a_lapsed_agreement_stops_a_start_before_the_key_is_read() {
+    let world = remote_world();
+    world.save_key("cloud");
+    let seen = Arc::new(Mutex::new(None));
+    let builds = Arc::new(AtomicUsize::new(0));
+    let client = world
+        .client()
+        .with_factory(mock_factory(seen.clone(), builds.clone()));
+    let plan = client.plan(&role(), prompt("draft")).unwrap();
+
+    // Agreed until one second after 1970: long gone.
+    let mut ledger = ConsentLedger::default();
+    ledger.grant_until(plan.disclosure(), 1);
+    assert!(plan.needs_consent(&ledger));
+    assert!(!plan.needs_consent_at(&ledger, 0), "valid before it lapses");
+    let err = client.start(&plan, &ledger).unwrap_err();
+    assert_eq!(err.kind, ErrorKind::ConsentRequired);
+    assert_eq!(builds.load(Ordering::SeqCst), 0);
+    assert_eq!(world.secrets.gets.load(Ordering::SeqCst), 0);
+
+    // Agreed for another hour: runs.
+    let now = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap()
+        .as_secs();
+    ledger.grant_until(plan.disclosure(), now + 3_600);
+    assert!(!plan.needs_consent(&ledger));
+    let done = client
+        .start(&plan, &ledger)
+        .unwrap()
+        .wait(Duration::from_millis(5), Duration::from_secs(10))
+        .unwrap();
+    assert_eq!(done.state, JobState::Succeeded);
 }
 
 #[test]

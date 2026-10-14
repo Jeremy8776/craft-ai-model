@@ -91,8 +91,8 @@ fn file_name(app: &AppId) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use craft_ai_model::ConnectionId;
     use craft_ai_model::consent::ConsentRecord;
+    use craft_ai_model::{CapabilityId, ConnectionId};
 
     fn app(s: &str) -> AppId {
         AppId::new(s).unwrap()
@@ -104,7 +104,9 @@ mod tests {
             app: app("photocraft"),
             connection: ConnectionId::new("c1").unwrap(),
             destination: "https://api.example.com".into(),
+            capability: Some(CapabilityId::parse("image.inpaint").unwrap()),
             kinds: vec![],
+            expires_at: Some(1_000),
         });
         l
     }
