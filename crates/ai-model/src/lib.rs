@@ -22,7 +22,7 @@
 //! | [`endpoint`] | strict endpoint parsing and loopback detection |
 //! | [`connection`] | [`Connection`], [`Auth`], [`Billing`], [`Locality`] |
 //! | [`role`] | [`Role`], [`Binding`], [`resolve`](role::resolve), [`eligible`](role::eligible) |
-//! | [`consent`] | [`Disclosure`], [`ConsentLedger`] |
+//! | [`consent`] | [`Disclosure`], [`ConsentLedger`], [`ConsentTerm`] |
 //! | [`store`] | [`StoreFile`], the launcher's versioned shared store |
 //! | [`picks`] | model presets: [`Pick`], the curated [`Catalog`], and [`picks::choose`] |
 //! | [`spec`] | a provider described as data: types, checker and substitutions (task u2) |
@@ -42,6 +42,7 @@ pub mod capability;
 pub mod conformance;
 pub mod connection;
 pub mod consent;
+mod consent_term;
 pub mod draft;
 pub mod endpoint;
 pub mod error;
@@ -62,6 +63,7 @@ pub mod store;
 pub use capability::{CapabilityId, Modality};
 pub use connection::{Auth, Billing, Connection, Locality};
 pub use consent::{ConsentLedger, Disclosure};
+pub use consent_term::ConsentTerm;
 pub use draft::{ConnectionDraft, DraftError, Field, KeyChange, PRESETS, Prepared, Preset};
 pub use error::{AiError, ErrorKind};
 pub use history::{EndRecord, HistoryEntry, HistoryLog, HistoryRecord, Outcome, StartRecord};
