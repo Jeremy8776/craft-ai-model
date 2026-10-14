@@ -1,0 +1,15 @@
+[package]
+name = "craft-ai-http"
+description = "The one TLS setting every hosted call in Craft AI uses"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+repository.workspace = true
+publish = false
+
+[dependencies]
+ureq = { version = "3", default-features = false, features = ["rustls", "platform-verifier"] }
+
+[lints]
+workspace = true

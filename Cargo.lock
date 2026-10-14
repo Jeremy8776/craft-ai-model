@@ -702,6 +702,7 @@ dependencies = [
 name = "craft-ai-artcraft"
 version = "0.1.0"
 dependencies = [
+ "craft-ai-http",
  "craft-ai-model",
  "serde_json",
  "ureq",
@@ -712,6 +713,7 @@ dependencies = [
 name = "craft-ai-bfl"
 version = "0.1.0"
 dependencies = [
+ "craft-ai-http",
  "craft-ai-model",
  "serde_json",
  "ureq",
@@ -743,6 +745,7 @@ name = "craft-ai-comfy-env"
 version = "0.1.0"
 dependencies = [
  "craft-ai-features",
+ "craft-ai-http",
  "craft-ai-media",
  "craft-ai-model",
  "dirs",
@@ -763,6 +766,7 @@ name = "craft-ai-comfyui"
 version = "0.1.0"
 dependencies = [
  "base64 0.22.1",
+ "craft-ai-http",
  "craft-ai-media",
  "craft-ai-model",
  "craft-ai-native",
@@ -778,6 +782,7 @@ dependencies = [
 name = "craft-ai-declarative"
 version = "0.1.0"
 dependencies = [
+ "craft-ai-http",
  "craft-ai-media",
  "craft-ai-model",
  "serde_json",
@@ -810,9 +815,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "craft-ai-http"
+version = "0.1.0"
+dependencies = [
+ "ureq",
+]
+
+[[package]]
 name = "craft-ai-media"
 version = "0.1.0"
 dependencies = [
+ "craft-ai-http",
  "craft-ai-model",
  "serde_json",
  "tempfile",
@@ -847,6 +860,7 @@ dependencies = [
 name = "craft-ai-openai"
 version = "0.1.0"
 dependencies = [
+ "craft-ai-http",
  "craft-ai-model",
  "serde",
  "serde_json",
@@ -857,6 +871,7 @@ dependencies = [
 name = "craft-ai-sam3"
 version = "0.1.0"
 dependencies = [
+ "craft-ai-http",
  "craft-ai-model",
  "serde_json",
  "ureq",
@@ -866,6 +881,7 @@ dependencies = [
 name = "craft-ai-seedance"
 version = "0.1.0"
 dependencies = [
+ "craft-ai-http",
  "craft-ai-model",
  "serde_json",
  "ureq",
@@ -875,6 +891,7 @@ dependencies = [
 name = "craft-ai-vertex"
 version = "0.1.0"
 dependencies = [
+ "craft-ai-http",
  "craft-ai-model",
  "serde_json",
  "ureq",
@@ -2573,6 +2590,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9f7c3e4beb33f85d45ae3e3a1792185706c8e16d043238c593331cc7cd313b50"
 
 [[package]]
+name = "openssl-probe"
+version = "0.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7c87def4c32ab89d880effc9e097653c8da5d6ef28e6b539d313baaacfbafcbe"
+
+[[package]]
 name = "option-ext"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3043,6 +3066,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "rustls-native-certs"
+version = "0.8.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4a073f5dc7469f984c52ad2752b63b0807745133b6de880b7b64c1ac4c48aec4"
+dependencies = [
+ "openssl-probe",
+ "rustls-pki-types",
+ "schannel",
+ "security-framework",
+]
+
+[[package]]
 name = "rustls-pki-types"
 version = "1.15.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3050,6 +3085,33 @@ checksum = "2f4925028c7eb5d1fcdaf196971378ed9d2c1c4efc7dc5d011256f76c99c0a96"
 dependencies = [
  "zeroize",
 ]
+
+[[package]]
+name = "rustls-platform-verifier"
+version = "0.7.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1167586491e2b18b8bfbb293e8180ec17c201c4f076d7cb3070ca964e7598f98"
+dependencies = [
+ "core-foundation 0.10.1",
+ "core-foundation-sys",
+ "jni",
+ "log",
+ "once_cell",
+ "rustls",
+ "rustls-native-certs",
+ "rustls-platform-verifier-android",
+ "rustls-webpki",
+ "security-framework",
+ "security-framework-sys",
+ "webpki-root-certs",
+ "windows-sys 0.52.0",
+]
+
+[[package]]
+name = "rustls-platform-verifier-android"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "eec689c0bc40ff2458a5977b6619cb718087084a18e02a131c599b62d05e1a5f"
 
 [[package]]
 name = "rustls-webpki"
@@ -3075,6 +3137,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "93fc1dc3aaa9bfed95e02e6eadabb4baf7e3078b0bd1b4d7b6b0b68378900502"
 dependencies = [
  "winapi-util",
+]
+
+[[package]]
+name = "schannel"
+version = "0.1.29"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "91c1b7e4904c873ef0710c1f407dde2e6287de2bebc1bbbf7d430bb7cbffd939"
+dependencies = [
+ "windows-sys 0.61.2",
 ]
 
 [[package]]
@@ -3661,6 +3732,7 @@ dependencies = [
  "percent-encoding",
  "rustls",
  "rustls-pki-types",
+ "rustls-platform-verifier",
  "ureq-proto",
  "utf8-zero",
  "webpki-roots",
@@ -3981,6 +4053,15 @@ checksum = "5a6580f308b1fad9207618087a65c04e7a10bc77e02c8e84e9b00dd4b12fa0bb"
 dependencies = [
  "js-sys",
  "wasm-bindgen",
+]
+
+[[package]]
+name = "webpki-root-certs"
+version = "1.0.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b96554aa2acc8ccdb7e1c9a58a7a68dd5d13bccc69cd124cb09406db612a1c9b"
+dependencies = [
+ "rustls-pki-types",
 ]
 
 [[package]]

@@ -13,6 +13,7 @@ pub(crate) struct Http {
 impl Http {
     pub fn new(base: String, key: SecretString, connect: Duration, request: Duration) -> Self {
         let config = ureq::Agent::config_builder()
+            .tls_config(craft_ai_http::tls_config())
             .http_status_as_error(false)
             .max_redirects(0)
             .max_redirects_will_error(false)
