@@ -1,6 +1,6 @@
    Compiling craft-ai-comfy-env v0.1.0 (%USERPROFILE%\Apps\ArtCraft\craft-ai-model\crates\ai-comfy-env)
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.42s
-     Running tests\nodepack_archive.rs (target\debug\deps\nodepack_archive-13d14388353d6c9d.exe)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.28s
+     Running tests\nodepack_archive.rs (target\debug\deps\nodepack_archive-c9ddbb87758ba36d.exe)
 
 running 1 test
 test hostile_archives_are_refused_for_the_right_reason_and_leave_nothing_behind ... FAILED
@@ -9,7 +9,7 @@ failures:
 
 ---- hostile_archives_are_refused_for_the_right_reason_and_leave_nothing_behind stdout ----
 
-thread 'hostile_archives_are_refused_for_the_right_reason_and_leave_nothing_behind' (36232) panicked at crates\ai-comfy-env\tests\nodepack_archive.rs:102:9:
+thread 'hostile_archives_are_refused_for_the_right_reason_and_leave_nothing_behind' (19688) panicked at crates\ai-comfy-env\tests\nodepack_archive.rs:139:9:
 assertion `left == right` failed: duplicate by case
   left: Unsafe("two names conflict")
  right: Unsafe("two names differ only in case")
@@ -19,6 +19,6 @@ note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
 failures:
     hostile_archives_are_refused_for_the_right_reason_and_leave_nothing_behind
 
-test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.06s
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.05s
 
 error: test failed, to rerun pass `-p craft-ai-comfy-env --test nodepack_archive`

@@ -55,6 +55,35 @@ fn hostile_archives_are_refused_for_the_right_reason_and_leave_nothing_behind() 
             archive_of(&[&format!("{r}/A.py"), &format!("{r}/a.py")]),
             "two names differ only in case",
         ),
+        (
+            // A case-sensitive disk would make two folders, Windows and default macOS one.
+            "folder by case",
+            archive_of(&[&format!("{r}/Dir/a.py"), &format!("{r}/dir/b.py")]),
+            "two names differ only in case",
+        ),
+        (
+            "folder by case, deeper down",
+            archive_of(&[&format!("{r}/x/Dir/a.py"), &format!("{r}/x/dir/b.py")]),
+            "two names differ only in case",
+        ),
+        (
+            "folder entry by case",
+            gz(&finish(vec![
+                file(&format!("{r}/Dir/a.py"), b"x"),
+                entry(&format!("{r}/dir/"), b'5', b"", ""),
+            ])),
+            "two names differ only in case",
+        ),
+        (
+            "file then folder by case",
+            archive_of(&[&format!("{r}/A"), &format!("{r}/a/b.py")]),
+            "two names differ only in case",
+        ),
+        (
+            "folder then file by case",
+            archive_of(&[&format!("{r}/a/b.py"), &format!("{r}/A")]),
+            "two names differ only in case",
+        ),
         ("empty", gz(&finish(vec![])), "the archive holds no files"),
         (
             "not gzip",

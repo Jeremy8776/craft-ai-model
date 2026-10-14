@@ -1,0 +1,9 @@
+   Compiling craft-ai-client v0.1.0 (%USERPROFILE%\Apps\ArtCraft\craft-ai-model\crates\ai-client)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.53s
+     Running tests\local_native.rs (target\debug\deps\local_native-48f7eb7079e3ad61.exe)
+
+running 1 test
+test a_tool_without_a_built_in_runtime_is_refused ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 10 filtered out; finished in 0.01s
+

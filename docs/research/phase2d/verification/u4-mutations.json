@@ -196,5 +196,17 @@
     "caught_by_runtime_test": true,
     "timed_out": false,
     "equivalent": null
+  },
+  {
+    "mutation": "archive-case-folders-accepted",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "archive-case-folders-compared-whole",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
   }
 ]

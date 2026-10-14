@@ -1,0 +1,22 @@
+   Compiling craft-ai-client v0.1.0 (%USERPROFILE%\Apps\ArtCraft\craft-ai-model\crates\ai-client)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.56s
+     Running tests\local_native.rs (target\debug\deps\local_native-48f7eb7079e3ad61.exe)
+
+running 1 test
+test a_choice_already_made_is_left_alone_and_both_routes_are_registered ... FAILED
+
+failures:
+
+---- a_choice_already_made_is_left_alone_and_both_routes_are_registered stdout ----
+
+thread 'a_choice_already_made_is_left_alone_and_both_routes_are_registered' (49144) panicked at crates\ai-client\tests\local_native.rs:100:5:
+the person's existing choice stays
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    a_choice_already_made_is_left_alone_and_both_routes_are_registered
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 12 filtered out; finished in 0.02s
+
+error: test failed, to rerun pass `-p craft-ai-client --test local_native`

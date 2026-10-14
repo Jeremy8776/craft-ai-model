@@ -1,0 +1,38 @@
+[
+  {
+    "mutation": "any-address-accepted",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "volcengine-address-accepted",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "query-string-allowed",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "old-model-served",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "preset-points-at-volcengine",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "preset-named-volcengine",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  }
+]

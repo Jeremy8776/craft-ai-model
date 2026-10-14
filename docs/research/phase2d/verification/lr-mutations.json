@@ -1,0 +1,50 @@
+[
+  {
+    "mutation": "wrong-backend-selected",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "wrong-model-selected",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "broken-choice-looks-unbound",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "remote-route-leaked",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "native-route-treated-as-comfyui",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "unsupported-native-looks-ready",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "picker-offers-uninstalled-adapter",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "picker-false-setup-for-adapter",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  }
+]

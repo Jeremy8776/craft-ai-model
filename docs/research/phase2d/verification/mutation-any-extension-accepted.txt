@@ -1,0 +1,31 @@
+   Compiling craft-ai-client v0.1.0 (%USERPROFILE%\Apps\ArtCraft\craft-ai-model\crates\ai-client)
+warning: unused variable: `safetensors`
+   --> crates\ai-client\src\local.rs:234:9
+    |
+234 |     let safetensors = path
+    |         ^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_safetensors`
+    |
+    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: `craft-ai-client` (lib) generated 1 warning (run `cargo fix --lib -p craft-ai-client` to apply 1 suggestion)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.44s
+     Running tests\local_native.rs (target\debug\deps\local_native-48f7eb7079e3ad61.exe)
+
+running 1 test
+test a_file_that_cannot_be_the_weights_is_refused_and_nothing_is_written ... FAILED
+
+failures:
+
+---- a_file_that_cannot_be_the_weights_is_refused_and_nothing_is_written stdout ----
+
+thread 'a_file_that_cannot_be_the_weights_is_refused_and_nothing_is_written' (33576) panicked at crates\ai-client\tests\local_native.rs:127:9:
+wrong extension
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    a_file_that_cannot_be_the_weights_is_refused_and_nothing_is_written
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 12 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `-p craft-ai-client --test local_native`

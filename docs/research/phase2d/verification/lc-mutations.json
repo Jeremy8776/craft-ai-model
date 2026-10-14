@@ -1,0 +1,68 @@
+[
+  {
+    "mutation": "non-local-address-accepted",
+    "caught_by_runtime_test": false,
+    "timed_out": false,
+    "equivalent": "SharedStore::update calls write, which validates every connection; a non-loopback Local endpoint is refused even without the earlier local_address check (local.rs test confirms nothing written)"
+  },
+  {
+    "mutation": "query-in-address-accepted",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "trailing-slash-kept",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "unrunnable-recipe-accepted",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "replaces-a-choice-made",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "never-binds",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "moved-address-kept-old",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "local-model-billed",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "local-model-needs-a-key",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "tool-inputs-dropped",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  },
+  {
+    "mutation": "address-not-given-to-apps",
+    "caught_by_runtime_test": true,
+    "timed_out": false,
+    "equivalent": null
+  }
+]

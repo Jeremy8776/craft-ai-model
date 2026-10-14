@@ -6,7 +6,7 @@
 //! past the limits (counted as the data is read, so a small download cannot expand without bound).
 //! Files are created new, never over something; nothing is made executable; nothing is run.
 
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, btree_map::Entry};
 use std::io::Read;
 use std::path::Path;
 
@@ -47,7 +47,7 @@ pub(in crate::source) fn unpack(
     std::fs::create_dir_all(&root_dir).map_err(|_| io_failed())?;
 
     let mut top: Option<String> = None;
-    let mut seen: BTreeSet<String> = BTreeSet::new();
+    let mut names = Names::default();
     let (mut files, mut entries, mut bytes) = (0u32, 0u32, 0u64);
     let mut top_files = Vec::new();
     let mut pending_path: Option<String> = None;
@@ -109,6 +109,7 @@ pub(in crate::source) fn unpack(
         if is_dir {
             read_data(&mut input, size, 0)?;
             if !rest.is_empty() {
+                names.folders(rest, rest.len())?;
                 std::fs::create_dir_all(&target)
                     .map_err(|_| unsafe_archive("two names conflict"))?;
             }
@@ -120,9 +121,8 @@ pub(in crate::source) fn unpack(
         if size > limits.max_file || bytes.saturating_add(size) > limits.max_expanded {
             return Err(PackError::Refused(PackRefusal::TooLarge));
         }
-        if !seen.insert(rest.join("/").to_lowercase()) {
-            return Err(unsafe_archive("two names differ only in case"));
-        }
+        names.folders(rest, rest.len() - 1)?;
+        names.file(&rest.join("/"))?;
         if let Some(parent) = target.parent() {
             std::fs::create_dir_all(parent).map_err(|_| unsafe_archive("two names conflict"))?;
         }
@@ -147,6 +147,47 @@ pub(in crate::source) fn unpack(
         bytes,
         top_files,
     })
+}
+
+/// Every name used so far, by lower-case path, with the spelling first seen and whether it is a
+/// folder. Two spellings of one name (`Dir` and `dir`) are two folders on a case-sensitive disk
+/// and one on Windows and default macOS, so the same archive would unpack differently on each.
+#[derive(Default)]
+struct Names(BTreeMap<String, (String, bool)>);
+
+impl Names {
+    /// The first `count` folders on the way down `parts`. Using one spelling again is fine.
+    fn folders(&mut self, parts: &[String], count: usize) -> Result<(), PackError> {
+        for end in 1..=count {
+            let path = parts[..end].join("/");
+            match self.0.entry(path.to_lowercase()) {
+                Entry::Vacant(slot) => {
+                    slot.insert((path, true));
+                }
+                Entry::Occupied(slot) if slot.get().0 == path => {}
+                Entry::Occupied(_) => return Err(same_in_any_case()),
+            }
+        }
+        Ok(())
+    }
+
+    /// A file name must be new in any spelling.
+    fn file(&mut self, path: &str) -> Result<(), PackError> {
+        match self.0.entry(path.to_lowercase()) {
+            Entry::Vacant(slot) => {
+                slot.insert((path.to_owned(), false));
+                Ok(())
+            }
+            Entry::Occupied(slot) if slot.get().1 && slot.get().0 == path => {
+                Err(unsafe_archive("two names conflict"))
+            }
+            Entry::Occupied(_) => Err(same_in_any_case()),
+        }
+    }
+}
+
+fn same_in_any_case() -> PackError {
+    unsafe_archive("two names differ only in case")
 }
 
 fn io_failed() -> PackError {
