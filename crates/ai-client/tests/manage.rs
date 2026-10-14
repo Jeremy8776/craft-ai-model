@@ -63,6 +63,18 @@ fn stored_key(r: &Rig, s: &str) -> Option<String> {
         .map(|k| k.expose().to_owned())
 }
 
+/// Where the saved connection `conn` keeps its key. Slots are named per save, so ask the file.
+fn locator(r: &Rig, conn: &str) -> String {
+    let store = r.shared.load().unwrap();
+    let c = store.connections.iter().find(|c| c.id == id(conn)).unwrap();
+    c.auth.secret_ref().unwrap().as_str().to_owned()
+}
+
+/// True when the secret store holds nothing at all.
+fn store_is_empty(r: &Rig) -> bool {
+    format!("{:?}", r.secrets) == "MemoryStore(0 secrets)"
+}
+
 fn file_text(r: &Rig) -> String {
     std::fs::read_to_string(r.shared.path()).unwrap_or_default()
 }
@@ -101,9 +113,11 @@ fn a_key_goes_to_the_secret_store_and_never_into_the_file() {
     let r = rig();
     let saved = r.manager.save(&openai(KEY)).unwrap();
     assert_eq!(saved.id, id("openai"));
-    assert_eq!(stored_key(&r, "openai.key").as_deref(), Some(KEY));
+    let loc = locator(&r, "openai");
+    assert!(loc.starts_with("openai.key"), "{loc}");
+    assert_eq!(stored_key(&r, &loc).as_deref(), Some(KEY));
     let text = file_text(&r);
-    assert!(text.contains("openai.key"), "the locator is in the file");
+    assert!(text.contains(&loc), "the locator is in the file");
     assert!(!text.contains(KEY), "the key must not be");
     assert_eq!(r.manager.views().unwrap()[0].key, KeyState::Saved);
 }
@@ -112,7 +126,9 @@ fn a_key_goes_to_the_secret_store_and_never_into_the_file() {
 fn a_connection_missing_its_key_is_flagged() {
     let r = rig();
     r.manager.save(&openai(KEY)).unwrap();
-    r.secrets.delete(&secret_ref("openai.key")).unwrap();
+    r.secrets
+        .delete(&secret_ref(&locator(&r, "openai")))
+        .unwrap();
     assert_eq!(r.manager.views().unwrap()[0].key, KeyState::Missing);
 }
 
@@ -132,7 +148,7 @@ fn a_form_problem_is_reported_by_field_and_saves_nothing() {
         Err(SaveError::Invalid(e)) if e.field == Field::Address
     ));
     assert!(r.manager.views().unwrap().is_empty());
-    assert!(r.secrets.get(&secret_ref("openai.key")).unwrap().is_none());
+    assert!(store_is_empty(&r), "no key was written for a refused form");
 }
 
 #[test]
@@ -143,14 +159,14 @@ fn renaming_keeps_the_id_and_key_and_a_new_key_replaces_it() {
     let mut d = ConnectionDraft::from_connection(&view.connection);
     d.label = "Work".into();
     assert_eq!(r.manager.save(&d).unwrap().id, id("openai"));
-    assert_eq!(stored_key(&r, "openai.key").as_deref(), Some(KEY));
+    let first = locator(&r, "openai");
+    assert_eq!(stored_key(&r, &first).as_deref(), Some(KEY));
     assert_eq!(r.manager.views().unwrap()[0].connection.label, "Work");
     d.key = "sk-replacement-9".into();
     r.manager.save(&d).unwrap();
-    assert_eq!(
-        stored_key(&r, "openai.key").as_deref(),
-        Some("sk-replacement-9")
-    );
+    let second = locator(&r, "openai");
+    assert!(stored_key(&r, &first).is_none(), "the replaced key is gone");
+    assert_eq!(stored_key(&r, &second).as_deref(), Some("sk-replacement-9"));
     assert_eq!(
         r.manager.views().unwrap().len(),
         1,
@@ -165,9 +181,10 @@ fn turning_the_key_off_removes_it_from_the_secret_store() {
     let view = r.manager.views().unwrap().remove(0);
     let mut d = ConnectionDraft::from_connection(&view.connection);
     d.uses_key = false;
+    let loc = locator(&r, "openai");
     let saved = r.manager.save(&d).unwrap();
     assert!(saved.warning.is_none());
-    assert!(stored_key(&r, "openai.key").is_none());
+    assert!(stored_key(&r, &loc).is_none());
     assert_eq!(r.manager.views().unwrap()[0].key, KeyState::NotNeeded);
 }
 
@@ -177,8 +194,10 @@ fn same_names_get_separate_ids_and_separate_keys() {
     r.manager.save(&openai("key-one")).unwrap();
     let second = r.manager.save(&openai("key-two")).unwrap();
     assert_eq!(second.id, id("openai-2"));
-    assert_eq!(stored_key(&r, "openai.key").as_deref(), Some("key-one"));
-    assert_eq!(stored_key(&r, "openai-2.key").as_deref(), Some("key-two"));
+    let (one, two) = (locator(&r, "openai"), locator(&r, "openai-2"));
+    assert_ne!(one, two);
+    assert_eq!(stored_key(&r, &one).as_deref(), Some("key-one"));
+    assert_eq!(stored_key(&r, &two).as_deref(), Some("key-two"));
 }
 
 #[test]
@@ -223,11 +242,12 @@ fn deleting_removes_the_connection_its_choices_and_its_key() {
     r.manager.save(&openai(KEY)).unwrap();
     r.manager.save(&preset("ollama")).unwrap();
     seed_bindings(&r, "openai");
+    let loc = locator(&r, "openai");
     assert_eq!(r.manager.views().unwrap()[0].bindings, 2);
     let removed = r.manager.delete(&id("openai")).unwrap();
     assert_eq!(removed.bindings_removed, 2);
     assert!(removed.key_removed);
-    assert!(stored_key(&r, "openai.key").is_none());
+    assert!(stored_key(&r, &loc).is_none());
     let store = r.shared.load().unwrap();
     assert_eq!(store.connections.len(), 1);
     assert!(store.defaults.is_empty());
@@ -239,6 +259,7 @@ fn deleting_removes_the_connection_its_choices_and_its_key() {
 fn deleting_keeps_a_key_another_connection_still_uses() {
     let r = rig();
     r.manager.save(&openai(KEY)).unwrap();
+    let loc = locator(&r, "openai");
     // Two connections that (through an older file) share one locator.
     r.shared
         .update(|f| {
@@ -248,9 +269,9 @@ fn deleting_keeps_a_key_another_connection_still_uses() {
         })
         .unwrap();
     r.manager.delete(&id("openai")).unwrap();
-    assert_eq!(stored_key(&r, "openai.key").as_deref(), Some(KEY));
+    assert_eq!(stored_key(&r, &loc).as_deref(), Some(KEY));
     r.manager.delete(&id("twin")).unwrap();
-    assert!(stored_key(&r, "openai.key").is_none());
+    assert!(stored_key(&r, &loc).is_none());
 }
 
 #[test]
@@ -285,7 +306,7 @@ fn testing_a_draft_lists_models_sends_the_typed_key_and_saves_nothing() {
         r.manager.views().unwrap().is_empty(),
         "a test saves nothing"
     );
-    assert!(r.secrets.get(&secret_ref("ollama.key")).unwrap().is_none());
+    assert!(store_is_empty(&r), "a test writes no key");
 }
 
 #[test]
@@ -379,7 +400,9 @@ fn testing_without_a_saved_key_says_where_to_add_it() {
     d.uses_key = true;
     d.key = KEY.into();
     r.manager.save(&d).unwrap();
-    r.secrets.delete(&secret_ref("ollama.key")).unwrap();
+    r.secrets
+        .delete(&secret_ref(&locator(&r, "ollama")))
+        .unwrap();
     let e = r.manager.test_saved(&id("ollama"), false).unwrap_err();
     assert_eq!(e.kind, ErrorKind::Auth);
     assert_eq!(server.count(), 0, "nothing is sent without a key");

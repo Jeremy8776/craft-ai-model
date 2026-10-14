@@ -9,7 +9,7 @@ use std::time::{Duration, Instant};
 
 use craft_ai_client::ConnectionManager;
 use craft_ai_egui::{ConnectionPanel, PanelEvent};
-use craft_ai_model::{ConnectionId, SecretRef};
+use craft_ai_model::ConnectionId;
 use craft_ai_native::secrets::{MemoryStore, SecretStore};
 use craft_ai_native::shared::SharedStore;
 use egui::accesskit::Role;
@@ -112,12 +112,14 @@ fn a_remote_connection_is_saved_with_its_key_in_the_secret_store_only() {
         Some(PanelEvent::Saved(ConnectionId::new("openai").unwrap()))
     );
     let text = std::fs::read_to_string(r.shared.path()).unwrap();
-    assert!(text.contains("openai.key") && !text.contains(KEY));
-    let stored = r
-        .secrets
-        .get(&SecretRef::new("openai.key").unwrap())
+    let loc = r.shared.load().unwrap().connections[0]
+        .auth
+        .secret_ref()
         .unwrap()
-        .unwrap();
+        .clone();
+    assert!(loc.as_str().starts_with("openai.key"), "{loc:?}");
+    assert!(text.contains(loc.as_str()) && !text.contains(KEY));
+    let stored = r.secrets.get(&loc).unwrap().unwrap();
     assert_eq!(stored.expose(), KEY);
 }
 

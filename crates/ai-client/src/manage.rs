@@ -6,9 +6,10 @@
 //! [`ConnectionDraft`](craft_ai_model::ConnectionDraft); this adds the parts that touch disk and the
 //! keychain, in an order that cannot lose a key:
 //!
-//! - **Save** takes the file lock, writes the new key, then the connection, and puts the old key
-//!   back if the file cannot be written. Either both are saved or neither changed, and two saves
-//!   at once can never share or delete each other's key.
+//! - **Save** writes a new key into a slot of its own with no lock held, then points the
+//!   connection at it under the file lock, then deletes the slot it replaced. No key is ever
+//!   overwritten, so a failed save only deletes the slot it just wrote, two saves at once can
+//!   never share or delete each other's key, and the lock is never held across the keychain.
 //! - **Delete** removes the connection and every default or app choice that pointed at it in one
 //!   locked write, then its key (unless another connection still uses that locator).
 //! - **Test** asks the server for its models with short timeouts, without saving anything.
@@ -20,8 +21,8 @@ use std::sync::Arc;
 use std::time::{Duration, Instant};
 
 use craft_ai_model::{
-    AiError, Connection, ConnectionDraft, ConnectionId, DraftError, ErrorKind, KeyChange,
-    ModelInfo, SecretRef, StoreFile,
+    AiError, Auth, Connection, ConnectionDraft, ConnectionId, DraftError, ErrorKind, KeyChange,
+    ModelInfo, SecretRef, SecretString, StoreFile,
 };
 use craft_ai_native::secrets::{EnvStore, KeychainStore, LayeredStore, SecretStore, secret_for};
 use craft_ai_native::shared::SharedStore;
@@ -29,6 +30,7 @@ use craft_ai_native::shared::SharedStore;
 use crate::factory::ProviderFactory;
 
 mod probe;
+mod slot;
 pub use probe::{
     Confirmed, MAX_DECLARED, ModelChoice, ProbeReport, ProbedModel, Unconfirmed, declare_models,
 };
@@ -170,79 +172,97 @@ impl ConnectionManager {
     }
 
     /// Adds a connection or saves changes to one.
+    ///
+    /// A new key goes into a slot of its own, with the file lock not held (a keychain can wait on
+    /// a prompt or a daemon, and every other app waits on that lock). Under the lock the file
+    /// only ever swaps to a slot that already holds its key, so a connection never points at a
+    /// missing key. A key is never overwritten: if the file cannot be written, the slot just
+    /// written is deleted and everything else is as it was; once it is written, the slot the
+    /// connection used to point at is deleted. A crash between the two writes leaves one unused
+    /// slot and nothing else.
     pub fn save(&self, draft: &ConnectionDraft) -> Result<Saved, SaveError> {
         let current = self.load().map_err(SaveError::Failed)?;
         let prepared = draft
             .prepare(&current.connections)
             .map_err(SaveError::Invalid)?;
-        let key_ref = prepared.connection.auth.secret_ref().cloned();
 
-        // 1. Under the file lock, the connection is re-checked against the file as it is now, then
-        // the key is written, then the connection. Holding the lock across the key write means two
-        // saves can never pick the same key slot and overwrite (or, on undo, delete) each other's key.
-        let wanted = key_ref.clone();
-        let secrets = &self.secrets;
-        let mut undo = None;
-        let result = self
-            .shared
-            .update(|file| -> Result<ConnectionId, SaveError> {
-                let again = draft
+        // 1. A typed key, in a slot nobody else can be using.
+        let fresh = match &prepared.key {
+            KeyChange::Set(key) => Some(self.store_new_key(&prepared.connection.id, key)?),
+            _ => None,
+        };
+
+        // 2. The file, re-checked as it is now. Only file work happens under the lock.
+        let result = self.shared.update(
+            |file| -> Result<(ConnectionId, Option<SecretRef>), SaveError> {
+                let mut again = draft
                     .prepare(&file.connections)
                     .map_err(SaveError::Invalid)?;
-                if again.connection.auth.secret_ref() != wanted.as_ref() {
-                    return Err(SaveError::Invalid(DraftError {
-                        field: craft_ai_model::Field::Label,
-                        message: "Another change was saved at the same moment. Try again."
-                            .to_owned(),
-                    }));
-                }
-                if let (KeyChange::Set(key), Some(r)) = (&again.key, &wanted) {
-                    let previous = secrets.get(r).ok().flatten();
-                    secrets
-                        .set(r, key)
-                        .map_err(|_| SaveError::Failed(key_not_saved(r)))?;
-                    undo = Some((r.clone(), previous));
+                if let (Some(slot), Auth::ApiKey { secret }) = (&fresh, &mut again.connection.auth)
+                {
+                    *secret = slot.clone();
                 }
                 let id = again.connection.id.clone();
-                match file.connections.iter_mut().find(|c| c.id == id) {
-                    Some(slot) => *slot = again.connection,
-                    None => file.connections.push(again.connection),
-                }
-                Ok(id)
-            });
+                let new_ref = again.connection.auth.secret_ref().cloned();
+                let old_ref = match file.connections.iter_mut().find(|c| c.id == id) {
+                    Some(slot) => {
+                        let old = slot.auth.secret_ref().cloned();
+                        *slot = again.connection;
+                        old
+                    }
+                    None => {
+                        file.connections.push(again.connection);
+                        None
+                    }
+                };
+                let retired = old_ref.filter(|r| {
+                    Some(r) != new_ref.as_ref()
+                        && !file
+                            .connections
+                            .iter()
+                            .any(|c| c.auth.secret_ref() == Some(r))
+                });
+                Ok((id, retired))
+            },
+        );
         let outcome = match result {
             Ok(done) => done,
             Err(e) => Err(SaveError::Failed(e.into())),
         };
 
-        // 2. If the file could not be written after the key was, put the old key back. This is the
-        // only failure left after the key write, and it is rare (a full or read-only disk).
-        let id = match outcome {
-            Ok(id) => id,
+        // 3. The file did not change, so the slot just written is unused: drop it. It is ours
+        // alone, so nothing else can be affected.
+        let (id, retired) = match outcome {
+            Ok(done) => done,
             Err(e) => {
-                if let Some((r, previous)) = undo {
-                    let _ = match previous {
-                        Some(old) => self.secrets.set(&r, &old),
-                        None => self.secrets.delete(&r),
-                    };
+                if let Some(slot) = &fresh {
+                    let _ = self.secrets.delete(slot);
                 }
                 return Err(e);
             }
         };
 
-        // 3. A key the connection no longer uses.
-        let mut warning = None;
-        if matches!(prepared.key, KeyChange::Clear)
-            && let Some(old) = current
-                .connections
-                .iter()
-                .find(|c| c.id == id)
-                .and_then(|c| c.auth.secret_ref())
-            && self.secrets.delete(old).is_err()
-        {
-            warning = Some("The old key could not be removed from the keychain.".to_owned());
-        }
+        // 4. The file now points at the new key. A key the connection no longer uses can go.
+        let warning = retired
+            .filter(|old| self.secrets.delete(old).is_err())
+            .map(|_| "The old key could not be removed from the keychain.".to_owned());
         Ok(Saved { id, warning })
+    }
+
+    /// Writes `key` to a slot no other save can be using and returns where it went.
+    fn store_new_key(&self, id: &ConnectionId, key: &SecretString) -> Result<SecretRef, SaveError> {
+        let mut slot = slot::fresh(id).map_err(SaveError::Failed)?;
+        for _ in 0..4 {
+            if !matches!(self.secrets.get(&slot), Ok(Some(_))) {
+                break;
+            }
+            slot = slot::fresh(id).map_err(SaveError::Failed)?;
+        }
+        if self.secrets.set(&slot, key).is_err() {
+            let _ = self.secrets.delete(&slot);
+            return Err(SaveError::Failed(key_not_saved(&slot)));
+        }
+        Ok(slot)
     }
 
     /// Turns a connection on or off without losing it.
