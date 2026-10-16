@@ -8,6 +8,7 @@ bad mutant (fix the mutant). Cargo runs serially, targeted with `-p`, with `-j 8
 | Script | Groups |
 |---|---|
 | `mutation_check.py` | `u1 u3 u4 p4 p10 v1 v2 v3 sd lc lr nr ct u2` (connections, model sources, node packs, media, client flows, declarative adapter). Cases for `u2` are in `mutation_u2.py`. |
+| `mutation_check.py ps` | Node pack status report (`pack/status.rs`): links, hidden folders, names, the install record. |
 | `sam3_mutation_check.py` | `sg1 sg2 sg2b sg2c sg3` (SAM 3 masks, sessions, slots, cancel). |
 
 ```sh

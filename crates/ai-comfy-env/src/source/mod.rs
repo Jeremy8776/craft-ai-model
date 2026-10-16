@@ -24,7 +24,8 @@ pub use format::{Format, FormatProblem};
 pub use hosts::{HostRules, SourceKind, host_matches};
 pub use install::{Consents, InstallError, Installer, Refusal};
 pub use pack::{
-    PackCandidate, PackConsent, PackEntry, PackError, PackLimits, PackRefusal, PackSpec, parse_pack,
+    PackCandidate, PackConsent, PackEntry, PackError, PackLimits, PackRefusal, PackReport,
+    PackSpec, PackStatus, pack_status, parse_pack,
 };
 pub use registry::{Checksum, Entry, LicenceAcceptance, Registry};
 pub use resolve::Resolver;

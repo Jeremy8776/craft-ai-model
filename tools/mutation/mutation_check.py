@@ -422,7 +422,20 @@ CT = [
 
 from mutation_u2 import U2, U2_EQUIVALENT  # noqa: E402
 
-GROUPS = {'ct': CT, 'u2': U2, 'nr': NR, 'u1': U1, 'u3': U3, 'u4': U4, 'p4': P4, 'p10': P10, 'v1': V1, 'v2': V2, 'v3': V3, 'sd': SD, 'lc': LC, 'lr': LR}
+PS_RS = C + 'ai-comfy-env/src/source/pack/status.rs'
+PS = [
+    ('record-not-consulted', PS_RS, '.find(|r| r.folder.eq_ignore_ascii_case(&folder.name))', '.find(|_| false)', E, 'nodepack_status', 'reports_the_commit'),
+    ('first-record-taken-for-any-folder', PS_RS, '.find(|r| r.folder.eq_ignore_ascii_case(&folder.name))', '.next()', E, 'nodepack_status', 'changes_nothing_on_disk'),
+    ('wrong-commit-reported', PS_RS, 'commit: entry.commit.clone(),', 'commit: entry.reference.clone(),', E, 'nodepack_status', 'reports_the_commit'),
+    ('link-vouched-for-by-record', PS_RS, 'let real = kind.is_dir();', 'let real = true;', E, 'nodepack_status', 'no_longer_ours'),
+    ('dangling-link-counts', PS_RS, 'kind.is_symlink() && entry.path().is_dir()', 'kind.is_symlink()', E, 'nodepack_status', 'link_to_nowhere'),
+    ('file-counts-as-a-pack', PS_RS, '(real || linked_folder).then_some', 'true.then_some', E, 'nodepack_status', 'file_with_the_packs_name'),
+    ('hidden-folder-counts', PS_RS, "name.starts_with('.') || name == \"__pycache__\"", 'false', E, 'nodepack_status', 'hidden_and_cache'),
+    ('names-compared-case-sensitively', PS_RS, '.find(|f| f.name.eq_ignore_ascii_case(known))', '.find(|f| f.name == *known)', E, 'nodepack_status', 'person_put_there'),
+    ('damaged-record-read-as-empty', PS_RS, 'registry.packs()?', 'registry.packs().unwrap_or_default()', E, 'nodepack_status', 'damaged_record'),
+    ('only-the-first-known-name-tried', PS_RS, '.find_map(|known|', '.take(1).find_map(|known|', E, 'nodepack_status', 'any_of_the_known'),
+]
+GROUPS = {'ps': PS, 'ct': CT, 'u2': U2, 'nr': NR, 'u1': U1, 'u3': U3, 'u4': U4, 'p4': P4, 'p10': P10, 'v1': V1, 'v2': V2, 'v3': V3, 'sd': SD, 'lc': LC, 'lr': LR}
 # Mutants whose effect is also refused by a second, independent check on this machine. They are
 # recorded as equivalent here, with the reason, and are never counted as caught.
 EQUIVALENT = {

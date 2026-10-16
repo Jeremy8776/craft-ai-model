@@ -14,14 +14,19 @@
 //!   that a `requirements.txt` or `install.py` is present), and records the commit it installed.
 //! - [`Installer::remove_pack`](super::Installer::remove_pack) removes a pack this app installed,
 //!   and refuses a folder it did not.
+//! - [`pack_status`] says, for the packs a recipe names, which are installed by hand, installed
+//!   by this app (with the commit recorded) or missing. It only reads folder names.
 
 mod archive;
 mod install;
 mod resolve;
+mod status;
 
 use craft_ai_core::AiError;
 use serde::{Deserialize, Serialize};
 use url::Url;
+
+pub use status::{PackReport, PackStatus, pack_status};
 
 use super::spec::{SpecError, revision_ok, segments};
 
