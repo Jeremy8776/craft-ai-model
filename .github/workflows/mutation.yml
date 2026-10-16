@@ -1,0 +1,36 @@
+name: Deliberate-bug checks
+
+# Run by hand from the Actions tab. Each case breaks one safety rule on purpose and checks that a
+# test notices (see tools/mutation/README.md). It is slow, so it does not run on every push.
+on:
+  workflow_dispatch:
+    inputs:
+      group:
+        description: Case group to run, for example u3 or u4
+        required: true
+        default: u3
+
+env:
+  CARGO_TERM_COLOR: always
+
+permissions:
+  contents: read
+
+jobs:
+  mutation:
+    name: ${{ inputs.group }} (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: dtolnay/rust-toolchain@686976e191b89faba57d3206551f0f330d8cb249 # stable
+        with:
+          toolchain: stable
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2
+      - run: python3 tools/mutation/mutation_check.py "$GROUP"
+        env:
+          GROUP: ${{ inputs.group }}

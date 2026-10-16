@@ -431,6 +431,8 @@ EQUIVALENT = {
     'directory-taken-as-local-file': 'on Windows a directory reports length 0, which the size check also refuses; elsewhere the is_file check is what refuses it',
 }
 EQUIVALENT.update(U2_EQUIVALENT)
+# Both reasons above are about Windows; on Linux and macOS they are observed, not assumed.
+WINDOWS_ONLY_EQUIVALENT = {'directory-taken-as-local-file', 'input-folder-read'}
 TIMEOUTS = {}
 
 
@@ -468,12 +470,16 @@ def main():
                 log, _ = proc.communicate(timeout=TIMEOUTS.get(name, 400))
             except subprocess.TimeoutExpired:
                 timed_out = True
-                subprocess.run(['taskkill', '/T', '/F', '/PID', str(proc.pid)], capture_output=True)
+                if os.name == 'nt':
+                    subprocess.run(['taskkill', '/T', '/F', '/PID', str(proc.pid)], capture_output=True)
+                else:
+                    proc.kill()
                 log, _ = proc.communicate()
                 log += '\nTIMED OUT: the mutated code made the test hang'
             (OUT / ('mutation-' + name + '.txt')).write_text(scrub(log), encoding='utf-8')
             caught = timed_out or (proc.returncode != 0 and 'test result: FAILED' in log)
-            equivalent = (not caught) and name in EQUIVALENT
+            # Equivalent on Windows only: elsewhere the case is expected to be caught, and a miss there is a finding.
+            equivalent = (not caught) and name in EQUIVALENT and not (name in WINDOWS_ONLY_EQUIVALENT and os.name != 'nt')
             results.append({'mutation': name, 'caught_by_runtime_test': caught, 'timed_out': timed_out, 'equivalent': EQUIVALENT[name] if equivalent else None})
             print(name, 'CAUGHT' if caught else ('EQUIVALENT' if equivalent else 'NOT CAUGHT'), flush=True)
         finally:
