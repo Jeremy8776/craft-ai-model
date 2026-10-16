@@ -4,10 +4,11 @@
 //! It holds file names, sizes, checksums, addresses and licence acceptances, and never a token.
 //! It is written to a temporary file and renamed into place, so a crash leaves the old one.
 //!
-//! The licence part is a minimal form of "remember accepted licences" (issue #8): an acceptance holds
-//! for the same kind of source, the same pinned version and the same licence name and link, and
-//! a new version or changed terms are asked about again. The general ledger across recipes is
-//! not built.
+//! Licences the person accepted are kept in the same file but apart from the installed files
+//! (`licences.rs`): an acceptance holds for the same kind of source, the same pinned version and
+//! the same licence name and link, and a new version or changed terms are asked about again.
+
+mod licences;
 
 use std::path::PathBuf;
 
@@ -19,6 +20,8 @@ use super::candidate::Candidate;
 use super::format::Format;
 use super::hosts::SourceKind;
 use super::pack::PackEntry;
+
+pub use licences::LicenceRecord;
 
 const MAX_FILE_BYTES: u64 = 4 * 1024 * 1024;
 const MAX_ENTRIES: usize = 5000;
@@ -68,6 +71,8 @@ struct Document {
     entries: Vec<Entry>,
     #[serde(default)]
     packs: Vec<PackEntry>,
+    #[serde(default)]
+    licences: Vec<LicenceRecord>,
 }
 
 #[derive(Clone, Debug)]
@@ -163,21 +168,6 @@ impl Registry {
         }
         self.write(document)?;
         Ok(true)
-    }
-
-    /// Whether this exact version under these exact terms was accepted before.
-    pub fn licence_on_record(&self, candidate: &Candidate) -> bool {
-        self.list().is_ok_and(|entries| {
-            entries.iter().any(|e| {
-                e.licence_accepted.is_some()
-                    && e.kind == candidate.kind
-                    && e.pin == candidate.pin
-                    && e.licence.name == candidate.licence.name
-                    && e.licence.url == candidate.licence.url
-                    // A file from this computer has no version: each one is its own question.
-                    && (candidate.kind != SourceKind::Local || e.filename == candidate.filename)
-            })
-        })
     }
 
     fn write(&self, mut document: Document) -> Result<(), AiError> {

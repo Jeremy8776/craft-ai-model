@@ -435,7 +435,25 @@ PS = [
     ('damaged-record-read-as-empty', PS_RS, 'registry.packs()?', 'registry.packs().unwrap_or_default()', E, 'nodepack_status', 'damaged_record'),
     ('only-the-first-known-name-tried', PS_RS, '.find_map(|known|', '.take(1).find_map(|known|', E, 'nodepack_status', 'any_of_the_known'),
 ]
-GROUPS = {'ps': PS, 'ct': CT, 'u2': U2, 'nr': NR, 'u1': U1, 'u3': U3, 'u4': U4, 'p4': P4, 'p10': P10, 'v1': V1, 'v2': V2, 'v3': V3, 'sd': SD, 'lc': LC, 'lr': LR}
+LG_RS = C + 'ai-comfy-env/src/source/registry/licences.rs'
+LG_IN = C + 'ai-comfy-env/src/source/install.rs'
+LGT = 'source_licences'
+LG = [
+    ('licence-name-ignored', LG_RS, '&& self.name == c.licence.name', '&& true', E, LGT, 'new_version_changed_terms'),
+    ('licence-link-ignored', LG_RS, '&& self.url == c.licence.url', '&& true', E, LGT, 'new_version_changed_terms'),
+    ('version-ignored', LG_RS, '&& self.pin == c.pin', '&& true', E, LGT, 'new_version_changed_terms'),
+    ('source-kind-ignored', LG_RS, 'self.kind == c.kind\n', 'true\n', E, LGT, 'new_version_changed_terms'),
+    ('local-files-share-an-acceptance', LG_RS, '|| self.filename.as_deref() == Some(&c.filename)', '|| true', E, LGT, 'one_local_file'),
+    ('permissive-terms-recorded', LG_RS, 'if !candidate.licence.accept_required {', 'if false {', E, LGT, 'need_no_acceptance'),
+    ('acceptance-recorded-twice', LG_RS, 'if document.licences.iter().any(|r| r.covers(candidate)) {', 'if false {', E, LGT, 'accepting_twice'),
+    ('old-installs-forgotten', LG_RS, '.any(|e| e.licence_accepted.is_some() && entry_covers(e, candidate))', '.any(|_| false)', E, LGT, 'before_the_record_existed_still_counts'),
+    ('forget-leaves-old-installs', LG_RS, 'if entry_covers(e, candidate) && e.licence_accepted.take().is_some() {', 'if false {', E, LGT, 'before_the_record_existed_still_counts'),
+    ('forget-keeps-the-record', LG_RS, 'document.licences.retain(|r| !r.covers(candidate));', 'document.licences.retain(|_| true);', E, LGT, 'taken_back'),
+    ('damaged-record-read-as-empty', LG_RS, 'let document = self.read()?;\n        Ok(document.licences.iter()', 'let document = self.read().unwrap_or_default();\n        Ok(document.licences.iter()', E, LGT, 'damaged_record'),
+    ('damage-found-only-after-download', LG_IN, 'self.registry.list().map_err(|_| Refusal::Record)?;', '', E, LGT, 'damaged_record'),
+    ('install-forgets-the-yes', LG_IN, 'if candidate.licence.accept_required && consents.licence {', 'if false {', E, LGT, 'outlives_the_file'),
+]
+GROUPS = {'lg': LG, 'ps': PS, 'ct': CT, 'u2': U2, 'nr': NR, 'u1': U1, 'u3': U3, 'u4': U4, 'p4': P4, 'p10': P10, 'v1': V1, 'v2': V2, 'v3': V3, 'sd': SD, 'lc': LC, 'lr': LR}
 # Mutants whose effect is also refused by a second, independent check on this machine. They are
 # recorded as equivalent here, with the reason, and are never counted as caught.
 EQUIVALENT = {

@@ -67,6 +67,9 @@ pub enum Refusal {
         needed: u64,
         available: u64,
     },
+    /// The list of installed models and accepted licences cannot be read, so nothing is
+    /// installed until that is sorted out.
+    Record,
 }
 
 #[derive(Debug)]
@@ -135,6 +138,8 @@ impl Installer {
         has_token: bool,
     ) -> Result<PathBuf, Refusal> {
         let target_dir = self.comfy.models_dir_for(folder).ok_or(Refusal::Folder)?;
+        // Better to say so now than after a download that could not be recorded.
+        self.registry.list().map_err(|_| Refusal::Record)?;
         if !plain_name(&candidate.filename)
             || Format::from_name(&candidate.filename) == Format::Unknown
         {
@@ -147,7 +152,13 @@ impl Installer {
         if needs.pickle && !consents.pickle {
             return Err(Refusal::Pickle);
         }
-        if needs.licence && !consents.licence && !self.registry.licence_on_record(candidate) {
+        if needs.licence
+            && !consents.licence
+            && !self
+                .registry
+                .licence_accepted(candidate)
+                .map_err(|_| Refusal::Record)?
+        {
             return Err(Refusal::Licence);
         }
         if needs.unverified && !consents.unverified {
@@ -185,6 +196,9 @@ impl Installer {
         let target_dir = self
             .check(candidate, folder, consents, token.is_some())
             .map_err(InstallError::Refused)?;
+        if candidate.licence.accept_required && consents.licence {
+            self.registry.accept_licence(candidate, unix_seconds())?;
+        }
         let stage = self.staging_dir_for(candidate);
         std::fs::create_dir_all(&stage)
             .map_err(|_| internal("could not create the staging folder"))?;
