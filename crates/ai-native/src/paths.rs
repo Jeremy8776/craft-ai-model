@@ -1,5 +1,5 @@
 //! Where the AI files live on disk. This is the per-OS location the launcher writes and every app
-//! reads (task l3, still a proposal until it is settled with the launcher owner).
+//! reads (a proposal until it is settled with the launcher's maintainers).
 //!
 //! | OS | Directory |
 //! |---|---|

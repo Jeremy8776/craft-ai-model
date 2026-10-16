@@ -1,4 +1,4 @@
-//! The tool-first model picker's data (task v2), against a temporary store and no servers.
+//! The tool-first model picker's data, against a temporary store and no servers.
 
 use std::sync::Arc;
 

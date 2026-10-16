@@ -4,7 +4,7 @@
 //! It holds file names, sizes, checksums, addresses and licence acceptances, and never a token.
 //! It is written to a temporary file and renamed into place, so a crash leaves the old one.
 //!
-//! The licence part is a minimal form of "remember accepted licences" (t8): an acceptance holds
+//! The licence part is a minimal form of "remember accepted licences" (issue #8): an acceptance holds
 //! for the same kind of source, the same pinned version and the same licence name and link, and
 //! a new version or changed terms are asked about again. The general ledger across recipes is
 //! not built.

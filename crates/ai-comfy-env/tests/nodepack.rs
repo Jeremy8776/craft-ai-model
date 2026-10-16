@@ -1,5 +1,5 @@
 #![allow(dead_code)]
-//! u4: installing a ComfyUI node pack from a GitHub address. The pack runs arbitrary Python inside
+//! Installing a ComfyUI node pack from a GitHub address. The pack runs arbitrary Python inside
 //! ComfyUI, so these tests pin what is shown, what is consented to, and that nothing is run or
 //! pip-installed. What an archive may contain is in `nodepack_archive.rs`. Scripted localhost
 //! servers and temporary folders only: no real repository is read and no real ComfyUI is touched.

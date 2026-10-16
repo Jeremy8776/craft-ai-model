@@ -1,15 +1,15 @@
 //! Shared egui widgets for the Craft AI layer.
 //!
-//! Three widgets that every egui Craft app mounts the same way, so the AI experience is identical
+//! Widgets that every egui Craft app mounts the same way, so the AI experience is identical
 //! across the suite:
 //!
-//! | Widget | Task | Reports |
-//! |---|---|---|
-//! | [`ai_status`] | u1 | open the launcher, pick a model, use the default |
-//! | [`consent_prompt`] | u2 | allow or don't send |
-//! | [`job_progress`] | u3 | cancel |
-//! | [`ConnectionPanel`] | u1 (s0g) | saved, closed |
-//! | [`history_view`] | issue #2 | refresh, clear, CSV export |
+//! | Widget | Reports |
+//! |---|---|
+//! | [`ai_status`] | open the launcher, pick a model, use the default |
+//! | [`consent_prompt`] | allow or don't send |
+//! | [`job_progress`] | cancel |
+//! | [`ConnectionPanel`] | saved, closed |
+//! | [`history_view`] | refresh, clear, CSV export |
 //!
 //! They draw and report; the app acts, through [`AiClient`](craft_ai_client::AiClient). The wording
 //! is in [`text`] as plain functions, so an app with its own UI can reuse the same sentences. Colours

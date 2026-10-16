@@ -1,4 +1,4 @@
-//! The model picker (task v2): a tool's models listed under the provider that serves them.
+//! The model picker: a tool's models listed under the provider that serves them.
 //!
 //! Theme neutral: it draws with the host's own visuals and takes no colours of its own beyond the
 //! host's warning colour. The data comes from `AiClient::picker`; the widget only reports what the

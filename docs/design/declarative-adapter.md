@@ -1,7 +1,7 @@
-# u2 design: a declarative adapter for providers that are not OpenAI-shaped
+# Design: a declarative adapter for providers that are not OpenAI-shaped
 
 Written 12/10/2026. **Built 13/10/2026** (see "As built" at the end); the rest of this note is the original design.
-Task id: u2. Depended on u1 (custom connections), p1 and p3.
+It builds on custom connections (see `docs/custom-connections-and-sources.md`).
 
 ## What it is
 
@@ -44,11 +44,11 @@ live in the wasm-safe model crate so the launcher can check a spec as it is past
 - `base`: https, or http for a loopback address, by the same `Endpoint` rule as every connection.
   Every call is `base` plus a path. A path starts with `/`, has no `..`, no `//`, no scheme and no
   host. An absolute URL in a path is an error.
-- `auth`: `bearer` (default), `header` with a name (the `check_key_header` rules from u1), or `none`.
+- `auth`: `bearer` (default), `header` with a name (the `check_key_header` rules for custom connections), or `none`.
   The key is never part of a spec. It comes from the connection's secret reference, exactly as for
   every other connection, and is only ever placed in the one header `auth` names.
 - `models`: at most 16. Each declares its capability and the inputs it takes. Nothing is offered
-  that the spec does not declare, the same rule as a u1 connection.
+  that the spec does not declare, the same rule as a custom connection.
 - `probe`: an optional free request for the Test button. Without one, Test reports that nothing
   could be confirmed.
 
@@ -91,7 +91,7 @@ live in the wasm-safe model crate so the launcher can check a spec as it is past
   pointers at most 8 levels deep, status table at most 16 entries.
 - Unknown fields are refused (`deny_unknown_fields`). A feature this version does not have fails
   with its name, for example "unsupported: flow.webhook", instead of being ignored.
-- Static headers a spec may add: `accept` and names that pass the u1 header rules, values at most
+- Static headers a spec may add: `accept` and names that pass the custom connection header rules, values at most
   256 printable ASCII characters. No header can be `authorization`, `host`, `cookie` or anything
   the transport owns.
 - At run time: no redirects followed, replies capped (32 MiB for JSON, with the existing 128 MiB
@@ -113,7 +113,7 @@ live in the wasm-safe model crate so the launcher can check a spec as it is past
 - New native crate `craft-ai-declarative`: the runner that implements `Provider`, with the HTTP
   layer copied in shape from `craft-ai-bfl` (no redirects, redacted errors, capped bodies).
 - Storage: a spec is a file beside the connections store (`specs/<id>.json`). A connection uses it
-  through `provider: "declarative"` and a new optional `spec` field holding the spec id. The u1
+  through `provider: "declarative"` and a new optional `spec` field holding the spec id. The custom connection
   `key_header` field is not used for such a connection: `auth` in the spec replaces it, so there is
   one place to look.
 - `ProviderFactory` registers `declarative`; nothing in `AiClient` changes.
@@ -130,7 +130,7 @@ Both pass the shared conformance suite (`run_lifecycle_paced`, `run_cancel_paced
 field, a reserved header, a key placeholder in a body, a redirect, an oversized reply, a status that
 never becomes final (poll budget), a job id with control characters, a status word that is not in
 the table, a prompt that tries to inject a field, and every size limit at and just past its edge.
-Then the deliberate-bug check in `docs/research/phase2d/mutation_check.py` with one case per rule.
+Then the deliberate-bug check in `tools/mutation/mutation_check.py` with one case per rule.
 
 Size estimate: about 900 lines in four files (types and validator, templates and extraction, runner,
 tests), none above 500.
@@ -158,8 +158,8 @@ tests), none above 500.
 Code: `crates/ai-core/src/spec.rs` and `spec/` (types, checker, substitutions; wasm-safe),
 `crates/ai-declarative` (the runner), `crates/ai-client/src/declarative.rs` (the factory entry).
 Tests: `ai-core/tests/spec_*.rs`, `ai-declarative/tests/{queue,direct}.rs`,
-`ai-client/tests/declarative.rs`. Deliberate-bug cases: group `u2` in
-`docs/research/phase2d/mutation_check.py` (cases in `mutation_u2.py`).
+`ai-client/tests/declarative.rs`. Deliberate-bug cases: mutation group `u2` in
+`tools/mutation/mutation_check.py` (cases in `mutation_u2.py`).
 
 Where it differs from the design above:
 

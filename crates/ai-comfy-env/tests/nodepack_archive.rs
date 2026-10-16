@@ -1,5 +1,5 @@
 #![allow(dead_code)]
-//! u4: what an archive from GitHub may contain. The pack is hostile until it has been read, so
+//! What an archive from GitHub may contain. The pack is hostile until it has been read, so
 //! every refusal here is checked for the reason it gives, not only for being a refusal: a case
 //! that some other check happens to catch would otherwise hide a check that has gone missing.
 mod nodepack_rig;

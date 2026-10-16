@@ -1,5 +1,5 @@
 #![allow(dead_code)]
-//! u3: the downloader's extra rules for user-chosen sources: an allow-list of hosts that applies
+//! The downloader's extra rules for user-chosen sources: an allow-list of hosts that applies
 //! to every hop, a download whose checksum nobody published (observed, not verified), and a size
 //! probe. Scripted localhost servers only.
 #[path = "../../ai-openai/tests/support/mod.rs"]

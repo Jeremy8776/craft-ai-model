@@ -1,4 +1,4 @@
-//! u1: adding a server that is not on the list. The connection manager probes it, says what it
+//! Adding a server that is not on the list. The connection manager probes it, says what it
 //! confirmed and what it could not, and a custom connection only offers the abilities a person
 //! declared. Scripted localhost servers only; nothing here reaches the internet or a real key.
 

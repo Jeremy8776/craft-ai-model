@@ -1,4 +1,4 @@
-//! u1: what a custom (unlisted, OpenAI-shaped) server needs from the adapter: a named key header
+//! What a custom (unlisted, OpenAI-shaped) server needs from the adapter: a named key header
 //! that still never follows a redirect, a raw model list, and models declared by a person with
 //! only the abilities they were declared with. Scripted localhost servers only.
 

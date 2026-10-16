@@ -1,6 +1,6 @@
 //! Where a person may ask for a model file to come from, and the rules each place carries.
 //!
-//! This module group is the model-source registry (task u3). Everything here is checked before a
+//! This module group is the model-source registry. Everything here is checked before a
 //! byte is fetched:
 //!
 //! - [`hosts`]: the only hosts each kind of source may use, including the storage hosts it

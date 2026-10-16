@@ -1,4 +1,4 @@
-//! One binding, every app (task v1): a tool has one suite-wide id, the launcher's choice for it is
+//! One binding, every app: a tool has one suite-wide id, the launcher's choice for it is
 //! stored once, and every app that has the tool reads that same choice with no setup of its own.
 
 use std::sync::Arc;

@@ -18,7 +18,7 @@ data, consent and jobs. It does not own any app's interface. Each app decides ho
 Crates keep the flat `crates/` folder on purpose. PhotoCraft and the launcher reach into it by
 path today, so moving a crate breaks their builds.
 
-`docs/design/` holds designs (u2). `docs/STATUS.md` says what is tested and what is open. The deliberate-bug
+`docs/design/` holds design notes. `docs/STATUS.md` says what is tested and what is open. The deliberate-bug
 scripts are in `tools/mutation/`; everything a script saves goes through `tools/mutation/scrub.py`.
 
 ## Not in this repository

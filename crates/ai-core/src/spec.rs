@@ -1,5 +1,5 @@
 //! A declarative route: a small data file that describes how to call a provider whose API is not
-//! OpenAI-shaped (design note `docs/design/u2-declarative-adapter.md`).
+//! OpenAI-shaped (design note `docs/design/declarative-adapter.md`).
 //!
 //! A spec runs no code. It names the calls to make, where the key goes and where in each reply to
 //! find the result. This module holds the types and the pure checker, so it compiles for wasm and

@@ -1,10 +1,9 @@
 //! Shared data model for AI in the Craft apps: connections, models, capabilities, roles,
 //! requests, jobs, consent and the launcher's shared store.
 //!
-//! This is the **interim contract** (task x1). It is small on purpose, has no I/O and no async
-//! runtime, and compiles for wasm. Apps build their adapters against it and test with
-//! [`mock::MockProvider`]. When the suite's AI core is chosen, it should adopt or replace this
-//! model, and the swap should touch one module per app.
+//! This contract is **provisional** until its review in `storytold/craft-libs` finishes. It is
+//! small on purpose, has no I/O and no async runtime, and compiles for wasm. Apps build their
+//! adapters against it and test with [`mock::MockProvider`].
 //!
 //! # Map
 //!
@@ -25,7 +24,7 @@
 //! | [`consent`] | [`Disclosure`], [`ConsentLedger`], [`ConsentTerm`] |
 //! | [`store`] | [`StoreFile`], the launcher's versioned shared store |
 //! | [`picks`] | model presets: [`Pick`], the curated [`Catalog`], and [`picks::choose`] |
-//! | [`spec`] | a provider described as data: types, checker and substitutions (task u2) |
+//! | [`spec`] | a provider described as data: types, checker and substitutions |
 //! | [`provider`] | the [`Provider`] trait |
 //! | [`mock`], [`conformance`] | scripted provider and reusable behaviour checks |
 

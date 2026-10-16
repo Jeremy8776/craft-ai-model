@@ -5,11 +5,11 @@ the crates are for and `docs/LAYOUT.md` says what lives where. Read both before 
 
 ## Branches and pull requests
 
-`main` is protected. Nothing is pushed to it directly, and it cannot be force-pushed or deleted.
+Changes reach `main` through a pull request. Nothing is pushed to it directly.
 
 1. Branch off `main`. Keep the branch short-lived and focused on one change.
 2. Open a pull request into `main`. Explain what changed and why, and how you checked it.
-3. Resolve every review conversation. New commits dismiss earlier approvals.
+3. Resolve every review conversation before merging.
 4. Merge by squash or rebase. History stays linear, so merge commits are off.
 5. The branch is deleted after merge. Delete your local copy too.
 
@@ -43,15 +43,14 @@ docs: add LAYOUT.md
 
 ## Building and testing
 
-Builds are heavy, so keep them targeted:
+Builds are heavy, so keep them targeted to the crate you changed. CI runs the whole workspace.
 
 ```
 cargo test -p <crate> -j 8
 cargo clippy -p <crate> -j 8
 ```
 
-Run one cargo process at a time and avoid workspace-wide builds. Tests that touch the real OS keychain
-are `#[ignore]`d and run on request, for example
+Tests that touch the real OS keychain are `#[ignore]`d and run on request, for example
 `cargo test -p craft-ai-native -- --ignored keychain_round_trip`. egui widgets need Rust 1.95.
 
 ## Licence

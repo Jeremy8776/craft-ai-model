@@ -1,4 +1,4 @@
-//! The compact status and model picker (task u1): is this feature usable, which model does it use,
+//! The compact status and model picker: is this feature usable, which model does it use,
 //! and a way to change that or open the launcher.
 //!
 //! The widget reports what the user asked for; the app acts on it (`AiClient::bind`,

@@ -5,7 +5,7 @@
 //! `CRAFT_AI_SECRET_CONN_01_KEY`. Two references that differ only in punctuation share a
 //! variable; that is acceptable for a fallback and documented here.
 //!
-//! The launcher never starts an app with secrets in its environment (task l5). This store exists
+//! The launcher never starts an app with secrets in its environment. This store exists
 //! for runs where no launcher or keychain is present.
 
 use craft_ai_core::{AiError, SecretRef, SecretString};

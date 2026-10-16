@@ -1,4 +1,4 @@
-//! Node packs from a GitHub address (task u4).
+//! Node packs from a GitHub address.
 //!
 //! A node pack is Python that ComfyUI imports and runs with the person's own access, so this
 //! module is built around one rule: **nothing runs, ever, during an install.** What it does:

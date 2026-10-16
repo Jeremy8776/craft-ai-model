@@ -1,4 +1,4 @@
-//! A tool's local model becomes something an app can read (Phase 2e, vertical slice).
+//! A tool's local model becomes something an app can read.
 //!
 //! The catalogue says a tool has a local recipe (SAM 3 for Select subject), and the launcher shows
 //! it Ready once the files and node pack are in place. Until now nothing in the shared store

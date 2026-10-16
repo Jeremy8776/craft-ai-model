@@ -15,6 +15,8 @@ python tools/mutation/mutation_check.py u2            # one group
 python tools/mutation/mutation_check.py u2 stale      # cases whose name contains "stale"
 ```
 
+Group ids are historical labels. The header of each test file says what it covers.
+
 Run them exclusively. They snapshot and restore source files, so do not edit, format or build those
 files while one runs. Afterwards read the restored source and rerun the focused tests.
 

@@ -1,0 +1,30 @@
+name: Bug report
+description: Something in the AI layer does not work as documented
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected and what you got. Never paste an API key.
+    validations:
+      required: true
+  - type: input
+    id: crate
+    attributes:
+      label: Crate and version or commit
+      placeholder: craft-ai-client, aea912b
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options: [Windows, macOS, Linux, Not specific to one]
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: The smallest steps that show it. A failing test is ideal.

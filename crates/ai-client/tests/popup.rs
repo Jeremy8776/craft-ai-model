@@ -1,4 +1,4 @@
-//! The in-app missing-model popup's flow (task v3): a tool with no model reports what it needs, a
+//! The in-app missing-model popup's flow: a tool with no model reports what it needs, a
 //! choice binds for every app, and an app reaches the same answer as the launcher.
 
 use std::sync::Arc;

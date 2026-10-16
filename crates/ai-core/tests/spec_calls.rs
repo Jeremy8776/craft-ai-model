@@ -1,4 +1,4 @@
-//! How calls may use substitutions and what a flow must send (task u2). Each case feeds an input
+//! How calls may use substitutions and what a flow must send. Each case feeds an input
 //! that only the named rule refuses.
 
 mod spec_support;

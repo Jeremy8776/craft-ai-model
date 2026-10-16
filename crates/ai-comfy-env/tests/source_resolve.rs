@@ -1,4 +1,4 @@
-//! u3: turning a pasted address into a described, pinned file by asking the host for its size and
+//! Turning a pasted address into a described, pinned file by asking the host for its size and
 //! checksum, against scripted servers that imitate each host's documented replies. Live behaviour
 //! of the real hosts is not exercised.
 #![allow(dead_code)]

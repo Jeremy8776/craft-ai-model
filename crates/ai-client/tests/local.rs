@@ -1,4 +1,4 @@
-//! A tool's local model as a connection an app can read (Phase 2e vertical slice).
+//! A tool's local model as a connection an app can read.
 
 use std::sync::Arc;
 

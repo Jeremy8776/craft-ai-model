@@ -1,6 +1,6 @@
 # Custom connections and local sources
 
-This page describes the current u1, u3 and u4 implementation. It records what the code does; it does not
+This page describes the current implementation of custom connections, model sources and node packs. It records what the code does; it does not
 claim that a real provider, download or GitHub repository has been tested.
 
 ## Custom OpenAI-compatible connections

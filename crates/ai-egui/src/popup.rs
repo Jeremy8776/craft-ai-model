@@ -1,4 +1,4 @@
-//! The in-app missing-model popup (task v3), as a neutral fallback.
+//! The in-app missing-model popup, as a neutral fallback.
 //!
 //! An app that already has a tool but no model for it shows this, or draws its own over the same
 //! [`MissingModel`] data in its own theme. It reports what the person asked for; the app binds a

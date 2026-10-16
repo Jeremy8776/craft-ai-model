@@ -1,4 +1,4 @@
-//! u3: the pure rules of the model-source registry: which hosts a kind of source may use, which
+//! The pure rules of the model-source registry: which hosts a kind of source may use, which
 //! file formats are installed, and what a person-supplied address means. No network, no disk.
 
 use craft_ai_comfy_env::source::{

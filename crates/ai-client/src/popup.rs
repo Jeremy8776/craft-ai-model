@@ -1,4 +1,4 @@
-//! What an app's missing-model popup shows (task v3).
+//! What an app's missing-model popup shows.
 //!
 //! An app already has a tool, such as Select subject, but no model is chosen for it, or the choice
 //! stopped working. [`ToolDesk::missing_model`](crate::ToolDesk::missing_model) hands the app this

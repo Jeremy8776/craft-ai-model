@@ -1,4 +1,4 @@
-//! The data behind a tool-first model picker (task v2).
+//! The data behind a tool-first model picker.
 //!
 //! A person chooses a tool, then a model for it. The models are listed under the provider that
 //! serves them, each with one line saying what is known about it. Only models able to do the tool

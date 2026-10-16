@@ -1,5 +1,5 @@
 #![allow(dead_code)]
-//! Shared by the u4 node pack tests: a small tar writer for good and hostile archives, scripted
+//! Shared by the node pack tests: a small tar writer for good and hostile archives, scripted
 //! localhost servers standing in for GitHub, and a rig that installs into a temporary ComfyUI
 //! folder. No real repository is read and no real ComfyUI is touched.
 #[path = "../../../ai-openai/tests/support/mod.rs"]

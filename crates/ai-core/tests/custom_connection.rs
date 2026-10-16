@@ -1,4 +1,4 @@
-//! u1: the rules for a custom (unlisted, OpenAI-shaped) connection: a named key header, and what
+//! The rules for a custom (unlisted, OpenAI-shaped) connection: a named key header, and what
 //! a stored file may carry. The form is `ConnectionDraft`; these tests go through its public API.
 
 use craft_ai_core::connection::ConnectionError;

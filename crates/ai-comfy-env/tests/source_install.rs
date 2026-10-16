@@ -1,5 +1,5 @@
 #![allow(dead_code)]
-//! u3: installing a described file. Every refusal is tested alone with everything else in order,
+//! Installing a described file. Every refusal is tested alone with everything else in order,
 //! against scripted localhost servers and temporary folders. Nothing is downloaded from a real
 //! host and no real ComfyUI is touched.
 #[path = "../../ai-openai/tests/support/mod.rs"]

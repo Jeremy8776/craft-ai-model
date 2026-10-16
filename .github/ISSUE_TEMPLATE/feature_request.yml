@@ -1,0 +1,21 @@
+name: Feature request
+description: Suggest a provider, tool, model source or change to the shared layer
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What is hard or impossible today, and for whom.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: What you would like to see. Say if it touches the shared contract in craft-libs.
+  - type: textarea
+    id: done
+    attributes:
+      label: Done when
+      description: How we would know it works, ideally as tests.

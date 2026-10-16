@@ -1,4 +1,4 @@
-//! The consent prompt (task u2): what is about to leave the machine, and a clear yes or no.
+//! The consent prompt: what is about to leave the machine, and a clear yes or no.
 //!
 //! The widget only reports the choice. The app records agreement in its `ConsentLedger` (and saves
 //! it) when the choice is [`ConsentChoice::Allow`], and does nothing when it is `Deny`.
