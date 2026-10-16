@@ -1,9 +1,0 @@
-   Compiling craft-ai-comfy-env v0.1.0 (%USERPROFILE%\Apps\ArtCraft\craft-ai-model\crates\ai-comfy-env)
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.34s
-     Running tests\source_resolve.rs (target\debug\deps\source_resolve-09d507fde58a88b0.exe)
-
-running 1 test
-test a_file_on_this_computer_is_described_without_being_hashed_or_trusted ... ok
-
-test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 15 filtered out; finished in 0.00s
-

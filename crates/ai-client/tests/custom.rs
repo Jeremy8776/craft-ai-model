@@ -13,7 +13,7 @@ use craft_ai_client::{
     AiClient, Confirmed, ConnectionManager, ModelChoice, RoleStatus, SaveError, Unconfirmed,
     declare_models,
 };
-use craft_ai_model::{
+use craft_ai_core::{
     AppId, Billing, Binding, CapabilityId, ConnectionDraft, ConnectionId, ConsentLedger, ErrorKind,
     InputRole, JobState, ModelId, Payload, Request, Role, RoleId, SecretRef, SecretString,
 };
@@ -201,7 +201,7 @@ fn only_a_custom_connection_gets_the_probe() {
     let r = rig();
     let server = Server::start(|_| Reply::Json(200, list(&["llama3"])));
     let mut d = ConnectionDraft::from_preset(
-        craft_ai_model::PRESETS
+        craft_ai_core::PRESETS
             .iter()
             .find(|p| p.key == "ollama")
             .unwrap(),
@@ -212,7 +212,7 @@ fn only_a_custom_connection_gets_the_probe() {
     assert_eq!(report.models.len(), 1);
 }
 
-fn choose(ids: &[(&str, &[Kind])]) -> Vec<craft_ai_model::ModelInfo> {
+fn choose(ids: &[(&str, &[Kind])]) -> Vec<craft_ai_core::ModelInfo> {
     let choices: Vec<_> = ids
         .iter()
         .map(|(id, kinds)| ModelChoice {
@@ -300,14 +300,14 @@ impl SecretStore for Counting {
     fn name(&self) -> &'static str {
         "counting"
     }
-    fn get(&self, k: &SecretRef) -> Result<Option<SecretString>, craft_ai_model::AiError> {
+    fn get(&self, k: &SecretRef) -> Result<Option<SecretString>, craft_ai_core::AiError> {
         self.gets.fetch_add(1, Ordering::SeqCst);
         self.inner.get(k)
     }
-    fn set(&self, k: &SecretRef, v: &SecretString) -> Result<(), craft_ai_model::AiError> {
+    fn set(&self, k: &SecretRef, v: &SecretString) -> Result<(), craft_ai_core::AiError> {
         self.inner.set(k, v)
     }
-    fn delete(&self, k: &SecretRef) -> Result<(), craft_ai_model::AiError> {
+    fn delete(&self, k: &SecretRef) -> Result<(), craft_ai_core::AiError> {
         self.inner.delete(k)
     }
 }
@@ -390,7 +390,7 @@ fn a_remote_custom_connection_still_needs_agreement_before_anything_is_sent() {
 fn a_header_name_is_refused_by_the_manager_and_nothing_is_saved() {
     let (r, server) = (rig(), gateway());
     let e = r.manager.save(&custom(&server, "host")).unwrap_err();
-    assert!(matches!(e, SaveError::Invalid(f) if f.field == craft_ai_model::Field::KeyHeader));
+    assert!(matches!(e, SaveError::Invalid(f) if f.field == craft_ai_core::Field::KeyHeader));
     assert!(r.manager.views().unwrap().is_empty());
     assert!(
         r.secrets

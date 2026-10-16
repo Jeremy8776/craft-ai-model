@@ -13,10 +13,10 @@
 //! }
 //! ```
 //!
-//! Money shown is only what providers reported. See [`craft_ai_model::history::report`].
+//! Money shown is only what providers reported. See [`craft_ai_core::history::report`].
 
-use craft_ai_model::HistoryLog;
-use craft_ai_model::history::report::{
+use craft_ai_core::HistoryLog;
+use craft_ai_core::history::report::{
     HistoryFilter, Totals, apps, by_day, by_month, models, start_of_day_ms, to_csv, totals,
 };
 use egui::{ComboBox, ScrollArea, Ui};

@@ -3,12 +3,12 @@
 
 mod support;
 
-use craft_ai_model::conformance::{
+use craft_ai_core::conformance::{
     run_cancel_paced, run_lifecycle_paced, run_rejects, run_unknown_job,
 };
-use craft_ai_model::job::{Event, JobState};
-use craft_ai_model::payload::base64_encode;
-use craft_ai_model::{
+use craft_ai_core::job::{Event, JobState};
+use craft_ai_core::payload::base64_encode;
+use craft_ai_core::{
     AiError, CapabilityId, ErrorKind, InputRole, ModelId, Payload, Provider, Request, SecretString,
 };
 use craft_ai_openai::{OpenAiConfig, OpenAiProvider};
@@ -28,7 +28,7 @@ fn lifecycle(
     p: &dyn Provider,
     m: &ModelId,
     r: &Request,
-) -> Result<craft_ai_model::conformance::Completed, String> {
+) -> Result<craft_ai_core::conformance::Completed, String> {
     run_lifecycle_paced(p, m, r, &pause)
 }
 
@@ -483,7 +483,7 @@ fn only_so_many_jobs_run_at_once() {
 }
 
 /// Submits one text job and polls it to the end, returning the usage the final snapshot carried.
-fn usage_of(server_url: &str) -> Option<craft_ai_model::Usage> {
+fn usage_of(server_url: &str) -> Option<craft_ai_core::Usage> {
     let p = provider(server_url);
     let id = p.submit(&model("gpt-4o"), &text_req()).unwrap();
     for _ in 0..400 {

@@ -4,9 +4,9 @@
 
 mod support;
 
-use craft_ai_model::conformance::run_lifecycle_paced;
-use craft_ai_model::job::JobState;
-use craft_ai_model::{
+use craft_ai_core::conformance::run_lifecycle_paced;
+use craft_ai_core::job::JobState;
+use craft_ai_core::{
     CapabilityId, ErrorKind, InputRole, ModelId, Payload, Provider, Request, SecretString,
 };
 use craft_ai_openai::catalog::{Kind, declare, suggest};

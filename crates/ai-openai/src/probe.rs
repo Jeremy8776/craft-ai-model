@@ -8,7 +8,7 @@
 
 use std::collections::BTreeSet;
 
-use craft_ai_model::{AiError, ErrorKind, ModelId};
+use craft_ai_core::{AiError, ErrorKind, ModelId};
 use serde_json::Value;
 
 use crate::OpenAiConfig;

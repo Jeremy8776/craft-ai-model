@@ -2,11 +2,11 @@
 #[path = "../../ai-openai/tests/support/mod.rs"]
 mod support;
 
-use craft_ai_media::{MediaStore, MediaStoreConfig, PersistingProvider};
-use craft_ai_model::{
+use craft_ai_core::{
     AiError, ErrorKind, Event, JobId, JobSnapshot, JobState, ModelId, ModelInfo, Output, Payload,
     Provider, Request,
 };
+use craft_ai_media::{MediaStore, MediaStoreConfig, PersistingProvider};
 use std::path::Path;
 use std::sync::{Arc, Mutex};
 use support::{Reply, Server, http_bytes};

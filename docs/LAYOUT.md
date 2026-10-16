@@ -1,6 +1,6 @@
 # Layout: what lives where
 
-This repository is the shared AI layer for the Craft apps: one connection, set up once, used by
+This repository is the runtime half of the shared AI layer for the Craft apps: one connection, set up once, used by
 every app that has the tool. It owns connections, models, the tool to model binding, the picker
 data, consent and jobs. It does not own any app's interface. Each app decides how a tool looks
 (a prompt bar, a one-click button, a click on the image), in its own repository.
@@ -9,7 +9,7 @@ data, consent and jobs. It does not own any app's interface. Each app decides ho
 
 | Group | Crates | Owns |
 |---|---|---|
-| Core | `ai-model`, `ai-native`, `ai-client`, `ai-features` | The data model and provider trait (wasm-safe), secret stores, the shared store and its location, history and consent files, the app-facing client and tool desk, the tool catalogue and setup options. |
+| Core | `ai-core`, `ai-native`, `ai-client`, `ai-features` | The data model and provider trait (wasm-safe), secret stores, the shared store and its location, history and consent files, the app-facing client and tool desk, the tool catalogue and setup options. |
 | Adapters | `ai-openai`, `ai-bfl`, `ai-vertex`, `ai-artcraft`, `ai-seedance`, `ai-comfyui`, `ai-sam3` | One crate per provider API shape. Each is registered in `ai-client`'s `ProviderFactory`. |
 | HTTP | `ai-http` | The one TLS setting every adapter and downloader uses (the platform's certificate check), and a test that fails if any crate builds an agent without it. |
 | Local runtime | `ai-comfy-env`, `ai-media` | Finding an existing ComfyUI, model sources and checksummed downloads, node packs, and durable media transfer. |
@@ -18,9 +18,8 @@ data, consent and jobs. It does not own any app's interface. Each app decides ho
 Crates keep the flat `crates/` folder on purpose. PhotoCraft and the launcher reach into it by
 path today, so moving a crate breaks their builds.
 
-`docs/design/` holds designs (u2). `docs/research/` holds the audits and the deliberate-bug
-scripts with their saved results; everything a script saves goes through
-`docs/research/sam3-headless/scrub.py`.
+`docs/design/` holds designs (u2). `docs/STATUS.md` says what is tested and what is open. The deliberate-bug
+scripts are in `tools/mutation/`; everything a script saves goes through `tools/mutation/scrub.py`.
 
 ## Not in this repository
 

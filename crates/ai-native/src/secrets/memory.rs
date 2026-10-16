@@ -3,7 +3,7 @@
 use std::collections::BTreeMap;
 use std::sync::Mutex;
 
-use craft_ai_model::{AiError, SecretRef, SecretString};
+use craft_ai_core::{AiError, SecretRef, SecretString};
 
 use super::SecretStore;
 

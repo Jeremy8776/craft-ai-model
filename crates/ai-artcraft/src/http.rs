@@ -1,5 +1,5 @@
 //! Same-origin Omni API calls. No cookies, redirects or key-bearing error text.
-use craft_ai_model::{AiError, ErrorKind, SecretString};
+use craft_ai_core::{AiError, ErrorKind, SecretString};
 use serde_json::Value;
 use std::{io::Read, time::Duration};
 use ureq::{Body, http::Response};

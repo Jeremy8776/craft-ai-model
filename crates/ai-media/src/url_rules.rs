@@ -9,7 +9,7 @@
 //! Names are compared without a trailing dot (`localhost.` is `localhost`), and an IPv6 address
 //! that carries an IPv4 one (mapped, compatible, NAT64, 6to4) is judged by the IPv4 inside it.
 
-use craft_ai_model::{AiError, ErrorKind};
+use craft_ai_core::{AiError, ErrorKind};
 use std::net::{IpAddr, Ipv4Addr, Ipv6Addr, ToSocketAddrs};
 use url::{Host, Url};
 

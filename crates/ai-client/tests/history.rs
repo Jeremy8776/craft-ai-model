@@ -6,8 +6,8 @@ use std::sync::{Arc, Mutex};
 use std::time::Duration;
 
 use craft_ai_client::{AiClient, ProviderFactory};
-use craft_ai_model::history::MAX_PROMPT_CHARS;
-use craft_ai_model::{
+use craft_ai_core::history::MAX_PROMPT_CHARS;
+use craft_ai_core::{
     AiError, AppId, Binding, CapabilityId, Connection, ConnectionId, ConsentLedger, CostEstimate,
     ErrorKind, InputRole, JobId, JobSnapshot, JobState, ModelId, ModelInfo, Outcome, Payload,
     Provider, Request, Role, RoleId, SecretRef, SecretString, StoreFile, Usage,
@@ -176,7 +176,7 @@ fn a_finished_job_leaves_a_start_and_an_end_with_the_reported_cost() {
         estimate: Some(CostEstimate {
             micros: 30_000,
             currency: "USD".into(),
-            billing: craft_ai_model::Billing::Metered,
+            billing: craft_ai_core::Billing::Metered,
         }),
         running_polls: 2,
         ..Behaviour::default()

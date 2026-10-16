@@ -8,8 +8,8 @@ use std::sync::Arc;
 use std::time::{Duration, Instant};
 
 use craft_ai_client::ConnectionManager;
+use craft_ai_core::ConnectionId;
 use craft_ai_egui::{ConnectionPanel, PanelEvent};
-use craft_ai_model::ConnectionId;
 use craft_ai_native::secrets::{MemoryStore, SecretStore};
 use craft_ai_native::shared::SharedStore;
 use egui::accesskit::Role;

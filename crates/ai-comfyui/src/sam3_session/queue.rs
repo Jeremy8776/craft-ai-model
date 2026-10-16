@@ -1,6 +1,6 @@
 //! Queue one graph on the local ComfyUI and wait for its history record.
 use super::Sam3Session;
-use craft_ai_model::{AiError, ErrorKind};
+use craft_ai_core::{AiError, ErrorKind};
 use serde_json::{Value, json};
 use std::time::{Duration, Instant};
 

@@ -9,7 +9,7 @@ repository.workspace = true
 publish = false
 
 [dependencies]
-craft-ai-model.workspace = true
+craft-ai-core.workspace = true
 craft-ai-native = { path = "../ai-native", package = "craft-ai-native" }
 craft-ai-openai = { path = "../ai-openai", package = "craft-ai-openai" }
 craft-ai-artcraft = { path = "../ai-artcraft", package = "craft-ai-artcraft" }

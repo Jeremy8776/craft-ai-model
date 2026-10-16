@@ -5,8 +5,8 @@ use std::path::PathBuf;
 use std::sync::Arc;
 
 use craft_ai_client::{AiClient, GroupState, RoleStatus, ToolDesk};
+use craft_ai_core::{AppId, Role, StoreFile};
 use craft_ai_features::Feature;
-use craft_ai_model::{AppId, Role, StoreFile};
 use craft_ai_native::secrets::MemoryStore;
 use craft_ai_native::shared::SharedStore;
 

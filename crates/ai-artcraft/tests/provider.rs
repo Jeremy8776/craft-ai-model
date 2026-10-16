@@ -3,7 +3,7 @@
 mod support;
 
 use craft_ai_artcraft::{ArtCraftConfig, ArtCraftProvider};
-use craft_ai_model::{
+use craft_ai_core::{
     ErrorKind, InputRole, JobState, ModelId, Payload, Provider, Request, SecretString,
     capability::CapabilityId,
 };

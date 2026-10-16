@@ -6,10 +6,10 @@
 mod support;
 
 use craft_ai_comfyui::{Binding, ComfyConfig, ComfyProvider, Workflow};
-use craft_ai_model::capability::CapabilityId;
-use craft_ai_model::model::InputRole;
-use craft_ai_model::payload::Payload;
-use craft_ai_model::{ErrorKind, JobState, ModelId, Provider, Request};
+use craft_ai_core::capability::CapabilityId;
+use craft_ai_core::model::InputRole;
+use craft_ai_core::payload::Payload;
+use craft_ai_core::{ErrorKind, JobState, ModelId, Provider, Request};
 use serde_json::json;
 use support::{Reply, Server, http_bytes};
 
@@ -62,7 +62,7 @@ fn output_server(filename: &'static str, key: &'static str, body: Vec<u8>) -> Se
     })
 }
 
-fn finish(server: &Server, config: ComfyConfig, cap: &str) -> craft_ai_model::job::JobSnapshot {
+fn finish(server: &Server, config: ComfyConfig, cap: &str) -> craft_ai_core::job::JobSnapshot {
     let provider = ComfyProvider::new(config.with_workflow(generate_workflow(cap))).unwrap();
     let _ = server;
     let request = Request::new(CapabilityId::parse(cap).unwrap())
@@ -215,7 +215,7 @@ fn provider(server: &Server, config: impl FnOnce(ComfyConfig) -> ComfyConfig) ->
 fn submit(
     p: &ComfyProvider,
     request: &Request,
-) -> Result<craft_ai_model::JobId, craft_ai_model::AiError> {
+) -> Result<craft_ai_core::JobId, craft_ai_core::AiError> {
     p.submit(&ModelId::new("repair").unwrap(), request)
 }
 

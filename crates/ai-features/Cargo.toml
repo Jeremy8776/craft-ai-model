@@ -9,7 +9,7 @@ repository.workspace = true
 publish = false
 
 [dependencies]
-craft-ai-model.workspace = true
+craft-ai-core.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 

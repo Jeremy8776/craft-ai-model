@@ -11,8 +11,8 @@
 //! and `response_format`. Giving `response_format` makes the request *structured*: the reply is
 //! checked to be JSON and arrives as one `application/json` output instead of text deltas.
 
-use craft_ai_model::job::{Event, Output};
-use craft_ai_model::{AiError, ErrorKind, InputRole, Payload, Request, Usage};
+use craft_ai_core::job::{Event, Output};
+use craft_ai_core::{AiError, ErrorKind, InputRole, Payload, Request, Usage};
 use serde_json::{Map, Value, json};
 
 /// Largest single SSE line accepted, in bytes.
@@ -304,7 +304,7 @@ impl SseState {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use craft_ai_model::CapabilityId;
+    use craft_ai_core::CapabilityId;
 
     fn req() -> Request {
         Request::new(CapabilityId::parse("text.complete").unwrap())

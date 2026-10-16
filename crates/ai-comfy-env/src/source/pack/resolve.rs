@@ -1,6 +1,6 @@
 //! Pinning a GitHub repository to one commit and describing it for the person.
 
-use craft_ai_model::{AiError, SecretString};
+use craft_ai_core::{AiError, SecretString};
 use serde_json::Value;
 
 use super::{PackCandidate, PackSpec};

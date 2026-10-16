@@ -1,9 +1,9 @@
 //! Imported API-format workflows and explicit, checked request-to-node mappings.
 //! No node/model discovery is inferred from a workflow's name. Only declared fields change.
-use craft_ai_model::capability::CapabilityId;
-use craft_ai_model::model::{CapabilitySpec, InputRole, ModelInfo};
-use craft_ai_model::payload::{Limits, Payload};
-use craft_ai_model::{AiError, ErrorKind, ModelId, Request};
+use craft_ai_core::capability::CapabilityId;
+use craft_ai_core::model::{CapabilitySpec, InputRole, ModelInfo};
+use craft_ai_core::payload::{Limits, Payload};
+use craft_ai_core::{AiError, ErrorKind, ModelId, Request};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 

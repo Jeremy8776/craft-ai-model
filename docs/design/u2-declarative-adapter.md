@@ -1,7 +1,7 @@
 # u2 design: a declarative adapter for providers that are not OpenAI-shaped
 
 Written 12/10/2026. **Built 13/10/2026** (see "As built" at the end); the rest of this note is the original design.
-Row: `u2` in `ai-framework-handoff/handoff_tasks.py`. Depends on u1 (built), p1 and p3.
+Task id: u2. Depended on u1 (custom connections), p1 and p3.
 
 ## What it is
 
@@ -108,7 +108,7 @@ live in the wasm-safe model crate so the launcher can check a spec as it is past
 
 ## Where it sits
 
-- `ai-model`: `spec.rs`, the types and the pure validator (wasm-safe, so the launcher can validate
+- `ai-core`: `spec.rs`, the types and the pure validator (wasm-safe, so the launcher can validate
   live). No I/O.
 - New native crate `craft-ai-declarative`: the runner that implements `Provider`, with the HTTP
   layer copied in shape from `craft-ai-bfl` (no redirects, redacted errors, capped bodies).
@@ -145,7 +145,7 @@ tests), none above 500.
 | Webhooks, websockets | Needs a listener, which this layer does not open |
 | Pagination, conditionals | Would turn the spec into a program |
 
-## Open questions for Jeremy
+## Questions raised at design time
 
 1. JSON as the format (recommended) or TOML. JSON keeps one parser and lets the model crate validate.
 2. Specs stay per user, added by hand or pasted, with no download of specs from anywhere. Agreed?
@@ -155,9 +155,9 @@ tests), none above 500.
 
 ## As built (13/10/2026)
 
-Code: `crates/ai-model/src/spec.rs` and `spec/` (types, checker, substitutions; wasm-safe),
+Code: `crates/ai-core/src/spec.rs` and `spec/` (types, checker, substitutions; wasm-safe),
 `crates/ai-declarative` (the runner), `crates/ai-client/src/declarative.rs` (the factory entry).
-Tests: `ai-model/tests/spec_*.rs`, `ai-declarative/tests/{queue,direct}.rs`,
+Tests: `ai-core/tests/spec_*.rs`, `ai-declarative/tests/{queue,direct}.rs`,
 `ai-client/tests/declarative.rs`. Deliberate-bug cases: group `u2` in
 `docs/research/phase2d/mutation_check.py` (cases in `mutation_u2.py`).
 

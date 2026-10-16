@@ -1,6 +1,6 @@
 //! An ordered chain of secret stores, such as environment, then keychain, then encrypted file.
 
-use craft_ai_model::{AiError, ErrorKind, SecretRef, SecretString};
+use craft_ai_core::{AiError, ErrorKind, SecretRef, SecretString};
 
 use super::SecretStore;
 

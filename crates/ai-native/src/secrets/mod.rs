@@ -21,7 +21,7 @@ mod keychain;
 mod layered;
 mod memory;
 
-use craft_ai_model::{AiError, Auth, Connection, ErrorKind, SecretRef, SecretString};
+use craft_ai_core::{AiError, Auth, Connection, ErrorKind, SecretRef, SecretString};
 
 pub use crypto::KdfParams;
 pub use env::EnvStore;

@@ -8,7 +8,7 @@
 //! person can see what setting it up would give them.
 
 use craft_ai_client::{GroupState, PickerGroup, PickerModel, PickerView, SetupLink};
-use craft_ai_model::{ConnectionId, ModelId};
+use craft_ai_core::{ConnectionId, ModelId};
 use egui::text::LayoutJob;
 use egui::{Align, FontSelection, Layout, RichText, ScrollArea, TextFormat, Ui};
 

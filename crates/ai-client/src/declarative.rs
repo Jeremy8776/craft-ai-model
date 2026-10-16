@@ -1,4 +1,4 @@
-//! Services described by a data file (`craft_ai_model::spec`): the factory entry that reads the
+//! Services described by a data file (`craft_ai_core::spec`): the factory entry that reads the
 //! file for a connection and builds the runner.
 //!
 //! The file is `<specs folder>/<connection id>.json`. Two rules protect the person:
@@ -11,10 +11,10 @@ use std::path::PathBuf;
 use std::sync::Arc;
 use std::time::Duration;
 
+use craft_ai_core::endpoint::Endpoint;
+use craft_ai_core::spec::Spec;
+use craft_ai_core::{AiError, Connection, Provider, SecretString};
 use craft_ai_declarative::{DeclarativeConfig, DeclarativeProvider};
-use craft_ai_model::endpoint::Endpoint;
-use craft_ai_model::spec::Spec;
-use craft_ai_model::{AiError, Connection, Provider, SecretString};
 
 /// Largest settings file read, a little over what the checker accepts.
 const READ_LIMIT: u64 = 64 * 1024;

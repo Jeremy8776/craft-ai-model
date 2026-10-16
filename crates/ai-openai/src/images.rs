@@ -10,9 +10,9 @@
 //! Inputs must be inline PNG, JPEG or WebP data. A handle (a path or URL) is refused, because this
 //! adapter does not read files or fetch URLs on an app's behalf.
 
-use craft_ai_model::job::Output;
-use craft_ai_model::payload::{Limits, base64_decode};
-use craft_ai_model::{AiError, ErrorKind, InputRole, Payload, Request, Usage};
+use craft_ai_core::job::Output;
+use craft_ai_core::payload::{Limits, base64_decode};
+use craft_ai_core::{AiError, ErrorKind, InputRole, Payload, Request, Usage};
 use serde_json::{Map, Value, json};
 
 use crate::catalog::needs_response_format;
@@ -279,8 +279,8 @@ pub(crate) fn parse_images(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use craft_ai_model::CapabilityId;
-    use craft_ai_model::payload::base64_encode;
+    use craft_ai_core::CapabilityId;
+    use craft_ai_core::payload::base64_encode;
 
     const PNG: [u8; 12] = [0x89, b'P', b'N', b'G', 0x0d, 0x0a, 0x1a, 0x0a, 0, 0, 0, 1];
 

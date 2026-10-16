@@ -1,8 +1,8 @@
 //! Civitai: the model version's file list gives the name, SHA-256 and format; the exact size is
 //! read from the download itself, because the list only states it in rounded kilobytes.
 
+use craft_ai_core::{AiError, SecretString};
 use craft_ai_features::Licence;
-use craft_ai_model::{AiError, SecretString};
 use serde_json::Value;
 use url::Url;
 

@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for helping with craft-ai-model, the shared AI layer for the Craft apps. `README.md` says what
+Thanks for helping with the Craft AI layer. `README.md` says what
 the crates are for and `docs/LAYOUT.md` says what lives where. Read both before a larger change.
 
 ## Branches and pull requests
@@ -31,10 +31,10 @@ docs: add LAYOUT.md
 - **Test first.** Write the failing test, then the code. Ship tests with new logic, especially pure
   functions.
 - **Safety rules get a deliberate-bug check.** Break the rule on purpose and confirm a test fails. No
-  surviving mutant is ignored.
+  surviving mutant is ignored. The harness and its case lists are in `tools/mutation/`.
 - **Small files.** Under 500 lines each, 700 at the very most. A file near the limit is doing too much,
   so split it by responsibility.
-- **Keep `ai-model` small.** It uses serde only, with no I/O and no async runtime, and it must compile
+- **Keep `ai-core` small.** It uses serde only, with no I/O and no async runtime, and it must compile
   for wasm. Desktop-only code belongs in `ai-native`.
 - **No unsafe code.** The workspace forbids it.
 - **No secrets in the repo or in logs.** Keys go through the secret stores in `ai-native`.

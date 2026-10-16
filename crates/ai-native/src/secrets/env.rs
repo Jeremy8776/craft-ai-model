@@ -8,7 +8,7 @@
 //! The launcher never starts an app with secrets in its environment (task l5). This store exists
 //! for runs where no launcher or keychain is present.
 
-use craft_ai_model::{AiError, SecretRef, SecretString};
+use craft_ai_core::{AiError, SecretRef, SecretString};
 
 use super::{SecretStore, read_only};
 
@@ -87,7 +87,7 @@ impl SecretStore for EnvStore {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use craft_ai_model::ErrorKind;
+    use craft_ai_core::ErrorKind;
 
     fn key(s: &str) -> SecretRef {
         SecretRef::new(s).unwrap()

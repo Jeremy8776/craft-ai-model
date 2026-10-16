@@ -1,7 +1,7 @@
 //! [`SharedStore`]: the launcher's connections file on disk.
 //!
 //! The launcher writes it; every app reads it. The document format and its validation live in
-//! [`craft_ai_model::StoreFile`]; this type adds the file handling around it:
+//! [`craft_ai_core::StoreFile`]; this type adds the file handling around it:
 //!
 //! - **Reads** never block on a writer. Writes replace the file atomically, so a reader sees the
 //!   old file or the new one.
@@ -17,8 +17,8 @@ use std::fmt;
 use std::io;
 use std::path::{Path, PathBuf};
 
-use craft_ai_model::store::{MAX_STORE_BYTES, StoreError};
-use craft_ai_model::{AiError, ErrorKind, StoreFile};
+use craft_ai_core::store::{MAX_STORE_BYTES, StoreError};
+use craft_ai_core::{AiError, ErrorKind, StoreFile};
 use serde_json::{Map, Value};
 
 use crate::{fsutil, paths};

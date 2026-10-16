@@ -18,7 +18,7 @@ use std::io::Read;
 use std::path::{Path, PathBuf};
 use std::sync::atomic::AtomicBool;
 
-use craft_ai_model::{AiError, ErrorKind, SecretString};
+use craft_ai_core::{AiError, ErrorKind, SecretString};
 use sha2::{Digest, Sha256};
 
 use super::candidate::{Candidate, MAX_FILE_BYTES};

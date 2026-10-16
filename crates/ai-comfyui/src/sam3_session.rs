@@ -5,9 +5,9 @@ use crate::http::Http;
 use crate::sam3_lease::SlotLease;
 use crate::sam3_lifecycle::{Revision, Sam3Canceller};
 
-use craft_ai_model::endpoint::Endpoint;
+use craft_ai_core::endpoint::Endpoint;
 
-use craft_ai_model::{AiError, ErrorKind};
+use craft_ai_core::{AiError, ErrorKind};
 use serde_json::{Value, json};
 use std::path::PathBuf;
 use std::time::{Duration, SystemTime, UNIX_EPOCH};

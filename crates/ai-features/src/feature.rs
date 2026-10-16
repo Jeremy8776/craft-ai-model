@@ -1,7 +1,7 @@
 //! The AI tools a person can switch on, and where they would appear.
 
 use crate::recipe::{CloudOption, LocalRecipe};
-use craft_ai_model::{CapabilityId, InputRole, Role, RoleId};
+use craft_ai_core::{CapabilityId, InputRole, Role, RoleId};
 use serde::{Deserialize, Serialize};
 
 /// Where a tool stands in one app. Nothing is `Shipped` until an app really calls the shared layer.

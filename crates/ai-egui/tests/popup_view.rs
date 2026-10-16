@@ -1,6 +1,7 @@
 //! The missing-model popup driven like a person would: real layout, real clicks, no window.
 
 use craft_ai_client::{GroupState, MissingModel, PickerGroup, PickerModel, PickerView, SetupLink};
+use craft_ai_core::{ConnectionId, Locality, ModelId, RoleId};
 use craft_ai_egui::{
     ADD_KEY, HEADING_SUFFIX, NOT_NOW, PopupAction, PopupInstallState, SET_UP,
     missing_model_popup_with_install,
@@ -8,7 +9,6 @@ use craft_ai_egui::{
 use craft_ai_features::{
     Gpu, GpuVendor, Inventory, Os, SetupOffer, SetupRoute, SystemProfile, setup_offer,
 };
-use craft_ai_model::{ConnectionId, Locality, ModelId, RoleId};
 use egui_kittest::Harness;
 use egui_kittest::kittest::Queryable;
 

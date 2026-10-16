@@ -1,6 +1,6 @@
 //! Jobs: a worker thread per request, and the shared cell the provider polls.
 //!
-//! The [`Provider`](craft_ai_model::Provider) contract is submit, poll, cancel. Each submit
+//! The [`Provider`](craft_ai_core::Provider) contract is submit, poll, cancel. Each submit
 //! validates and builds the request on the caller's thread (so a bad request fails before any
 //! network use), then hands it to a worker thread that talks to the server and writes into a
 //! [`JobCell`]. Polls read the cell.
@@ -14,8 +14,8 @@ use std::io::{BufRead, BufReader, Read};
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::{Arc, Mutex, MutexGuard, PoisonError};
 
-use craft_ai_model::job::{Event, JobSnapshot, JobState};
-use craft_ai_model::{AiError, ErrorKind, JobId, Usage};
+use craft_ai_core::job::{Event, JobSnapshot, JobState};
+use craft_ai_core::{AiError, ErrorKind, JobId, Usage};
 
 use crate::chat::{self, ChatPlan, MAX_SSE_LINE, SseState};
 use crate::http::Http;

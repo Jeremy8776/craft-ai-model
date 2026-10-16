@@ -3,10 +3,10 @@
 use crate::Workflow;
 use crate::http::Http;
 use crate::output;
-use craft_ai_model::endpoint::Endpoint;
-use craft_ai_model::job::{JobSnapshot, JobState};
-use craft_ai_model::model::InputRole;
-use craft_ai_model::{AiError, ErrorKind, JobId, ModelId, ModelInfo, Provider, Request};
+use craft_ai_core::endpoint::Endpoint;
+use craft_ai_core::job::{JobSnapshot, JobState};
+use craft_ai_core::model::InputRole;
+use craft_ai_core::{AiError, ErrorKind, JobId, ModelId, ModelInfo, Provider, Request};
 use serde_json::{Value, json};
 use std::path::PathBuf;
 use std::sync::{Mutex, MutexGuard, PoisonError};

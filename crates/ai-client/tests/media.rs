@@ -6,7 +6,7 @@ mod support;
 use std::sync::Arc;
 
 use craft_ai_client::ProviderFactory;
-use craft_ai_model::{
+use craft_ai_core::{
     AiError, Connection, Event, JobId, JobSnapshot, JobState, ModelId, ModelInfo, Output, Payload,
     Provider, Request,
 };

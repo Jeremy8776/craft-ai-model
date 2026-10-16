@@ -9,9 +9,9 @@
 
 use std::time::{Duration, Instant};
 
-use craft_ai_model::job::Event;
-use craft_ai_model::role::resolve;
-use craft_ai_model::{
+use craft_ai_core::job::Event;
+use craft_ai_core::role::resolve;
+use craft_ai_core::{
     AiError, AppId, Billing, Binding, ConnectionId, ConsentLedger, Disclosure, JobState, Locality,
     ModelId, Payload, Request, Role, RoleId, StoreFile,
 };

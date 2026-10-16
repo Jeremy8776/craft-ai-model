@@ -10,7 +10,7 @@
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 
-use craft_ai_model::{AiError, ErrorKind, SecretRef, SecretString};
+use craft_ai_core::{AiError, ErrorKind, SecretRef, SecretString};
 use serde::{Deserialize, Serialize};
 
 use super::crypto::{self, CryptoError, Envelope, KdfParams};

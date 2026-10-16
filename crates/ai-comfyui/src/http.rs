@@ -1,5 +1,5 @@
 //! Local-only HTTP. Redirects are refused and replies are bounded before parsing.
-use craft_ai_model::{AiError, ErrorKind};
+use craft_ai_core::{AiError, ErrorKind};
 use serde_json::Value;
 use std::io::Read;
 use std::time::Duration;

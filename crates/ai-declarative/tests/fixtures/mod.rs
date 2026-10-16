@@ -3,8 +3,8 @@
 #[path = "../../../ai-openai/tests/support/mod.rs"]
 pub mod support;
 
-use craft_ai_model::spec::Spec;
-use craft_ai_model::{InputRole, ModelId, Payload, Request, capability::CapabilityId};
+use craft_ai_core::spec::Spec;
+use craft_ai_core::{InputRole, ModelId, Payload, Request, capability::CapabilityId};
 use serde_json::{Value, json};
 
 pub const KEY: &str = "needle-secret-key";
@@ -62,5 +62,5 @@ pub fn png_bytes() -> Vec<u8> {
 }
 
 pub fn b64(bytes: &[u8]) -> String {
-    craft_ai_model::payload::base64_encode(bytes)
+    craft_ai_core::payload::base64_encode(bytes)
 }

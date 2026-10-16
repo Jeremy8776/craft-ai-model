@@ -8,8 +8,8 @@
 
 use std::io::Read;
 
+use craft_ai_core::{AiError, Payload};
 use craft_ai_media::sniff;
-use craft_ai_model::{AiError, Payload};
 
 pub(crate) const DEFAULT_MAX_UPLOAD_BYTES: u64 = 32 * 1024 * 1024;
 pub(crate) const HARD_MAX_UPLOAD_BYTES: u64 = 256 * 1024 * 1024;

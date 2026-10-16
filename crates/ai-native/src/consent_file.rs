@@ -2,7 +2,7 @@
 //!
 //! Consent belongs to the app (it says exactly what that app sends), so each app has its own file,
 //! `consent/<app>.json` under the AI directory. The ledger type and its rules live in
-//! `craft_ai_model::ConsentLedger`; this adds the file handling.
+//! `craft_ai_core::ConsentLedger`; this adds the file handling.
 //!
 //! **Fails closed.** A missing file is an empty ledger (nothing agreed yet). A damaged one is an
 //! error from [`load`](ConsentFile::load), and [`load_or_empty`](ConsentFile::load_or_empty) treats
@@ -10,7 +10,7 @@
 
 use std::path::{Path, PathBuf};
 
-use craft_ai_model::{AiError, AppId, ConsentLedger, ErrorKind};
+use craft_ai_core::{AiError, AppId, ConsentLedger, ErrorKind};
 
 use crate::{fsutil, paths};
 
@@ -91,8 +91,8 @@ fn file_name(app: &AppId) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use craft_ai_model::consent::ConsentRecord;
-    use craft_ai_model::{CapabilityId, ConnectionId};
+    use craft_ai_core::consent::ConsentRecord;
+    use craft_ai_core::{CapabilityId, ConnectionId};
 
     fn app(s: &str) -> AppId {
         AppId::new(s).unwrap()

@@ -9,7 +9,7 @@
 //!
 //! Only OpenRouter's own list is read this way: another server's `pricing` could mean anything.
 
-use craft_ai_model::{ModelInfo, Pricing};
+use craft_ai_core::{ModelInfo, Pricing};
 use serde_json::Value;
 
 /// Dollars per token as a JSON string or number, to millionths of a dollar per million tokens.
@@ -47,7 +47,7 @@ pub(crate) fn add_openrouter_meta(info: &mut ModelInfo, entry: &Value) {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use craft_ai_model::ModelId;
+    use craft_ai_core::ModelId;
     use serde_json::json;
 
     fn info() -> ModelInfo {

@@ -3,8 +3,8 @@
 use std::sync::Arc;
 
 use craft_ai_client::{AiClient, ProviderFactory, ToolDesk};
+use craft_ai_core::{AiError, AppId, StoreFile};
 use craft_ai_features::{Feature, Gpu, GpuVendor, Os, Pace, SystemProfile};
-use craft_ai_model::{AiError, AppId, StoreFile};
 use craft_ai_native::secrets::MemoryStore;
 use craft_ai_native::shared::SharedStore;
 
@@ -140,7 +140,7 @@ fn a_build_declared_cpu_only_is_advised_as_the_processor_and_loses_to_a_gpu_engi
     assert!(advice[0].recommended);
 }
 
-fn enabled_world() -> (World, craft_ai_model::Role) {
+fn enabled_world() -> (World, craft_ai_core::Role) {
     let w = World::new();
     let file = w.dir.path().join("sam3.safetensors");
     std::fs::write(&file, b"x").unwrap();

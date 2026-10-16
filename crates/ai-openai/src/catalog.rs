@@ -9,7 +9,7 @@
 //! that can stream, call tools and return structured output. That last part is an assumption:
 //! plenty of local models cannot, and the server will say so when asked.
 
-use craft_ai_model::{CapabilityId, CapabilitySpec, Features, InputRole, ModelId, ModelInfo};
+use craft_ai_core::{CapabilityId, CapabilitySpec, Features, InputRole, ModelId, ModelInfo};
 
 /// Substrings of ids that are not chat or image models.
 const NOT_SUPPORTED: &[&str] = &[

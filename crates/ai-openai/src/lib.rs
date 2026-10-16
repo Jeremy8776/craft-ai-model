@@ -17,14 +17,14 @@
 //! # Using it
 //!
 //! ```no_run
-//! use craft_ai_model::{Provider, SecretString};
+//! use craft_ai_core::{Provider, SecretString};
 //! use craft_ai_openai::{OpenAiConfig, OpenAiProvider};
 //!
 //! let config = OpenAiConfig::new("https://api.openai.com/v1")
 //!     .with_key(SecretString::new("sk-..."));
 //! let provider = OpenAiProvider::new(config)?;
 //! let models = provider.models()?;
-//! # Ok::<(), craft_ai_model::AiError>(())
+//! # Ok::<(), craft_ai_core::AiError>(())
 //! ```
 //!
 //! # Safety properties
@@ -56,9 +56,9 @@ pub mod probe;
 use std::sync::Arc;
 use std::time::Duration;
 
-use craft_ai_model::endpoint::Endpoint;
-use craft_ai_model::payload::Limits;
-use craft_ai_model::{
+use craft_ai_core::endpoint::Endpoint;
+use craft_ai_core::payload::Limits;
+use craft_ai_core::{
     AiError, JobId, JobSnapshot, ModelId, ModelInfo, Provider, Request, SecretString,
 };
 

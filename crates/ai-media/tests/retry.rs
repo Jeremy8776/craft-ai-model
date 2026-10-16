@@ -5,8 +5,8 @@
 #[path = "../../ai-openai/tests/support/mod.rs"]
 mod support;
 
+use craft_ai_core::{AiError, ErrorKind, Payload, PayloadHandle};
 use craft_ai_media::{MediaStore, MediaStoreConfig};
-use craft_ai_model::{AiError, ErrorKind, Payload, PayloadHandle};
 use std::path::Path;
 use std::sync::Arc;
 use std::sync::atomic::{AtomicUsize, Ordering};

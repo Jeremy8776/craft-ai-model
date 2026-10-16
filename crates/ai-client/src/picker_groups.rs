@@ -1,12 +1,12 @@
 //! Building the provider groups for the picker: the connections a person has, and the providers
 //! they could still set up. Pure functions over the store, so each rule has its own test.
 
-use craft_ai_features::{Route, SetupOption};
-use craft_ai_model::role::fits;
-use craft_ai_model::{
+use craft_ai_core::role::fits;
+use craft_ai_core::{
     AppId, Auth, Billing, Binding, Connection, InputRole, Locality, ModelInfo, PRESETS, Role,
     RoleId, StoreFile,
 };
+use craft_ai_features::{Route, SetupOption};
 use craft_ai_native::secrets::secret_for;
 
 use crate::client::AiClient;

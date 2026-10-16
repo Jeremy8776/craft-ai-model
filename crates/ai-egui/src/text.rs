@@ -6,8 +6,8 @@
 //! surprises.
 
 use craft_ai_client::RoleStatus;
-use craft_ai_model::consent::DisclosureItem;
-use craft_ai_model::{Billing, CostEstimate, Disclosure, JobState, Locality, PayloadKind};
+use craft_ai_core::consent::DisclosureItem;
+use craft_ai_core::{Billing, CostEstimate, Disclosure, JobState, Locality, PayloadKind};
 
 /// `1536` becomes `1.5 KB`. Sizes are decimal-free for bytes and one decimal above.
 pub fn bytes(n: u64) -> String {
@@ -132,7 +132,7 @@ pub fn state_label(state: &JobState) -> String {
 mod tests {
     use super::*;
     use craft_ai_client::RoleReady;
-    use craft_ai_model::{
+    use craft_ai_core::{
         AiError, AppId, CapabilityId, ConnectionId, ErrorKind, InputRole, ModelId,
     };
 

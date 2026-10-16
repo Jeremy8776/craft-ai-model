@@ -4,7 +4,7 @@ use std::io::Read;
 use std::path::Path;
 use std::sync::atomic::{AtomicBool, Ordering};
 
-use craft_ai_model::{AiError, ErrorKind};
+use craft_ai_core::{AiError, ErrorKind};
 use sha2::{Digest, Sha256};
 
 use super::{

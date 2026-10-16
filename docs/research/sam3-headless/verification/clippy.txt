@@ -1,2 +1,0 @@
-    Checking craft-ai-comfyui v0.1.0 (%USERPROFILE%\Apps\ArtCraft\craft-ai-model\crates\ai-comfyui)
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.90s

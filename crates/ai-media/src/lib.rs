@@ -1,7 +1,7 @@
 //! Durable local copies of media that hosted providers return as short-lived links.
 //!
 //! Hosted image and video providers answer a finished job with a URL on a delivery host, and that
-//! URL expires. [`PersistingProvider`] wraps any [`craft_ai_model::Provider`]: when a poll carries
+//! URL expires. [`PersistingProvider`] wraps any [`craft_ai_core::Provider`]: when a poll carries
 //! an output that is an http(s) link, it downloads the file into an app-owned directory and
 //! replaces the link with a `file:` handle. Everything else passes through untouched.
 //!
@@ -28,7 +28,7 @@ pub mod links {
     pub use crate::url_rules::{check, check_resolved, redirect_target};
 }
 
-use craft_ai_model::{
+use craft_ai_core::{
     AiError, CostEstimate, Event, JobId, JobSnapshot, ModelId, ModelInfo, Payload, Provider,
     Request,
 };

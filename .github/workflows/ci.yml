@@ -33,7 +33,9 @@ jobs:
       # Same gate as craft-libs. Every lib.rs denies unwrap, expect and panic in shipped code.
       - run: cargo clippy --workspace --all-targets --locked -- -D warnings
       # The model crate promises to compile for wasm.
-      - run: cargo check -p craft-ai-model --target wasm32-unknown-unknown --locked
+      - run: cargo check -p craft-ai-core --target wasm32-unknown-unknown --locked
+      # So does the tool catalogue, which a web launcher reads.
+      - run: cargo check -p craft-ai-features --target wasm32-unknown-unknown --locked
 
   test:
     name: test (${{ matrix.os }})

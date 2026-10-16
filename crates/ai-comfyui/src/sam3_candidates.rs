@@ -4,7 +4,7 @@
 use crate::sam3_detect::{MAX_TEXT_BYTES, bounds, decode, list, number};
 use crate::sam3_lifecycle::Revision;
 use crate::sam3_masks::bad;
-use craft_ai_model::AiError;
+use craft_ai_core::AiError;
 
 /// The model offers at most this many alternatives per prompt.
 pub(crate) const MAX_CANDIDATES: usize = 3;

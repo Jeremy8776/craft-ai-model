@@ -16,7 +16,7 @@ use std::path::PathBuf;
 
 /// Environment variable that replaces the default directory.
 pub const DIR_ENV: &str = "CRAFT_AI_DIR";
-/// The launcher's shared store, a [`craft_ai_model::StoreFile`] as JSON.
+/// The launcher's shared store, a [`craft_ai_core::StoreFile`] as JSON.
 pub const STORE_FILE: &str = "connections.json";
 /// The passphrase-encrypted secret file, used when no keychain is available.
 pub const SECRETS_FILE: &str = "secrets.enc.json";

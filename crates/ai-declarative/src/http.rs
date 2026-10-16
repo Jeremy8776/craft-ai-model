@@ -4,8 +4,8 @@
 use std::io::Read;
 use std::time::Duration;
 
-use craft_ai_model::spec::{Method, SpecAuth};
-use craft_ai_model::{AiError, ErrorKind, SecretString};
+use craft_ai_core::spec::{Method, SpecAuth};
+use craft_ai_core::{AiError, ErrorKind, SecretString};
 use serde_json::Value;
 use ureq::{Body, http::Response};
 

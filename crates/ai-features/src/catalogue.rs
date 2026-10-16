@@ -7,7 +7,7 @@
 
 use crate::feature::{AppStatus, AppUse, Feature};
 use crate::recipe::{CloudOption, Licence, LocalRecipe, ModelFile, NativeRoute, NodePack, Source};
-use craft_ai_model::{CapabilityId, InputRole};
+use craft_ai_core::{CapabilityId, InputRole};
 
 fn uses(list: &[(&str, &str)]) -> Vec<AppUse> {
     list.iter()

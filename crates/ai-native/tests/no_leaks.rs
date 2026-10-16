@@ -2,7 +2,7 @@
 //! file, never in a Debug dump or an error, and is found again by an app that only has the
 //! connection.
 
-use craft_ai_model::{AiError, Connection, ErrorKind, SecretRef, SecretString};
+use craft_ai_core::{AiError, Connection, ErrorKind, SecretRef, SecretString};
 use craft_ai_native::secrets::{
     EncryptedFileStore, EnvStore, KdfParams, LayeredStore, MemoryStore, SecretStore, secret_for,
 };

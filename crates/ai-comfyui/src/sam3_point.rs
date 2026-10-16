@@ -2,10 +2,10 @@
 //! This is a job, not a hover session: every call uploads an image and queues a graph.
 use crate::http::Http;
 use crate::output;
-use craft_ai_model::endpoint::Endpoint;
-use craft_ai_model::job::Event;
-use craft_ai_model::payload::Payload;
-use craft_ai_model::{AiError, ErrorKind};
+use craft_ai_core::endpoint::Endpoint;
+use craft_ai_core::job::Event;
+use craft_ai_core::payload::Payload;
+use craft_ai_core::{AiError, ErrorKind};
 use serde_json::{Value, json};
 use std::time::{Duration, Instant};
 

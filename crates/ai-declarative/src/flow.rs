@@ -1,11 +1,11 @@
 //! The pure parts of running a spec: filling in a call and reading a reply. No network here.
 
+use craft_ai_core::endpoint::Endpoint;
+use craft_ai_core::payload::base64_decode;
+use craft_ai_core::spec::template::{Values, render_text, render_value};
+use craft_ai_core::spec::{Call, Extract, ExtractAs, Method};
+use craft_ai_core::{AiError, ErrorKind, Payload};
 use craft_ai_media::sniff;
-use craft_ai_model::endpoint::Endpoint;
-use craft_ai_model::payload::base64_decode;
-use craft_ai_model::spec::template::{Values, render_text, render_value};
-use craft_ai_model::spec::{Call, Extract, ExtractAs, Method};
-use craft_ai_model::{AiError, ErrorKind, Payload};
 use serde_json::Value;
 
 /// A call with its substitutions made, ready to send.

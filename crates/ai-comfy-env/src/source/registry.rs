@@ -11,8 +11,8 @@
 
 use std::path::PathBuf;
 
+use craft_ai_core::{AiError, ErrorKind};
 use craft_ai_features::Licence;
-use craft_ai_model::{AiError, ErrorKind};
 use serde::{Deserialize, Serialize};
 
 use super::candidate::Candidate;

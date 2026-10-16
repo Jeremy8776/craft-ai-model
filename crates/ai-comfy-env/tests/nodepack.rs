@@ -12,7 +12,7 @@ use craft_ai_comfy_env::source::{
     Consents, Installer, PackConsent, PackError, PackRefusal, PackSpec, Registry, Resolver,
     parse_pack,
 };
-use craft_ai_model::ErrorKind;
+use craft_ai_core::ErrorKind;
 use nodepack_rig::support::{Reply, Server, http_bytes};
 use nodepack_rig::*;
 use serde_json::json;

@@ -122,7 +122,7 @@ impl LocalRecipe {
 /// A hosted way to get the same result when this computer cannot run the models.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct CloudOption {
-    /// The connection preset key (see `craft_ai_model::PRESETS`) that adds it.
+    /// The connection preset key (see `craft_ai_core::PRESETS`) that adds it.
     pub preset: String,
     pub label: String,
     /// What the user should know: billing, and whether the route has been tried.

@@ -8,8 +8,8 @@ use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 use std::sync::{Arc, Mutex};
 use std::time::{SystemTime, UNIX_EPOCH};
 
-use craft_ai_model::history::{HISTORY_SCHEMA, clip_prompt};
-use craft_ai_model::{
+use craft_ai_core::history::{HISTORY_SCHEMA, clip_prompt};
+use craft_ai_core::{
     AiError, CostEstimate, EndRecord, ErrorKind, HistoryRecord, InputRole, JobId, JobState,
     Outcome, Payload, StartRecord, Usage,
 };

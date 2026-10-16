@@ -7,12 +7,16 @@
 
 use std::sync::mpsc::{Receiver, Sender, channel};
 
-use craft_ai_model::{AiError, ConnectionDraft, ConnectionId};
+use craft_ai_core::{AiError, ConnectionDraft, ConnectionId};
 
 use crate::manage::{ConnectionManager, TestReport};
 
 /// What to test.
+///
+/// One value is made per click and moved to a worker thread, so the size gap between the variants
+/// costs nothing. Boxing the draft would change a public type its callers match on.
 #[derive(Clone, Debug)]
+#[allow(clippy::large_enum_variant)]
 pub enum TestTarget {
     /// The form as typed, before anything is saved.
     Draft(ConnectionDraft),

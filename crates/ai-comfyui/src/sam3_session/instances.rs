@@ -9,7 +9,7 @@
 use super::{Prepared, Sam3Session};
 use crate::sam3_detect::{Metadata, Sam3Detections};
 use crate::sam3_masks::{bad, fetch};
-use craft_ai_model::{AiError, ErrorKind};
+use craft_ai_core::{AiError, ErrorKind};
 use serde_json::{Value, json};
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::time::{SystemTime, UNIX_EPOCH};

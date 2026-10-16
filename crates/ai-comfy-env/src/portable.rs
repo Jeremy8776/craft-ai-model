@@ -16,8 +16,8 @@ use std::io::Write;
 use std::path::{Component, Path, PathBuf};
 use std::sync::atomic::{AtomicBool, Ordering};
 
+use craft_ai_core::{AiError, ErrorKind};
 use craft_ai_features::{Licence, ModelFile, PortableBuild, Source, is_official_build};
-use craft_ai_model::{AiError, ErrorKind};
 use sevenz_rust2::{ArchiveReader, Password};
 
 use crate::detect::ComfyInstall;

@@ -1,8 +1,8 @@
 //! Behaviour of the shared store file: persistence, concurrent writers, version refusal and
 //! hostile input. Uses real files in a temp directory.
 
-use craft_ai_model::store::{MAX_STORE_BYTES, StoreError};
-use craft_ai_model::{Connection, StoreFile};
+use craft_ai_core::store::{MAX_STORE_BYTES, StoreError};
+use craft_ai_core::{Connection, StoreFile};
 use craft_ai_native::shared::{SharedError, SharedStore};
 
 fn connection(id: &str) -> Connection {
@@ -158,7 +158,7 @@ fn truncating_a_valid_file_anywhere_never_panics() {
 
 #[test]
 fn shared_error_maps_to_ai_error_kinds() {
-    use craft_ai_model::{AiError, ErrorKind};
+    use craft_ai_core::{AiError, ErrorKind};
     let too_new: AiError = SharedError::Store(StoreError::TooNew {
         found: 2,
         supported: 1,
@@ -171,7 +171,7 @@ fn shared_error_maps_to_ai_error_kinds() {
 
 #[test]
 fn deleting_a_custom_tool_does_not_resurrect_it_as_an_unknown_field() {
-    use craft_ai_model::{CapabilityId, InputRole, Role, RoleId};
+    use craft_ai_core::{CapabilityId, InputRole, Role, RoleId};
     let dir = tempfile::tempdir().unwrap();
     let s = store_at(&dir);
     s.update(|st| {

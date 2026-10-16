@@ -1,5 +1,5 @@
+use craft_ai_core::{InputRole, Payload};
 use craft_ai_features::{builtin, sample_is_costly, sample_request};
-use craft_ai_model::{InputRole, Payload};
 
 fn decode(bytes: &[u8]) -> (u32, u32, Vec<u8>) {
     let decoder = png::Decoder::new(std::io::Cursor::new(bytes));
@@ -9,7 +9,7 @@ fn decode(bytes: &[u8]) -> (u32, u32, Vec<u8>) {
     (info.width, info.height, buf[..info.buffer_size()].to_vec())
 }
 
-fn inline(request: &craft_ai_model::Request, role: &InputRole) -> Vec<u8> {
+fn inline(request: &craft_ai_core::Request, role: &InputRole) -> Vec<u8> {
     match request
         .inputs
         .iter()

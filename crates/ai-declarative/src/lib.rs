@@ -1,4 +1,4 @@
-//! Runs a declarative spec (`craft_ai_model::spec`): a provider described by data.
+//! Runs a declarative spec (`craft_ai_core::spec`): a provider described by data.
 //!
 //! The spec says which calls to make; this crate makes them, within bounds, and nothing else.
 //! Every call goes to the spec's `base`; a link the service returns is handed back as a handle
@@ -17,10 +17,10 @@ use std::sync::Mutex;
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::time::{Duration, Instant};
 
-use craft_ai_model::payload::Limits;
-use craft_ai_model::spec::template::Values;
-use craft_ai_model::spec::{Flow, Spec, SpecAuth, StateWord};
-use craft_ai_model::{
+use craft_ai_core::payload::Limits;
+use craft_ai_core::spec::template::Values;
+use craft_ai_core::spec::{Flow, Spec, SpecAuth, StateWord};
+use craft_ai_core::{
     AiError, ErrorKind, Event, InputRole, JobId, JobSnapshot, JobState, ModelId, ModelInfo, Output,
     Payload, Provider, Request, SecretString,
 };

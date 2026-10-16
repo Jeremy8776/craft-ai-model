@@ -2,7 +2,7 @@
 //! Run through `run_sessions_live.py`. It uses the hover cache slots `craft_ai_sam3_0..3`, never
 //! the older shared `craft_ai_sam3` id, so a running PhotoCraft build is not disturbed.
 use craft_ai_comfyui::{Sam3Session, sam3};
-use craft_ai_model::ErrorKind;
+use craft_ai_core::ErrorKind;
 use std::time::{Duration, Instant};
 
 fn source() -> Vec<u8> {

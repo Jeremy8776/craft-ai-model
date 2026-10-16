@@ -5,7 +5,7 @@
 //! tool whose hosted routes name it, and a local model unlocks the tool whose recipe it is.
 
 use crate::feature::Feature;
-use craft_ai_model::PRESETS;
+use craft_ai_core::PRESETS;
 use serde::{Deserialize, Serialize};
 
 /// How a thing is set up.
@@ -14,7 +14,7 @@ use serde::{Deserialize, Serialize};
 pub enum Route {
     /// Download model files for this feature and run them through ComfyUI on this computer.
     Local { feature: String },
-    /// Connect a hosted service. `preset` is a key of `craft_ai_model::PRESETS`.
+    /// Connect a hosted service. `preset` is a key of `craft_ai_core::PRESETS`.
     Service { preset: String },
 }
 

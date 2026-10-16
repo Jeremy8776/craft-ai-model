@@ -13,8 +13,8 @@ use craft_ai_comfy_env::source::{
     Candidate, Checksum, Consents, Entry, Format, HostOverride, InstallError, Installer, Refusal,
     Registry, SourceKind, SourceSettings,
 };
+use craft_ai_core::{ErrorKind, SecretString};
 use craft_ai_features::Licence;
-use craft_ai_model::{ErrorKind, SecretString};
 use sha2::{Digest, Sha256};
 use support::{Server, http_bytes};
 

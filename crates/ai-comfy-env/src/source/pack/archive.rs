@@ -191,8 +191,8 @@ fn same_in_any_case() -> PackError {
 }
 
 fn io_failed() -> PackError {
-    PackError::Failed(craft_ai_model::AiError::new(
-        craft_ai_model::ErrorKind::Internal,
+    PackError::Failed(craft_ai_core::AiError::new(
+        craft_ai_core::ErrorKind::Internal,
         "could not write the node pack (is the disk full?)",
     ))
 }

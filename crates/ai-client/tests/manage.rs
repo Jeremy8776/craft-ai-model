@@ -7,8 +7,8 @@ mod support;
 use std::sync::Arc;
 
 use craft_ai_client::{ConnectionManager, KeyState, SaveError, TestRunner, TestTarget};
-use craft_ai_model::store::AppSettings;
-use craft_ai_model::{
+use craft_ai_core::store::AppSettings;
+use craft_ai_core::{
     AiError, AppId, Binding, Connection, ConnectionDraft, ConnectionId, ErrorKind, Field, ModelId,
     PRESETS, RoleId, SecretRef,
 };
@@ -102,10 +102,7 @@ fn a_local_connection_needs_no_key_and_shows_as_such() {
     let views = r.manager.views().unwrap();
     assert_eq!(views.len(), 1);
     assert_eq!(views[0].key, KeyState::NotNeeded);
-    assert_eq!(
-        views[0].connection.locality,
-        craft_ai_model::Locality::Local
-    );
+    assert_eq!(views[0].connection.locality, craft_ai_core::Locality::Local);
 }
 
 #[test]
@@ -366,7 +363,7 @@ fn testing_a_saved_connection_asks_the_server_even_with_a_saved_model_list() {
     r.manager.save(&local_draft(&server.url)).unwrap();
     r.shared
         .update(|f| {
-            f.connections[0].models = vec![craft_ai_model::ModelInfo::new(
+            f.connections[0].models = vec![craft_ai_core::ModelInfo::new(
                 ModelId::new("stale-model").unwrap(),
                 "Stale",
             )];

@@ -7,7 +7,7 @@
 //! [`ToolDesk::choose`](crate::ToolDesk::choose); a set-up link goes through the same shared store
 //! or opens the launcher.
 
-use craft_ai_model::RoleId;
+use craft_ai_core::RoleId;
 
 use crate::picker::PickerView;
 

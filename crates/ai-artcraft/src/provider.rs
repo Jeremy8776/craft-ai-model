@@ -1,6 +1,6 @@
 //! API-key generation and polling, not subscription entitlement.
 use crate::http::Http;
-use craft_ai_model::{
+use craft_ai_core::{
     AiError, ErrorKind, Event, InputRole, JobId, JobSnapshot, JobState, ModelId, ModelInfo, Output,
     Payload, Provider, Request, SecretString, capability::CapabilityId, endpoint::Endpoint,
     model::CapabilitySpec, payload::Limits,

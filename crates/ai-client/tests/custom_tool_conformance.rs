@@ -15,8 +15,8 @@ use std::sync::Arc;
 use std::time::Duration;
 
 use craft_ai_client::{AiClient, Finished, ProviderFactory, RoleStatus, ToolDesk};
-use craft_ai_model::job::Event;
-use craft_ai_model::{
+use craft_ai_core::job::Event;
+use craft_ai_core::{
     AppId, ConsentLedger, ErrorKind, JobState, SecretRef, SecretString, StoreFile,
 };
 use craft_ai_native::secrets::{MemoryStore, SecretStore};
@@ -225,7 +225,7 @@ fn a_connections_file_from_before_custom_tools_keeps_working() {
     let path = dir.path().join("connections.json");
     let old = StoreFile {
         connections: vec![connection(false)],
-        defaults: vec![craft_ai_model::Binding {
+        defaults: vec![craft_ai_core::Binding {
             role: tool().id,
             connection: connection(false).id,
             model: model().id,

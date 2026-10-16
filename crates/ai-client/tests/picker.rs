@@ -3,11 +3,11 @@
 use std::sync::Arc;
 
 use craft_ai_client::{AiClient, GroupState, PickerView, SetupLink};
-use craft_ai_features::{Route, SetupOption};
-use craft_ai_model::{
+use craft_ai_core::{
     AppId, Binding, CapabilityId, CapabilitySpec, Connection, ConnectionId, InputRole, Locality,
     ModelId, ModelInfo, Role, SecretRef, SecretString, StoreFile,
 };
+use craft_ai_features::{Route, SetupOption};
 use craft_ai_native::secrets::{MemoryStore, SecretStore};
 use craft_ai_native::shared::SharedStore;
 use serde_json::json;

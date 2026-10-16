@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
-use craft_ai_model::connection::Locality;
-use craft_ai_model::history::{EndRecord, HISTORY_SCHEMA, Outcome, StartRecord};
+use craft_ai_core::connection::Locality;
+use craft_ai_core::history::{EndRecord, HISTORY_SCHEMA, Outcome, StartRecord};
 
 use super::*;
 

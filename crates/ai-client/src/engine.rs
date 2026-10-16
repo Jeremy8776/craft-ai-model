@@ -1,8 +1,8 @@
 //! Suggests which local engine suits this computer for a tool. Offers only; nothing is bound, so
 //! a person's own pick (`ToolDesk::choose`, `AiClient::bind`) is never touched.
 
+use craft_ai_core::{AiError, Role};
 use craft_ai_features::{EngineAdvice, EngineOffer, Feature, SetupOption, SystemProfile, advise};
-use craft_ai_model::{AiError, Role};
 
 use crate::client::AiClient;
 use crate::picker::{GroupState, PickerView};

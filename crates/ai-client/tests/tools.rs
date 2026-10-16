@@ -5,8 +5,8 @@ use std::sync::{Arc, Mutex};
 use std::time::Duration;
 
 use craft_ai_client::{AiClient, ProviderFactory, RoleStatus, SampleReport, TestStart, ToolDesk};
-use craft_ai_model::job::{Event, Output};
-use craft_ai_model::{
+use craft_ai_core::job::{Event, Output};
+use craft_ai_core::{
     AiError, Connection, ConnectionId, ErrorKind, JobId, JobSnapshot, JobState, ModelId, ModelInfo,
     Payload, Provider, Request, Role, SecretRef, SecretString, StoreFile,
 };
@@ -307,7 +307,7 @@ fn a_remote_sample_waits_for_agreement_and_builds_nothing_until_then() {
         } => {
             assert_eq!(disclosure.destination, "https://api.example.com");
             assert_eq!(connection_label, "Connection good-remote");
-            assert_eq!(billing, craft_ai_model::Billing::Metered);
+            assert_eq!(billing, craft_ai_core::Billing::Metered);
         }
         TestStart::Started(_) => panic!("sent before the person agreed"),
     }

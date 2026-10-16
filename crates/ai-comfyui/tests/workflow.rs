@@ -1,7 +1,7 @@
 use craft_ai_comfyui::{Binding, Workflow};
-use craft_ai_model::capability::CapabilityId;
-use craft_ai_model::model::InputRole;
-use craft_ai_model::{Payload, Request};
+use craft_ai_core::capability::CapabilityId;
+use craft_ai_core::model::InputRole;
+use craft_ai_core::{Payload, Request};
 use serde_json::{Value, json};
 
 fn request(capability: &str) -> Request {

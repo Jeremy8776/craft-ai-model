@@ -12,11 +12,11 @@
 use std::sync::Arc;
 
 use craft_ai_client::{AiClient, PickerView, SetupLink, ToolDesk};
-use craft_ai_egui::{PickerAction, PopupAction, missing_model_popup, model_picker};
-use craft_ai_model::{
+use craft_ai_core::{
     AppId, Binding, CapabilityId, CapabilitySpec, Connection, ConnectionId, InputRole, ModelId,
     ModelInfo, Role, SecretRef, SecretString, StoreFile,
 };
+use craft_ai_egui::{PickerAction, PopupAction, missing_model_popup, model_picker};
 use craft_ai_native::secrets::{MemoryStore, SecretStore};
 use craft_ai_native::shared::SharedStore;
 use serde_json::json;
@@ -111,7 +111,7 @@ fn build(sam3_installed: bool) -> Sample {
     let dir = tempfile::tempdir().expect("a temporary folder");
     let shared = SharedStore::new(dir.path().join("connections.json"));
     let choose = |role: &str, conn: &str, model: &str| Binding {
-        role: craft_ai_model::RoleId::new(role).expect("a literal role id"),
+        role: craft_ai_core::RoleId::new(role).expect("a literal role id"),
         connection: ConnectionId::new(conn).expect("a literal id"),
         model: ModelId::new(model).expect("a literal id"),
     };
@@ -293,7 +293,7 @@ fn main() -> eframe::Result {
                 as_popup: false,
                 dismissed: false,
                 view: PickerView {
-                    tool: craft_ai_model::RoleId::new("select-subject").expect("a literal role id"),
+                    tool: craft_ai_core::RoleId::new("select-subject").expect("a literal role id"),
                     title: String::new(),
                     current: None,
                     groups: Vec::new(),

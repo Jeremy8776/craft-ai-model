@@ -21,8 +21,8 @@ use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::{Arc, Mutex};
 
 use craft_ai_client::ProviderFactory;
-use craft_ai_model::mock::{MockProvider, Outcome, Script};
-use craft_ai_model::{
+use craft_ai_core::mock::{MockProvider, Outcome, Script};
+use craft_ai_core::{
     AiError, CapabilityId, CapabilitySpec, Connection, InputRole, InputRole::Source, JobId,
     JobSnapshot, ModelId, ModelInfo, Payload, Provider, Request, Role, RoleId,
 };

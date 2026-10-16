@@ -12,7 +12,7 @@ use std::fs::{self, OpenOptions};
 use std::io::{self, Read, Seek, SeekFrom, Write};
 use std::path::{Path, PathBuf};
 
-use craft_ai_model::HistoryRecord;
+use craft_ai_core::HistoryRecord;
 
 use crate::fsutil::{read_capped, with_lock};
 use crate::paths;

@@ -4,7 +4,7 @@
 use std::sync::Arc;
 
 use craft_ai_client::{AiClient, GroupState, RoleStatus, ToolDesk};
-use craft_ai_model::{
+use craft_ai_core::{
     AppId, CapabilityId, CapabilitySpec, Connection, ConnectionId, InputRole, ModelId, ModelInfo,
     Role, StoreFile,
 };

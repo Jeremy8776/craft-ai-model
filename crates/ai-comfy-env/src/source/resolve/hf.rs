@@ -1,7 +1,7 @@
 //! Hugging Face: pin the revision to a commit, then ask for that one file's size and LFS checksum.
 
+use craft_ai_core::{AiError, SecretString};
 use craft_ai_features::Licence;
-use craft_ai_model::{AiError, SecretString};
 use serde_json::{Value, json};
 
 use super::api::{Api, is_hex, join, refused, sane_size, tidy};

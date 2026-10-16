@@ -8,7 +8,7 @@
 //! apps share one ComfyUI) and is released if the holder crashes, so a dead app cannot leak a
 //! slot. Nothing here can free the server's cached tensors; the bound on slots is the bound on
 //! what this client can leave behind there.
-use craft_ai_model::{AiError, ErrorKind};
+use craft_ai_core::{AiError, ErrorKind};
 use std::fs::{File, OpenOptions, TryLockError};
 use std::path::Path;
 

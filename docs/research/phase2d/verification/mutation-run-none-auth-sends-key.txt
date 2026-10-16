@@ -1,9 +1,0 @@
-   Compiling craft-ai-declarative v0.1.0 (%USERPROFILE%\Apps\ArtCraft\craft-ai-model\crates\ai-declarative)
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.09s
-     Running tests\direct.rs (target\debug\deps\direct-0083c9d204f0cd8f.exe)
-
-running 1 test
-test a_service_with_no_key_sends_none_and_one_with_a_key_insists_on_it ... ok
-
-test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.00s
-

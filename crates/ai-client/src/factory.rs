@@ -15,9 +15,9 @@ use std::time::Duration;
 use craft_ai_artcraft::{ArtCraftConfig, ArtCraftProvider};
 use craft_ai_bfl::{BflConfig, BflProvider};
 use craft_ai_comfyui::{ComfyConfig, ComfyProvider, WorkflowLibrary};
+use craft_ai_core::{AiError, Connection, Locality, Provider, SecretString};
 use craft_ai_features::GpuVendor;
 use craft_ai_media::{MediaStore, MediaStoreConfig, PersistingProvider};
-use craft_ai_model::{AiError, Connection, Locality, Provider, SecretString};
 use craft_ai_openai::{OpenAiConfig, OpenAiProvider};
 use craft_ai_sam3::{Sam3Config, Sam3Provider};
 use craft_ai_seedance::{SeedanceConfig, SeedanceProvider};
@@ -101,7 +101,7 @@ impl ProviderFactory {
                 .ok_or_else(|| AiError::invalid("ArtCraft Omni API address is required"))?;
             let key = s.ok_or_else(|| {
                 AiError::new(
-                    craft_ai_model::ErrorKind::Auth,
+                    craft_ai_core::ErrorKind::Auth,
                     "ArtCraft Omni API key is required",
                 )
             })?;
@@ -118,7 +118,7 @@ impl ProviderFactory {
                 .as_deref()
                 .ok_or_else(|| AiError::invalid("BFL address is required"))?;
             let key = s.ok_or_else(|| {
-                AiError::new(craft_ai_model::ErrorKind::Auth, "BFL API key is required")
+                AiError::new(craft_ai_core::ErrorKind::Auth, "BFL API key is required")
             })?;
             let mut cfg = BflConfig::new(base, key);
             if let Some((connect, request)) = timeouts {
@@ -134,7 +134,7 @@ impl ProviderFactory {
                 .ok_or_else(|| AiError::invalid("ModelArk address is required"))?;
             let key = s.ok_or_else(|| {
                 AiError::new(
-                    craft_ai_model::ErrorKind::Auth,
+                    craft_ai_core::ErrorKind::Auth,
                     "ModelArk API key is required",
                 )
             })?;
@@ -152,7 +152,7 @@ impl ProviderFactory {
                 .ok_or_else(|| AiError::invalid("Vertex address is required"))?;
             let key = s.ok_or_else(|| {
                 AiError::new(
-                    craft_ai_model::ErrorKind::Auth,
+                    craft_ai_core::ErrorKind::Auth,
                     "Vertex express API key is required",
                 )
             })?;

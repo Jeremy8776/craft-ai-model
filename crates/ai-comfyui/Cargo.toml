@@ -1,15 +1,18 @@
 [package]
 name = "craft-ai-comfyui"
+description = "ComfyUI workflow adapter and SAM 3 point, text and session clients for Craft AI. Local only."
 version.workspace = true
 edition.workspace = true
 license.workspace = true
 rust-version.workspace = true
+repository.workspace = true
+publish = false
 
 [lints]
 workspace = true
 
 [dependencies]
-craft-ai-model.workspace = true
+craft-ai-core.workspace = true
 craft-ai-http.workspace = true
 craft-ai-media = { path = "../ai-media", package = "craft-ai-media" }
 serde.workspace = true

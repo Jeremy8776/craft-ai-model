@@ -1,5 +1,5 @@
 //! Bounded, same-origin API calls. The key is never sent to result media URLs.
-use craft_ai_model::{AiError, ErrorKind, SecretString};
+use craft_ai_core::{AiError, ErrorKind, SecretString};
 use serde_json::Value;
 use std::io::Read;
 use std::time::Duration;

@@ -8,8 +8,8 @@
 //! This holds data only. The widget lives in `craft-ai-egui`; the app acts on what the person
 //! picks (`ToolDesk::choose` for the whole suite, `AiClient::bind` for one app).
 
+use craft_ai_core::{AiError, ConnectionId, Locality, ModelId, Role, RoleId};
 use craft_ai_features::SetupOption;
-use craft_ai_model::{AiError, ConnectionId, Locality, ModelId, Role, RoleId};
 
 use crate::client::{AiClient, RoleStatus};
 use crate::picker_groups::{binding_for, connection_groups, model_label, unset_groups};

@@ -4,8 +4,8 @@ use std::path::PathBuf;
 use std::sync::Arc;
 
 use craft_ai_client::{AiClient, ToolDesk};
+use craft_ai_core::{AppId, Role, StoreFile};
 use craft_ai_features::Feature;
-use craft_ai_model::{AppId, Role, StoreFile};
 use craft_ai_native::secrets::MemoryStore;
 use craft_ai_native::shared::SharedStore;
 
@@ -289,7 +289,7 @@ fn the_picker_offers_the_two_runtimes_of_one_model_side_by_side() {
 #[test]
 fn old_stores_without_the_field_load_and_it_is_not_written_when_absent() {
     let json = r#"{"id":"sam3","label":"SAM 3"}"#;
-    let info: craft_ai_model::ModelInfo = serde_json::from_str(json).unwrap();
+    let info: craft_ai_core::ModelInfo = serde_json::from_str(json).unwrap();
     assert_eq!(info.local_file, None);
     assert!(!serde_json::to_string(&info).unwrap().contains("local_file"));
 }

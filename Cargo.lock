@@ -702,8 +702,8 @@ dependencies = [
 name = "craft-ai-artcraft"
 version = "0.1.0"
 dependencies = [
+ "craft-ai-core",
  "craft-ai-http",
- "craft-ai-model",
  "serde_json",
  "ureq",
  "uuid",
@@ -713,8 +713,8 @@ dependencies = [
 name = "craft-ai-bfl"
 version = "0.1.0"
 dependencies = [
+ "craft-ai-core",
  "craft-ai-http",
- "craft-ai-model",
  "serde_json",
  "ureq",
 ]
@@ -726,10 +726,10 @@ dependencies = [
  "craft-ai-artcraft",
  "craft-ai-bfl",
  "craft-ai-comfyui",
+ "craft-ai-core",
  "craft-ai-declarative",
  "craft-ai-features",
  "craft-ai-media",
- "craft-ai-model",
  "craft-ai-native",
  "craft-ai-openai",
  "craft-ai-sam3",
@@ -744,10 +744,10 @@ dependencies = [
 name = "craft-ai-comfy-env"
 version = "0.1.0"
 dependencies = [
+ "craft-ai-core",
  "craft-ai-features",
  "craft-ai-http",
  "craft-ai-media",
- "craft-ai-model",
  "dirs",
  "flate2",
  "fs4",
@@ -766,9 +766,9 @@ name = "craft-ai-comfyui"
 version = "0.1.0"
 dependencies = [
  "base64 0.22.1",
+ "craft-ai-core",
  "craft-ai-http",
  "craft-ai-media",
- "craft-ai-model",
  "craft-ai-native",
  "png 0.17.16",
  "serde",
@@ -779,12 +779,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "craft-ai-core"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "craft-ai-declarative"
 version = "0.1.0"
 dependencies = [
+ "craft-ai-core",
  "craft-ai-http",
  "craft-ai-media",
- "craft-ai-model",
  "serde_json",
  "ureq",
 ]
@@ -794,8 +802,8 @@ name = "craft-ai-egui"
 version = "0.1.0"
 dependencies = [
  "craft-ai-client",
+ "craft-ai-core",
  "craft-ai-features",
- "craft-ai-model",
  "craft-ai-native",
  "eframe",
  "egui",
@@ -808,7 +816,7 @@ dependencies = [
 name = "craft-ai-features"
 version = "0.1.0"
 dependencies = [
- "craft-ai-model",
+ "craft-ai-core",
  "png 0.17.16",
  "serde",
  "serde_json",
@@ -825,20 +833,12 @@ dependencies = [
 name = "craft-ai-media"
 version = "0.1.0"
 dependencies = [
+ "craft-ai-core",
  "craft-ai-http",
- "craft-ai-model",
  "serde_json",
  "tempfile",
  "ureq",
  "url",
-]
-
-[[package]]
-name = "craft-ai-model"
-version = "0.1.0"
-dependencies = [
- "serde",
- "serde_json",
 ]
 
 [[package]]
@@ -847,7 +847,7 @@ version = "0.1.0"
 dependencies = [
  "argon2",
  "chacha20poly1305",
- "craft-ai-model",
+ "craft-ai-core",
  "dirs",
  "getrandom 0.4.3",
  "keyring",
@@ -860,8 +860,8 @@ dependencies = [
 name = "craft-ai-openai"
 version = "0.1.0"
 dependencies = [
+ "craft-ai-core",
  "craft-ai-http",
- "craft-ai-model",
  "serde",
  "serde_json",
  "ureq",
@@ -871,8 +871,8 @@ dependencies = [
 name = "craft-ai-sam3"
 version = "0.1.0"
 dependencies = [
+ "craft-ai-core",
  "craft-ai-http",
- "craft-ai-model",
  "serde_json",
  "ureq",
 ]
@@ -881,8 +881,8 @@ dependencies = [
 name = "craft-ai-seedance"
 version = "0.1.0"
 dependencies = [
+ "craft-ai-core",
  "craft-ai-http",
- "craft-ai-model",
  "serde_json",
  "ureq",
 ]
@@ -891,8 +891,8 @@ dependencies = [
 name = "craft-ai-vertex"
 version = "0.1.0"
 dependencies = [
+ "craft-ai-core",
  "craft-ai-http",
- "craft-ai-model",
  "serde_json",
  "ureq",
 ]

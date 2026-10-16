@@ -16,7 +16,7 @@
 use std::collections::BTreeSet;
 use std::time::{Duration, Instant};
 
-use craft_ai_model::{AiError, Billing, Connection, ErrorKind, ModelInfo, SecretString};
+use craft_ai_core::{AiError, Billing, Connection, ErrorKind, ModelInfo, SecretString};
 use craft_ai_openai::OpenAiConfig;
 use craft_ai_openai::catalog::{self, Kind};
 use craft_ai_openai::probe::{MAX_LISTED, list_models};

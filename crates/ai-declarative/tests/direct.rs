@@ -3,9 +3,9 @@
 
 mod fixtures;
 
+use craft_ai_core::conformance::run_lifecycle_paced;
+use craft_ai_core::{ErrorKind, Event, JobState, Payload, Provider, SecretString};
 use craft_ai_declarative::{DeclarativeConfig, DeclarativeProvider};
-use craft_ai_model::conformance::run_lifecycle_paced;
-use craft_ai_model::{ErrorKind, Event, JobState, Payload, Provider, SecretString};
 use fixtures::support::{Reply, Server, http_bytes};
 use fixtures::{KEY, b64, direct_json, image_request, model, png_bytes, queue_json, spec};
 use serde_json::{Value, json};
@@ -25,7 +25,7 @@ fn png_server() -> Server {
     Server::start(move |_| Reply::Json(200, body.clone()))
 }
 
-fn failure(p: &DeclarativeProvider, id: &craft_ai_model::JobId) -> String {
+fn failure(p: &DeclarativeProvider, id: &craft_ai_core::JobId) -> String {
     match p.poll(id).unwrap().state {
         JobState::Failed { error } => error.message,
         other => panic!("expected a failed job, got {other:?}"),

@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 #[path = "../../ai-openai/tests/support/mod.rs"]
 mod support;
-use craft_ai_model::{
+use craft_ai_core::{
     ErrorKind, InputRole, JobState, ModelId, Payload, Provider, Request, SecretString,
     capability::CapabilityId,
 };

@@ -6,11 +6,11 @@ use std::sync::Arc;
 use std::sync::atomic::{AtomicUsize, Ordering};
 use std::time::Duration;
 
-use craft_ai_declarative::{DeclarativeConfig, DeclarativeProvider};
-use craft_ai_model::conformance::{
+use craft_ai_core::conformance::{
     run_cancel_paced, run_lifecycle_paced, run_rejects, run_unknown_job,
 };
-use craft_ai_model::{ErrorKind, InputRole, JobState, Payload, Provider, SecretString};
+use craft_ai_core::{ErrorKind, InputRole, JobState, Payload, Provider, SecretString};
+use craft_ai_declarative::{DeclarativeConfig, DeclarativeProvider};
 use fixtures::support::{Reply, Server};
 use fixtures::{KEY, image_request, model, queue_json, spec};
 use serde_json::{Value, json};
@@ -68,7 +68,7 @@ fn the_probe_the_submit_and_the_checks_follow_the_spec_and_pass_conformance() {
     let done = run_lifecycle_paced(&p, &model(), &image_request("a red door"), &pause).unwrap();
     assert_eq!(done.state, JobState::Succeeded);
     let out = done.events.iter().find_map(|e| match e {
-        craft_ai_model::Event::Output(o) => Some(o),
+        craft_ai_core::Event::Output(o) => Some(o),
         _ => None,
     });
     let Some(Payload::Handle(h)) = out.map(|o| &o.payload) else {

@@ -1,9 +1,0 @@
-
-running 1 test
-test reversed_corners_and_fractions_normalise_the_same_way ... ok
-
-test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 7 filtered out; finished in 0.01s
-
-   Compiling craft-ai-comfyui v0.1.0 (%USERPROFILE%\Apps\ArtCraft\craft-ai-model\crates\ai-comfyui)
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.47s
-     Running tests\sam3_candidate_inputs.rs (target\debug\deps\sam3_candidate_inputs-84ace87c52f682a8.exe)

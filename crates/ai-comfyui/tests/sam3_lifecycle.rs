@@ -2,7 +2,7 @@
 //! so an app can drop a stale one, and cancelling a request touches only that request's prompt.
 mod sam3_support;
 use craft_ai_comfyui::{Sam3Session, sam3};
-use craft_ai_model::ErrorKind;
+use craft_ai_core::ErrorKind;
 use sam3_support::{Reply, Server, mask, server_nodes, server_with, sized_mask, two_masks};
 use serde_json::{Value, json};
 use std::sync::atomic::{AtomicUsize, Ordering};
@@ -149,7 +149,7 @@ fn posted(server: &Server, path: &str) -> Vec<Value> {
 
 /// Run `candidates` on a thread, cancel it after a moment, and return the error and how long
 /// the cancellation took to be honoured.
-fn cancel_a_running_request(s: &Sam3Session) -> (craft_ai_model::AiError, Duration) {
+fn cancel_a_running_request(s: &Sam3Session) -> (craft_ai_core::AiError, Duration) {
     let canceller = s.canceller();
     std::thread::scope(|scope| {
         let worker = scope.spawn(|| s.candidates(&click()));

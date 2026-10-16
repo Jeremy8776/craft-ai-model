@@ -11,8 +11,8 @@
 
 use std::path::{Path, PathBuf};
 
-use craft_ai_model::Catalog;
-use craft_ai_model::picks::MAX_CATALOG_BYTES;
+use craft_ai_core::Catalog;
+use craft_ai_core::picks::MAX_CATALOG_BYTES;
 
 use crate::{fsutil, paths};
 

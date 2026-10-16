@@ -2,9 +2,9 @@
 //! count, encoded bytes and decoded pixels are bounded, and any bad mask fails the batch.
 use crate::http::Http;
 use crate::{output, sam3_point::grayscale_mask};
-use craft_ai_model::job::Event;
-use craft_ai_model::payload::Payload;
-use craft_ai_model::{AiError, ErrorKind};
+use craft_ai_core::job::Event;
+use craft_ai_core::payload::Payload;
+use craft_ai_core::{AiError, ErrorKind};
 use serde_json::{Value, json};
 
 const MAX_MASKS: usize = 100;

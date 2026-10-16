@@ -8,13 +8,13 @@
 
 use std::path::{Path, PathBuf};
 
-use craft_ai_features::Feature;
-use craft_ai_model::endpoint::Endpoint;
-use craft_ai_model::role::ResolveError;
-use craft_ai_model::{
+use craft_ai_core::endpoint::Endpoint;
+use craft_ai_core::role::ResolveError;
+use craft_ai_core::{
     AiError, Auth, Billing, Binding, CapabilitySpec, Connection, ConnectionId, Locality, ModelId,
     ModelInfo, Role,
 };
+use craft_ai_features::Feature;
 
 use crate::client::AiClient;
 use crate::tools::ToolDesk;
@@ -68,7 +68,7 @@ impl ToolDesk {
     fn register(
         &self,
         connection: Connection,
-        role: craft_ai_model::RoleId,
+        role: craft_ai_core::RoleId,
         model: ModelId,
     ) -> Result<LocalEnabled, AiError> {
         let id = connection.id.clone();

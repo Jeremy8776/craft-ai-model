@@ -1,6 +1,6 @@
 //! Native-only pieces of the Craft AI layer. Desktop builds only: this crate does file and
 //! operating system I/O and must never be a dependency of a wasm build. The data model it serves
-//! lives in `craft-ai-model`, which stays I/O free.
+//! lives in `craft-ai-core`, which stays I/O free.
 //!
 //! # Map
 //!

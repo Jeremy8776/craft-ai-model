@@ -18,7 +18,7 @@
 
 use crate::sniff::{self, HEAD_LEN};
 use crate::url_rules;
-use craft_ai_model::{AiError, ErrorKind, MediaType, Payload, PayloadHandle};
+use craft_ai_core::{AiError, ErrorKind, MediaType, Payload, PayloadHandle};
 use std::io::{Read, Write};
 use std::path::PathBuf;
 use std::time::{Duration, Instant};

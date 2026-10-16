@@ -3,11 +3,11 @@
 use std::sync::Arc;
 
 use craft_ai_client::{AiClient, GroupState, RoleStatus, ToolDesk};
-use craft_ai_features::Feature;
-use craft_ai_model::{
+use craft_ai_core::{
     AppId, Binding, CapabilityId, CapabilitySpec, Connection, ConnectionId, InputRole, Locality,
     ModelId, ModelInfo, Role, StoreFile,
 };
+use craft_ai_features::Feature;
 use craft_ai_native::secrets::MemoryStore;
 use craft_ai_native::shared::SharedStore;
 use serde_json::json;
@@ -67,7 +67,7 @@ fn enabling_the_local_model_writes_a_local_connection_offering_it_for_the_tool()
     assert_eq!(c.endpoint.as_deref(), Some(SAM3_URL));
     assert!(c.auth.secret_ref().is_none(), "a local model needs no key");
     assert_eq!(c.provider, "comfyui");
-    assert_eq!(c.billing, craft_ai_model::Billing::Free);
+    assert_eq!(c.billing, craft_ai_core::Billing::Free);
     assert!(c.enabled);
     let model = c.model(&done.model).unwrap();
     assert_eq!(model.label, "SAM 3");

@@ -1,9 +1,9 @@
 //! Parse one declared output node and fetch its locally saved media.
 use crate::http::{Http, encode_query};
+use craft_ai_core::job::{Event, Output};
+use craft_ai_core::payload::Payload;
+use craft_ai_core::{AiError, ErrorKind};
 use craft_ai_media::sniff;
-use craft_ai_model::job::{Event, Output};
-use craft_ai_model::payload::Payload;
-use craft_ai_model::{AiError, ErrorKind};
 use serde_json::Value;
 use std::io::Read;
 use std::path::Path;

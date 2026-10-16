@@ -1,13 +1,13 @@
 //! The history view driven like a person would: filter, switch tables, export, clear.
 
+use craft_ai_core::history::{EndRecord, HISTORY_SCHEMA, StartRecord, merge};
+use craft_ai_core::job::Usage;
+use craft_ai_core::{ErrorKind, HistoryLog, HistoryRecord, Locality, Outcome};
 use craft_ai_egui::history_text::entry_line;
 use craft_ai_egui::{
     CLEAR, CLEAR_NO, CLEAR_YES, EMPTY, EXPORT, HistoryAction, HistoryViewState, NOTHING_MATCHES,
     REFRESH, Range, TAB_DAYS, TAB_MONTHS, Tab, history_view,
 };
-use craft_ai_model::history::{EndRecord, HISTORY_SCHEMA, StartRecord, merge};
-use craft_ai_model::job::Usage;
-use craft_ai_model::{ErrorKind, HistoryLog, HistoryRecord, Locality, Outcome};
 use egui_kittest::Harness;
 use egui_kittest::kittest::{NodeT, Queryable};
 

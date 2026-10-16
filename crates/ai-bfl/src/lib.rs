@@ -3,7 +3,7 @@
 //! short-lived remote handles; callers must persist them if they need durable assets.
 #![deny(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 mod http;
-use craft_ai_model::{
+use craft_ai_core::{
     AiError, ErrorKind, Event, InputRole, JobId, JobSnapshot, JobState, ModelId, ModelInfo, Output,
     Payload, Provider, Request, SecretString, capability::CapabilityId, endpoint::Endpoint,
     model::CapabilitySpec, payload::Limits,

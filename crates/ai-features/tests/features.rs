@@ -1,5 +1,5 @@
+use craft_ai_core::PRESETS;
 use craft_ai_features::*;
-use craft_ai_model::PRESETS;
 use std::collections::HashSet;
 
 fn feature(id: &str) -> Feature {
@@ -73,7 +73,7 @@ fn recipes_carry_checkable_files() {
 
 #[test]
 fn the_sam3_recipe_matches_the_real_file() {
-    // Size and checksum of the file the Hugging Face copy serves and of the one on Jeremy's machine.
+    // Size and checksum of the file the Hugging Face copy serves and of the copy checked on the maintainer's machine.
     let m = &feature("select-subject").local.unwrap().models[0];
     assert_eq!(m.size_bytes, 3_449_860_632);
     assert_eq!(

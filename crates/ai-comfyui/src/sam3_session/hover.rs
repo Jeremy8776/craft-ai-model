@@ -3,7 +3,7 @@
 //! queue a graph so the saved mask is exact rather than a lossy JPEG.
 use super::{Sam3Session, sam3};
 use base64::Engine;
-use craft_ai_model::{AiError, ErrorKind};
+use craft_ai_core::{AiError, ErrorKind};
 use serde_json::{Value, json};
 
 impl Sam3Session {

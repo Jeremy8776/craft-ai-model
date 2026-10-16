@@ -5,7 +5,7 @@
 
 use crate::feature::Feature;
 use crate::png;
-use craft_ai_model::{InputRole, Payload, Request};
+use craft_ai_core::{InputRole, Payload, Request};
 
 /// A white square with a mid-grey disc, so "the disc" means something to a segmenter.
 fn picture() -> Vec<u8> {

@@ -4,8 +4,8 @@
 use std::sync::Arc;
 
 use craft_ai_client::{AiClient, ToolDesk};
+use craft_ai_core::{AppId, ConnectionId, Role, StoreFile};
 use craft_ai_features::{Feature, Gpu, GpuVendor, Os, SystemProfile};
-use craft_ai_model::{AppId, ConnectionId, Role, StoreFile};
 use craft_ai_native::secrets::MemoryStore;
 use craft_ai_native::shared::SharedStore;
 
@@ -240,7 +240,7 @@ fn the_errors_an_app_may_show_are_plain() {
         .update(|store| {
             for c in &mut store.connections {
                 if c.provider == "comfyui" {
-                    c.locality = craft_ai_model::Locality::Remote;
+                    c.locality = craft_ai_core::Locality::Remote;
                     c.endpoint = Some("https://example.com".to_owned());
                 }
             }

@@ -19,7 +19,7 @@ mod archive;
 mod install;
 mod resolve;
 
-use craft_ai_model::AiError;
+use craft_ai_core::AiError;
 use serde::{Deserialize, Serialize};
 use url::Url;
 

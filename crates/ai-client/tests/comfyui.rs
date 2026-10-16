@@ -8,7 +8,7 @@ use std::sync::{Arc, Mutex};
 
 use craft_ai_client::{ConnectionManager, ProviderFactory};
 use craft_ai_comfyui::WorkflowSpec;
-use craft_ai_model::{ConnectionDraft, ConnectionId, PRESETS, Request};
+use craft_ai_core::{ConnectionDraft, ConnectionId, PRESETS, Request};
 use craft_ai_native::secrets::MemoryStore;
 use craft_ai_native::shared::SharedStore;
 use serde_json::json;
@@ -126,26 +126,26 @@ fn the_factory_builds_a_comfyui_provider_that_runs_a_library_workflow() {
         .build(&prepared.connection, None)
         .expect("comfyui is registered");
     let request =
-        Request::new(craft_ai_model::capability::CapabilityId::parse("image.generate").unwrap())
+        Request::new(craft_ai_core::capability::CapabilityId::parse("image.generate").unwrap())
             .with_input(
-                craft_ai_model::model::InputRole::Prompt,
-                craft_ai_model::payload::Payload::text("a kite"),
+                craft_ai_core::model::InputRole::Prompt,
+                craft_ai_core::payload::Payload::text("a kite"),
             );
     let id = provider
         .submit(
-            &craft_ai_model::ModelId::new("kite-image").unwrap(),
+            &craft_ai_core::ModelId::new("kite-image").unwrap(),
             &request,
         )
         .expect("the library workflow runs");
     let snapshot = provider.poll(&id).unwrap();
     assert_eq!(
         snapshot.state,
-        craft_ai_model::JobState::Succeeded,
+        craft_ai_core::JobState::Succeeded,
         "the workflow job should succeed against the scripted server"
     );
     assert!(matches!(
         snapshot.outputs().next().unwrap().payload,
-        craft_ai_model::payload::Payload::Handle(_)
+        craft_ai_core::payload::Payload::Handle(_)
     ));
     let saved = std::fs::read_dir(&output_dir)
         .unwrap()

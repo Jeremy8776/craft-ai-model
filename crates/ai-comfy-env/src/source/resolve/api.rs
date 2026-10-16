@@ -3,8 +3,8 @@
 
 use std::io::Read;
 
+use craft_ai_core::{AiError, ErrorKind, SecretString};
 use craft_ai_media::links;
-use craft_ai_model::{AiError, ErrorKind, SecretString};
 use serde_json::Value;
 use url::Url;
 

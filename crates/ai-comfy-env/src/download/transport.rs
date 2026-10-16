@@ -4,8 +4,8 @@
 //! Invariants: every hop passes the shared link rules and the allowed-host list; the token goes
 //! only to `auth_host`; redirects are never followed by the HTTP client itself.
 
+use craft_ai_core::{AiError, ErrorKind, SecretString};
 use craft_ai_media::links;
-use craft_ai_model::{AiError, ErrorKind, SecretString};
 use std::io::Read;
 use url::Url;
 

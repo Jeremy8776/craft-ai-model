@@ -8,7 +8,7 @@ mod support;
 use craft_ai_comfy_env::source::{
     ApiBases, Candidate, Format, HostOverride, Resolver, SourceKind, SourceSettings, parse,
 };
-use craft_ai_model::{ErrorKind, SecretString};
+use craft_ai_core::{ErrorKind, SecretString};
 use serde_json::{Value, json};
 use support::{Reply, Server, http_bytes};
 
@@ -42,7 +42,7 @@ fn resolve(
     base: &str,
     address: &str,
     token: Option<&str>,
-) -> Result<Candidate, craft_ai_model::AiError> {
+) -> Result<Candidate, craft_ai_core::AiError> {
     let token = token.map(SecretString::new);
     Resolver::new(settings(base)).resolve(&parse(address).unwrap(), token.as_ref())
 }

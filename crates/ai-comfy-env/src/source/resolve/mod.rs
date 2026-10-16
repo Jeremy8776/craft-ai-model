@@ -7,8 +7,8 @@ mod civitai;
 mod github;
 mod hf;
 
+use craft_ai_core::{AiError, ErrorKind, SecretString};
 use craft_ai_features::Licence;
-use craft_ai_model::{AiError, ErrorKind, SecretString};
 
 use super::candidate::Candidate;
 use super::format::Format;

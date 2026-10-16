@@ -6,8 +6,8 @@
 //! link by opening the launcher or its own connection panel.
 
 use craft_ai_client::{MissingModel, SetupLink};
+use craft_ai_core::{ConnectionId, ModelId};
 use craft_ai_features::{PortableBuild, SetupOffer, SetupRoute, gigabytes};
-use craft_ai_model::{ConnectionId, ModelId};
 use egui::Ui;
 
 use crate::picker::{PickerAction, provider_list};

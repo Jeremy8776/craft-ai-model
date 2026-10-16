@@ -13,8 +13,8 @@
 //! The link handling (redirects, host rules, token scoping) is in `transport`; this file holds the
 //! resumable `.part` handling and the size and checksum checks.
 
+use craft_ai_core::{AiError, ErrorKind, SecretString};
 use craft_ai_features::ModelFile;
-use craft_ai_model::{AiError, ErrorKind, SecretString};
 use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicBool, Ordering};

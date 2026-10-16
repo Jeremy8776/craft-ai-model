@@ -1,11 +1,11 @@
 #[path = "../../ai-openai/tests/support/mod.rs"]
 mod support;
 use craft_ai_comfyui::{Binding, ComfyConfig, ComfyProvider, Workflow};
-use craft_ai_model::capability::CapabilityId;
-use craft_ai_model::conformance;
-use craft_ai_model::model::InputRole;
-use craft_ai_model::payload::Payload;
-use craft_ai_model::{ErrorKind, JobState, ModelId, Provider, Request};
+use craft_ai_core::capability::CapabilityId;
+use craft_ai_core::conformance;
+use craft_ai_core::model::InputRole;
+use craft_ai_core::payload::Payload;
+use craft_ai_core::{ErrorKind, JobState, ModelId, Provider, Request};
 use serde_json::json;
 use std::sync::Arc;
 use std::sync::atomic::{AtomicUsize, Ordering};

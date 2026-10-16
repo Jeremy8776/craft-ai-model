@@ -58,7 +58,7 @@ fn inpaint_bindings_survive_the_shared_workflow_library() {
     assert!(
         loaded[0].info().capabilities[0]
             .requires
-            .contains(&craft_ai_model::model::InputRole::Mask)
+            .contains(&craft_ai_core::model::InputRole::Mask)
     );
 }
 
@@ -84,12 +84,12 @@ fn a_json_file_lands_in_the_library_and_loads_back() {
     assert_eq!(workflows[0].id().as_str(), "kite-image");
     let rendered = workflows[0]
         .render(
-            &craft_ai_model::Request::new(
-                craft_ai_model::capability::CapabilityId::parse("image.generate").unwrap(),
+            &craft_ai_core::Request::new(
+                craft_ai_core::capability::CapabilityId::parse("image.generate").unwrap(),
             )
             .with_input(
-                craft_ai_model::model::InputRole::Prompt,
-                craft_ai_model::payload::Payload::text("a kite"),
+                craft_ai_core::model::InputRole::Prompt,
+                craft_ai_core::payload::Payload::text("a kite"),
             ),
         )
         .unwrap();
@@ -110,12 +110,12 @@ fn a_bare_api_graph_gets_defaults_and_a_derived_id() {
     // Default binding: the only text-input node found.
     let rendered = workflows[0]
         .render(
-            &craft_ai_model::Request::new(
-                craft_ai_model::capability::CapabilityId::parse("image.generate").unwrap(),
+            &craft_ai_core::Request::new(
+                craft_ai_core::capability::CapabilityId::parse("image.generate").unwrap(),
             )
             .with_input(
-                craft_ai_model::model::InputRole::Prompt,
-                craft_ai_model::payload::Payload::text("a kite"),
+                craft_ai_core::model::InputRole::Prompt,
+                craft_ai_core::payload::Payload::text("a kite"),
             ),
         )
         .unwrap();
@@ -226,12 +226,12 @@ fn workflow_specs_round_trip_through_the_library_file() {
     assert_eq!(
         loaded[0]
             .render(
-                &craft_ai_model::Request::new(
-                    craft_ai_model::capability::CapabilityId::parse("image.generate").unwrap(),
+                &craft_ai_core::Request::new(
+                    craft_ai_core::capability::CapabilityId::parse("image.generate").unwrap(),
                 )
                 .with_input(
-                    craft_ai_model::model::InputRole::Prompt,
-                    craft_ai_model::payload::Payload::text("checked"),
+                    craft_ai_core::model::InputRole::Prompt,
+                    craft_ai_core::payload::Payload::text("checked"),
                 )
             )
             .unwrap()["1"]["inputs"]["text"],
@@ -249,5 +249,5 @@ fn a_spec_with_an_unknown_capability_is_refused() {
         Some("2".to_owned()),
     )
     .unwrap_err();
-    assert_eq!(err.kind, craft_ai_model::ErrorKind::Unsupported);
+    assert_eq!(err.kind, craft_ai_core::ErrorKind::Unsupported);
 }

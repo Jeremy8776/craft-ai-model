@@ -9,8 +9,8 @@ use std::path::Path;
 use std::sync::atomic::AtomicBool;
 
 use craft_ai_comfy_env::{DownloadConfig, Downloader};
+use craft_ai_core::{ErrorKind, SecretString};
 use craft_ai_features::{Licence, ModelFile, Source};
-use craft_ai_model::{ErrorKind, SecretString};
 use sha2::{Digest, Sha256};
 use support::{Reply, Server, http_bytes};
 
@@ -68,7 +68,7 @@ fn fetch(
     f: &ModelFile,
     dir: &Path,
     token: Option<&SecretString>,
-) -> Result<std::path::PathBuf, craft_ai_model::AiError> {
+) -> Result<std::path::PathBuf, craft_ai_core::AiError> {
     d.fetch(f, dir, token, &AtomicBool::new(false), &mut |_| {})
 }
 

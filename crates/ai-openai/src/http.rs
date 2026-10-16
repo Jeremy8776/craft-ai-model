@@ -9,8 +9,8 @@
 use std::io::Read;
 use std::time::Duration;
 
-use craft_ai_model::secret::redact;
-use craft_ai_model::{AiError, ErrorKind, SecretString, Usage};
+use craft_ai_core::secret::redact;
+use craft_ai_core::{AiError, ErrorKind, SecretString, Usage};
 use serde_json::Value;
 use ureq::Body;
 use ureq::http::Response;

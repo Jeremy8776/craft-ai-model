@@ -1,5 +1,5 @@
+use craft_ai_core::PRESETS;
 use craft_ai_features::{Route, builtin, setup_options};
-use craft_ai_model::PRESETS;
 
 #[test]
 fn options_are_derived_from_the_features_not_written_twice() {

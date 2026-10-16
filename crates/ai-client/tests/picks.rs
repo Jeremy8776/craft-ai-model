@@ -4,8 +4,8 @@
 use std::sync::Arc;
 
 use craft_ai_client::AiClient;
-use craft_ai_model::picks::CatalogEntry;
-use craft_ai_model::{
+use craft_ai_core::picks::CatalogEntry;
+use craft_ai_core::{
     AppId, Billing, Binding, CapabilityId, Catalog, Connection, ConnectionId, InputRole, ModelId,
     ModelInfo, Pick, PickedBy, Pricing, Role, RoleId, SecretRef, SecretString, StoreFile,
 };

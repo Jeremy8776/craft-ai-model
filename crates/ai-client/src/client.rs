@@ -19,11 +19,11 @@
 use std::sync::Arc;
 use std::time::{Duration, Instant};
 
-use craft_ai_model::job::Event;
-use craft_ai_model::payload::Limits;
-use craft_ai_model::picks::{Candidate, choose};
-use craft_ai_model::role::eligible;
-use craft_ai_model::{
+use craft_ai_core::job::Event;
+use craft_ai_core::payload::Limits;
+use craft_ai_core::picks::{Candidate, choose};
+use craft_ai_core::role::eligible;
+use craft_ai_core::{
     AiError, AppId, Billing, Binding, Catalog, Connection, ConnectionId, ConsentLedger, Disclosure,
     ErrorKind, HistoryLog, JobId, JobSnapshot, JobState, Locality, ModelId, Pick, PickedBy,
     Provider, Request, Role, RoleId, Usage,
@@ -263,7 +263,7 @@ impl AiClient {
         let read = file
             .read()
             .map_err(|e| AiError::new(ErrorKind::Internal, format!("history unavailable: {e}")))?;
-        Ok(craft_ai_model::history::merge(read.records, read.skipped))
+        Ok(craft_ai_core::history::merge(read.records, read.skipped))
     }
 
     /// Deletes the log for every app.
@@ -427,7 +427,7 @@ impl AiClient {
             store
                 .check_tool(role)
                 .map_err(|e| AiError::invalid(e.to_string()))?;
-            craft_ai_model::role::resolve(
+            craft_ai_core::role::resolve(
                 role,
                 &[std::slice::from_ref(&binding)],
                 &store.connections,
@@ -517,12 +517,7 @@ impl AiClient {
         self.factory.build(&plan.connection, secret)
     }
 
-    fn log_refused(
-        &self,
-        plan: &Plan,
-        estimate: Option<craft_ai_model::CostEstimate>,
-        e: &AiError,
-    ) {
+    fn log_refused(&self, plan: &Plan, estimate: Option<craft_ai_core::CostEstimate>, e: &AiError) {
         if let Some(file) = &self.history {
             history::refused(file, plan, estimate, self.keep_prompts, e);
         }
@@ -535,7 +530,7 @@ impl std::fmt::Debug for AiClient {
     }
 }
 
-fn set_override(store: &mut craft_ai_model::StoreFile, app: &AppId, binding: Binding) {
+fn set_override(store: &mut craft_ai_core::StoreFile, app: &AppId, binding: Binding) {
     let settings = store.apps.entry(app.clone()).or_default();
     settings.overrides.retain(|b| b.role != binding.role);
     settings.overrides.push(binding);

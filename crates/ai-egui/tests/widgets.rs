@@ -1,14 +1,14 @@
 //! The widgets driven headlessly: real egui layout, real clicks, no window and no GPU.
 
 use craft_ai_client::{Choice, RoleReady, RoleStatus};
+use craft_ai_core::consent::DisclosureItem;
+use craft_ai_core::{
+    AiError, AppId, Billing, CapabilityId, ConnectionId, CostEstimate, Disclosure, ErrorKind,
+    InputRole, JobState, Locality, ModelId, PayloadKind,
+};
 use craft_ai_egui::{
     ADD_CONNECTION, ALLOW, CANCEL, ConsentChoice, DENY, OPEN_LAUNCHER, ProgressAction,
     StatusAction, StatusView, USE_DEFAULT, ai_status, consent_prompt, job_progress,
-};
-use craft_ai_model::consent::DisclosureItem;
-use craft_ai_model::{
-    AiError, AppId, Billing, CapabilityId, ConnectionId, CostEstimate, Disclosure, ErrorKind,
-    InputRole, JobState, Locality, ModelId, PayloadKind,
 };
 use egui::accesskit::Role;
 use egui_kittest::Harness;

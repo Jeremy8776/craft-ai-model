@@ -6,7 +6,7 @@ use super::instances::{stamp, unstamped};
 use super::{Prepared, Sam3Session, sam3};
 use crate::sam3_candidates::{Sam3Candidates, parse_scores};
 use crate::sam3_masks::{bad, fetch};
-use craft_ai_model::AiError;
+use craft_ai_core::AiError;
 use serde_json::{Value, json};
 
 /// More points than any person places, and a bound on the graph text we send.

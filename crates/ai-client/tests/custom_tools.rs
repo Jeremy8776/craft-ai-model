@@ -1,5 +1,5 @@
 use craft_ai_client::{AiClient, ToolDesk};
-use craft_ai_model::{AppId, CapabilityId, InputRole, Role, RoleId, StoreFile};
+use craft_ai_core::{AppId, CapabilityId, InputRole, Role, RoleId, StoreFile};
 use craft_ai_native::secrets::MemoryStore;
 use craft_ai_native::shared::SharedStore;
 use std::sync::Arc;
@@ -39,8 +39,8 @@ fn user_declared_tool_is_shared_without_changing_builtin_catalogue() {
 
 #[test]
 fn removing_a_custom_tool_clears_its_suite_and_app_choices_atomically() {
-    use craft_ai_model::store::AppSettings;
-    use craft_ai_model::{Binding, ConnectionId, ModelId};
+    use craft_ai_core::store::AppSettings;
+    use craft_ai_core::{Binding, ConnectionId, ModelId};
     let dir = tempfile::tempdir().unwrap();
     let shared = SharedStore::new(dir.path().join("connections.json"));
     let tool = role("describe-photo");
@@ -106,7 +106,7 @@ fn malformed_custom_role_never_reaches_disk() {
 
 #[test]
 fn custom_tool_uses_one_bound_model_across_apps_and_rejects_missing_input() {
-    use craft_ai_model::{CapabilitySpec, Connection, ConnectionId, ModelId, ModelInfo};
+    use craft_ai_core::{CapabilitySpec, Connection, ConnectionId, ModelId, ModelInfo};
     let dir = tempfile::tempdir().unwrap();
     let shared = SharedStore::new(dir.path().join("connections.json"));
     let tool = role("describe-photo");
@@ -144,7 +144,7 @@ fn custom_tool_uses_one_bound_model_across_apps_and_rejects_missing_input() {
 
 #[test]
 fn launcher_cannot_bind_a_redefined_shared_tool() {
-    use craft_ai_model::{CapabilitySpec, Connection, ConnectionId, ModelId, ModelInfo};
+    use craft_ai_core::{CapabilitySpec, Connection, ConnectionId, ModelId, ModelInfo};
     let dir = tempfile::tempdir().unwrap();
     let shared = SharedStore::new(dir.path().join("connections.json"));
     let tool = role("describe-photo");
@@ -175,7 +175,7 @@ fn launcher_cannot_bind_a_redefined_shared_tool() {
 
 #[test]
 fn an_app_cannot_offer_models_for_a_redefined_custom_tool() {
-    use craft_ai_model::{CapabilitySpec, Connection, ModelId, ModelInfo};
+    use craft_ai_core::{CapabilitySpec, Connection, ModelId, ModelInfo};
     let dir = tempfile::tempdir().unwrap();
     let shared = SharedStore::new(dir.path().join("connections.json"));
     let tool = role("describe-photo");
@@ -201,7 +201,7 @@ fn an_app_cannot_offer_models_for_a_redefined_custom_tool() {
     assert!(
         app.bind(
             &redefined,
-            &craft_ai_model::ConnectionId::new("service").unwrap(),
+            &craft_ai_core::ConnectionId::new("service").unwrap(),
             &ModelId::new("m").unwrap()
         )
         .is_err()

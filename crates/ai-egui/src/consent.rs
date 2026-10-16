@@ -4,7 +4,7 @@
 //! it) when the choice is [`ConsentChoice::Allow`], and does nothing when it is `Deny`.
 //! `AiClient::start` re-checks the ledger regardless, so a prompt that is skipped sends nothing.
 
-use craft_ai_model::{Disclosure, Locality};
+use craft_ai_core::{Disclosure, Locality};
 use egui::{RichText, Ui};
 
 use crate::text;

@@ -5,12 +5,12 @@
 //! the saving and testing, which most apps want. The sentences are in [`words`] so an app with its
 //! own look can reuse them.
 
-use craft_ai_model::{Connection, ConnectionDraft, DraftError, Field, Locality, PRESETS};
+use craft_ai_core::{Connection, ConnectionDraft, DraftError, Field, Locality, PRESETS};
 use egui::{ComboBox, RichText, TextEdit, Ui};
 
 /// The form's sentences.
 pub mod words {
-    use craft_ai_model::Locality;
+    use craft_ai_core::Locality;
 
     pub const TITLE_ADD: &str = "Add a connection";
     pub const TITLE_EDIT: &str = "Edit connection";

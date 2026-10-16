@@ -8,9 +8,9 @@ use std::sync::Arc;
 use std::time::Duration;
 
 use craft_ai_client::{AiClient, ProviderFactory, RoleStatus, ToolDesk};
-use craft_ai_model::job::Event;
-use craft_ai_model::spec::Spec;
-use craft_ai_model::{
+use craft_ai_core::job::Event;
+use craft_ai_core::spec::Spec;
+use craft_ai_core::{
     AppId, CapabilityId, Connection, ConsentLedger, ErrorKind, InputRole, JobState, Payload,
     Request, Role, RoleId, SecretRef, SecretString,
 };
@@ -86,8 +86,8 @@ impl World {
         desk.register_tool(tool()).unwrap();
         desk.choose(
             &tool(),
-            &craft_ai_model::ConnectionId::new("notes-service").unwrap(),
-            &craft_ai_model::ModelId::new("sum-1").unwrap(),
+            &craft_ai_core::ConnectionId::new("notes-service").unwrap(),
+            &craft_ai_core::ModelId::new("sum-1").unwrap(),
         )
         .unwrap();
         world

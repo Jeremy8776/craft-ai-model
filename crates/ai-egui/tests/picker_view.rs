@@ -1,10 +1,10 @@
 //! The model picker widget driven like a person would: real layout, real clicks, no window.
 
 use craft_ai_client::{CurrentChoice, GroupState, PickerGroup, PickerModel, PickerView, SetupLink};
+use craft_ai_core::{ConnectionId, Locality, ModelId, RoleId};
 use craft_ai_egui::{
     ADD_KEY, HEADING, IN_USE, NOTHING, PickerAction, SET_UP, SWITCH_ON, model_picker,
 };
-use craft_ai_model::{ConnectionId, Locality, ModelId, RoleId};
 use egui_kittest::Harness;
 use egui_kittest::kittest::Queryable;
 

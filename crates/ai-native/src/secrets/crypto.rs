@@ -10,8 +10,8 @@
 use argon2::{Algorithm, Argon2, Params, Version};
 use chacha20poly1305::aead::{Aead, Payload};
 use chacha20poly1305::{KeyInit, XChaCha20Poly1305, XNonce};
-use craft_ai_model::SecretString;
-use craft_ai_model::payload::{base64_decode, base64_encode};
+use craft_ai_core::SecretString;
+use craft_ai_core::payload::{base64_decode, base64_encode};
 use serde::{Deserialize, Serialize};
 
 /// The only envelope version this build reads and writes.

@@ -10,10 +10,10 @@
 
 use std::time::{SystemTime, UNIX_EPOCH};
 
+use craft_ai_core::history::{EndRecord, HISTORY_SCHEMA, StartRecord, merge};
+use craft_ai_core::job::Usage;
+use craft_ai_core::{ErrorKind, HistoryLog, HistoryRecord, Locality, Outcome};
 use craft_ai_egui::{HistoryAction, HistoryViewState, history_view};
-use craft_ai_model::history::{EndRecord, HISTORY_SCHEMA, StartRecord, merge};
-use craft_ai_model::job::Usage;
-use craft_ai_model::{ErrorKind, HistoryLog, HistoryRecord, Locality, Outcome};
 use craft_ai_native::HistoryFile;
 
 const HOUR: u64 = 3_600_000;

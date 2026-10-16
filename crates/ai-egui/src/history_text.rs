@@ -1,7 +1,7 @@
 //! The words the history view shows. Pure functions, no egui, like [`crate::text`].
 
-use craft_ai_model::history::report::{Totals, amount_text, time_text};
-use craft_ai_model::{ErrorKind, HistoryEntry, Locality, Outcome};
+use craft_ai_core::history::report::{Totals, amount_text, time_text};
+use craft_ai_core::{ErrorKind, HistoryEntry, Locality, Outcome};
 
 /// A short phrase for why a job failed. Never the provider's own message.
 pub fn failure_reason(kind: ErrorKind) -> &'static str {
@@ -121,9 +121,9 @@ pub fn skipped_line(n: usize) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use craft_ai_model::history::report::totals;
-    use craft_ai_model::history::{EndRecord, HISTORY_SCHEMA, HistoryRecord, StartRecord, merge};
-    use craft_ai_model::job::Usage;
+    use craft_ai_core::history::report::totals;
+    use craft_ai_core::history::{EndRecord, HISTORY_SCHEMA, HistoryRecord, StartRecord, merge};
+    use craft_ai_core::job::Usage;
 
     fn entries(outcomes: &[(Option<Outcome>, Option<u64>)]) -> Vec<HistoryEntry> {
         let mut records = Vec::new();

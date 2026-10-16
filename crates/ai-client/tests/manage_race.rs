@@ -13,7 +13,7 @@ use std::sync::{Arc, Mutex};
 use std::time::Duration;
 
 use craft_ai_client::{ConnectionManager, SaveError};
-use craft_ai_model::{AiError, ConnectionDraft, PRESETS, SecretRef, SecretString};
+use craft_ai_core::{AiError, ConnectionDraft, PRESETS, SecretRef, SecretString};
 use craft_ai_native::secrets::{MemoryStore, SecretStore};
 use craft_ai_native::shared::SharedStore;
 
@@ -296,7 +296,7 @@ fn replacing_a_key_keeps_a_slot_another_connection_still_uses() {
     shared
         .update(|f| {
             let mut twin = f.connections[0].clone();
-            twin.id = craft_ai_model::ConnectionId::new("twin").unwrap();
+            twin.id = craft_ai_core::ConnectionId::new("twin").unwrap();
             f.connections.push(twin);
         })
         .unwrap();

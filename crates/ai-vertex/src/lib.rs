@@ -3,7 +3,7 @@
 //! represented by this adapter. There is no known non-billable key probe: `models()` refuses
 //! to claim that a saved key is verified. The preconfigured model can still be bound and used.
 #![deny(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
-use craft_ai_model::{
+use craft_ai_core::{
     AiError, ErrorKind, Event, InputRole, JobId, JobSnapshot, JobState, ModelId, Output, Payload,
     Provider, Request, SecretString,
     endpoint::Endpoint,
@@ -175,7 +175,7 @@ impl VertexProvider {
     }
 }
 impl Provider for VertexProvider {
-    fn models(&self) -> Result<Vec<craft_ai_model::ModelInfo>, AiError> {
+    fn models(&self) -> Result<Vec<craft_ai_core::ModelInfo>, AiError> {
         Err(AiError::unsupported(
             "Vertex express key cannot be checked without a billable generation; saved model is unverified",
         ))

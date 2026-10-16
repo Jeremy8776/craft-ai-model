@@ -3,8 +3,8 @@
 mod support;
 
 use craft_ai_comfy_env::{DownloadConfig, Downloader, Phase, Progress, verify_file};
+use craft_ai_core::{ErrorKind, SecretString};
 use craft_ai_features::{Licence, ModelFile, Source};
-use craft_ai_model::{ErrorKind, SecretString};
 use sha2::{Digest, Sha256};
 use std::path::Path;
 use std::sync::atomic::{AtomicBool, Ordering};
@@ -84,7 +84,7 @@ fn run(
     token: Option<&SecretString>,
     cancel: &AtomicBool,
 ) -> (
-    Result<std::path::PathBuf, craft_ai_model::AiError>,
+    Result<std::path::PathBuf, craft_ai_core::AiError>,
     Vec<Progress>,
 ) {
     let seen = Arc::new(Mutex::new(Vec::new()));

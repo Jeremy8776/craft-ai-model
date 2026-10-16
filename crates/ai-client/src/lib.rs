@@ -1,13 +1,13 @@
 //! The app-facing entry point of the Craft AI layer.
 //!
-//! An app declares its [`Role`](craft_ai_model::Role)s, builds one [`AiClient`], and for each
+//! An app declares its [`Role`](craft_ai_core::Role)s, builds one [`AiClient`], and for each
 //! feature runs: `status` (can it run?), `plan` (what would be sent?), consent if needed, `start`
 //! (go), then polls the [`Job`]. Everything underneath (the launcher's shared store, the key
 //! stores, the provider adapters) is reached through that one type.
 //!
 //! ```no_run
 //! use craft_ai_client::AiClient;
-//! use craft_ai_model::{AppId, CapabilityId, ConsentLedger, InputRole, Payload, Request, Role, RoleId};
+//! use craft_ai_core::{AppId, CapabilityId, ConsentLedger, InputRole, Payload, Request, Role, RoleId};
 //!
 //! let client = AiClient::standard(AppId::new("wordcraft")?)?;
 //! let rewrite = Role {

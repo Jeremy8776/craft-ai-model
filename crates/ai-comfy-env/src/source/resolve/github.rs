@@ -1,8 +1,8 @@
 //! GitHub release assets (public repositories): the digest GitHub computes at upload time, when
 //! the asset has one. The download address is built here, never taken from the reply.
 
+use craft_ai_core::{AiError, SecretString};
 use craft_ai_features::Licence;
-use craft_ai_model::{AiError, SecretString};
 use serde_json::Value;
 
 use super::api::{Api, is_hex, join, refused, sane_size, tidy};

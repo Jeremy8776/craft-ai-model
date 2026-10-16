@@ -1,6 +1,6 @@
 # Suite-wide AI contract for app maintainers
 
-**Status:** local draft in `craft-ai-model`, 13/10/2026. Not yet accepted by craft-libs or mounted end-to-end by the apps. The app-work inventory is in `../../ai-framework-handoff/app-work/README.md`; it is not this platform's backlog.
+**Status:** provisional. The contract crate (`craft-ai-core`) is under review in `storytold/craft-libs` and is not yet accepted there, and no app mounts the shared flow end to end. See [STATUS.md](STATUS.md) for what is tested and what is open.
 
 ## Ownership boundary
 
@@ -14,11 +14,11 @@ A registered tool is a **declaration**, not installed code. A compatible binding
 
 ## Declaring and adopting a tool
 
-1. Define a `craft_ai_model::Role` with a stable `RoleId`, a display label, one `CapabilityId`, and a nonempty set of `InputRole`s. Choose a suite-wide ID with the other maintainers. `ToolDesk::register_tool(role)` writes it once to the shared store; `ToolDesk::custom_tools()` reads registered declarations in any process using that same store. Built-in IDs cannot be replaced. A declaration does not add it to the seven built-in catalogue.
+1. Define a `craft_ai_core::Role` with a stable `RoleId`, a display label, one `CapabilityId`, and a nonempty set of `InputRole`s. Choose a suite-wide ID with the other maintainers. `ToolDesk::register_tool(role)` writes it once to the shared store; `ToolDesk::custom_tools()` reads registered declarations in any process using that same store. Built-in IDs cannot be replaced. A declaration does not add it to the seven built-in catalogue.
 2. Add or discover a connection and a model advertising that capability and the required inputs. `ToolDesk::choose(&role, &connection_id, &model_id)` sets the suite default. The shared update verifies the declared tool contract and model compatibility before persisting the binding. An app can use `AiClient::bind` for an explicit per-app override. Removal with `ToolDesk::remove_tool(&role_id)` deletes the declaration and its suite/app bindings together.
 3. An app reads the same store and resolves the role with `AiClient::status`, `choices`, `picker`, `plan` and `start` as appropriate. It may localise the label, but **must not reinterpret the same ID's capability or inputs**. Mismatched contracts are rejected during resolution, model listing, picker creation and binding. Apps still own their UI, input conversion and actual execution route.
 
-Concrete API examples and regressions: `crates/ai-client/tests/custom_tools.rs`, `crates/ai-model/tests/custom_tools.rs` and `crates/ai-native/tests/shared_store.rs`. The shared store is `craft_ai_native::shared::SharedStore`; it uses locked atomic updates for registration, binding and removal. Old version-1 JSON files without `custom_tools` still load with an empty list. Secret values belong in the secret store, never in the shared JSON or a tool declaration.
+Concrete API examples and regressions: `crates/ai-client/tests/custom_tools.rs`, `crates/ai-core/tests/custom_tools.rs` and `crates/ai-native/tests/shared_store.rs`. The shared store is `craft_ai_native::shared::SharedStore`; it uses locked atomic updates for registration, binding and removal. Old version-1 JSON files without `custom_tools` still load with an empty list. Secret values belong in the secret store, never in the shared JSON or a tool declaration.
 
 ## Deliberate limits and next gate
 

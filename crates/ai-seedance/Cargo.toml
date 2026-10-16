@@ -1,6 +1,6 @@
 [package]
 name = "craft-ai-seedance"
-description = "Volcengine Ark Seedance video provider for Craft AI"
+description = "BytePlus ModelArk Seedance video provider for Craft AI"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
@@ -9,7 +9,7 @@ repository.workspace = true
 publish = false
 
 [dependencies]
-craft-ai-model.workspace = true
+craft-ai-core.workspace = true
 craft-ai-http.workspace = true
 serde_json.workspace = true
 ureq = { version = "3", default-features = false, features = ["rustls"] }

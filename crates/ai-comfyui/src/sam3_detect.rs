@@ -4,7 +4,7 @@
 //! Detector boxes are model metadata; use mask bounds and `pick` for exact geometry.
 use crate::sam3_lifecycle::Revision;
 use crate::sam3_masks::{bad, union_masks};
-use craft_ai_model::AiError;
+use craft_ai_core::AiError;
 use serde_json::Value;
 use std::sync::OnceLock;
 

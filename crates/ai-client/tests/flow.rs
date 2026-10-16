@@ -11,9 +11,9 @@ use std::sync::{Arc, Mutex};
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 use craft_ai_client::{AiClient, ProviderFactory, RoleStatus};
-use craft_ai_model::job::{Event, Output};
-use craft_ai_model::mock::{MockProvider, Outcome, Script};
-use craft_ai_model::{
+use craft_ai_core::job::{Event, Output};
+use craft_ai_core::mock::{MockProvider, Outcome, Script};
+use craft_ai_core::{
     AppId, Binding, CapabilityId, Connection, ConnectionId, ConsentLedger, ErrorKind, InputRole,
     JobState, ModelId, Payload, Provider, Request, Role, RoleId, SecretRef, SecretString,
     StoreFile,
@@ -91,14 +91,14 @@ impl SecretStore for Counting {
     fn name(&self) -> &'static str {
         "counting"
     }
-    fn get(&self, k: &SecretRef) -> Result<Option<SecretString>, craft_ai_model::AiError> {
+    fn get(&self, k: &SecretRef) -> Result<Option<SecretString>, craft_ai_core::AiError> {
         self.gets.fetch_add(1, Ordering::SeqCst);
         self.inner.get(k)
     }
-    fn set(&self, k: &SecretRef, v: &SecretString) -> Result<(), craft_ai_model::AiError> {
+    fn set(&self, k: &SecretRef, v: &SecretString) -> Result<(), craft_ai_core::AiError> {
         self.inner.set(k, v)
     }
-    fn delete(&self, k: &SecretRef) -> Result<(), craft_ai_model::AiError> {
+    fn delete(&self, k: &SecretRef) -> Result<(), craft_ai_core::AiError> {
         self.inner.delete(k)
     }
 }

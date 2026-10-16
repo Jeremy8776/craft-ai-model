@@ -8,7 +8,7 @@
 //! afterwards.
 
 use craft_ai_client::{Choice, RoleStatus};
-use craft_ai_model::{ConnectionId, ModelId};
+use craft_ai_core::{ConnectionId, ModelId};
 use egui::{ComboBox, Ui};
 
 use crate::text;
@@ -86,7 +86,7 @@ pub fn ai_status(ui: &mut Ui, view: &StatusView<'_>) -> Option<StatusAction> {
                     .iter()
                     .find(|c| current == Some((&c.connection, &c.model)))
                     .map_or_else(|| "Choose a model".to_owned(), choice_text);
-                ComboBox::from_id_salt(("craft-ai-model-picker", view.label))
+                ComboBox::from_id_salt(("craft-ai-core-picker", view.label))
                     .selected_text(selected)
                     .show_ui(ui, |ui| {
                         for c in view.choices {

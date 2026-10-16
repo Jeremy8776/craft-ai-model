@@ -2,10 +2,10 @@
 mod support;
 
 use craft_ai_comfyui::{Binding, ComfyConfig, ComfyProvider, Workflow};
-use craft_ai_model::capability::CapabilityId;
-use craft_ai_model::model::InputRole;
-use craft_ai_model::payload::Payload;
-use craft_ai_model::{JobState, ModelId, Provider, Request};
+use craft_ai_core::capability::CapabilityId;
+use craft_ai_core::model::InputRole;
+use craft_ai_core::payload::Payload;
+use craft_ai_core::{JobState, ModelId, Provider, Request};
 use serde_json::json;
 use support::{Reply, Server, http_bytes};
 
@@ -50,7 +50,7 @@ fn server(output: &'static [u8]) -> Server {
     })
 }
 
-fn run(config: ComfyConfig) -> craft_ai_model::job::JobSnapshot {
+fn run(config: ComfyConfig) -> craft_ai_core::job::JobSnapshot {
     let provider = ComfyProvider::new(config.with_workflow(workflow())).unwrap();
     let request = Request::new(CapabilityId::parse("video.generate").unwrap())
         .with_input(InputRole::Prompt, Payload::text("a lighthouse"));

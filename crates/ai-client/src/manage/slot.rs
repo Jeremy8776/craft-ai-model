@@ -3,7 +3,7 @@
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::time::{SystemTime, UNIX_EPOCH};
 
-use craft_ai_model::{AiError, ConnectionId, SecretRef};
+use craft_ai_core::{AiError, ConnectionId, SecretRef};
 
 static COUNTER: AtomicU64 = AtomicU64::new(0);
 

@@ -1,7 +1,7 @@
 //! Loopback-only SAM 3 bridge for text-prompted object detection.
 //! The bridge lives in `bridge/server.py` and requires a separately acquired SAM checkpoint.
 #![deny(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
-use craft_ai_model::{
+use craft_ai_core::{
     AiError, ErrorKind, Event, InputRole, JobId, JobSnapshot, JobState, ModelId, ModelInfo, Output,
     Payload, Provider, Request,
     capability::CapabilityId,

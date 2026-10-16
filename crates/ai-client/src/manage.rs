@@ -3,7 +3,7 @@
 //!
 //! It is the one writer of the shared store and of the keys that go with it, so the two cannot
 //! drift apart. The rules a person types against live in
-//! [`ConnectionDraft`](craft_ai_model::ConnectionDraft); this adds the parts that touch disk and the
+//! [`ConnectionDraft`](craft_ai_core::ConnectionDraft); this adds the parts that touch disk and the
 //! keychain, in an order that cannot lose a key:
 //!
 //! - **Save** writes a new key into a slot of its own with no lock held, then points the
@@ -20,7 +20,7 @@
 use std::sync::Arc;
 use std::time::{Duration, Instant};
 
-use craft_ai_model::{
+use craft_ai_core::{
     AiError, Auth, Connection, ConnectionDraft, ConnectionId, DraftError, ErrorKind, KeyChange,
     ModelInfo, SecretRef, SecretString, StoreFile,
 };
@@ -350,7 +350,7 @@ impl ConnectionManager {
     fn ask(
         &self,
         mut connection: Connection,
-        secret: Option<craft_ai_model::SecretString>,
+        secret: Option<craft_ai_core::SecretString>,
     ) -> Result<TestReport, AiError> {
         if connection.provider == probe::CUSTOM_PROVIDER {
             let start = Instant::now();

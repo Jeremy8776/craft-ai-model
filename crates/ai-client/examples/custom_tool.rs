@@ -12,8 +12,8 @@ use std::sync::Arc;
 use std::time::Duration;
 
 use craft_ai_client::{AiClient, RoleStatus, ToolDesk};
-use craft_ai_model::job::Event;
-use craft_ai_model::{AppId, ConsentLedger};
+use craft_ai_core::job::Event;
+use craft_ai_core::{AppId, ConsentLedger};
 use craft_ai_native::secrets::MemoryStore;
 use craft_ai_native::shared::SharedStore;
 use describe_tool::{Rig, connection, model, photo_request, tool};

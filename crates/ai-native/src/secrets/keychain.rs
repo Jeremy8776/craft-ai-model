@@ -5,7 +5,7 @@
 //! call returns [`ErrorKind::Unsupported`] so a [`LayeredStore`](super::LayeredStore) moves on to
 //! the next layer.
 
-use craft_ai_model::{AiError, ErrorKind, SecretRef, SecretString};
+use craft_ai_core::{AiError, ErrorKind, SecretRef, SecretString};
 use keyring::Error as KeyError;
 
 use super::{SecretStore, storage_error};

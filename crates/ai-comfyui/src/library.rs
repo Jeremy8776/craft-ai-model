@@ -30,7 +30,7 @@ mod native_paths {
 }
 
 use crate::workflow::{Binding, Workflow};
-use craft_ai_model::{AiError, ErrorKind};
+use craft_ai_core::{AiError, ErrorKind};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::fs;
@@ -345,7 +345,7 @@ impl WorkflowLibrary {
             .and_then(|s| s.to_str())
             .unwrap_or("workflow");
         let spec = WorkflowSpec::parse(&bytes, Some(stem))?;
-        let id = craft_ai_model::ModelId::new(&spec.id)
+        let id = craft_ai_core::ModelId::new(&spec.id)
             .map_err(|_| AiError::new(ErrorKind::InvalidRequest, "workflow id is not usable"))?
             .as_str()
             .to_owned();
@@ -357,7 +357,7 @@ impl WorkflowLibrary {
 
     /// Writes one workflow file. The id becomes the file name.
     pub fn save(&self, spec: &WorkflowSpec) -> Result<(), AiError> {
-        let id = craft_ai_model::ModelId::new(spec.id.trim())
+        let id = craft_ai_core::ModelId::new(spec.id.trim())
             .map_err(|_| AiError::new(ErrorKind::InvalidRequest, "workflow id is not usable"))?
             .as_str()
             .to_owned();
@@ -370,7 +370,7 @@ impl WorkflowLibrary {
 
     /// Deletes one workflow file. Missing is fine.
     pub fn remove(&self, id: &str) -> Result<(), AiError> {
-        let id = craft_ai_model::ModelId::new(id)
+        let id = craft_ai_core::ModelId::new(id)
             .map_err(|_| AiError::new(ErrorKind::InvalidRequest, "workflow id is not usable"))?
             .as_str()
             .to_owned();

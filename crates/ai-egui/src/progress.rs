@@ -1,7 +1,7 @@
 //! Job progress with cancel and a cost line (task u3). Works for a two-second image edit (a spinner
 //! with no percentage) and a two-minute video job (a bar), and shows the final state afterwards.
 
-use craft_ai_model::{CostEstimate, JobState};
+use craft_ai_core::{CostEstimate, JobState};
 use egui::{ProgressBar, Ui};
 
 use crate::text;
