@@ -219,10 +219,23 @@ pub(crate) fn map_status(
         .and_then(Value::as_str)
         .unwrap_or_default()
         .to_ascii_lowercase();
+    // OpenAI answers an account with no credit with a 429, the same status as "slow down". Waiting
+    // does not help there, so tell the two apart by the code or, as seen on a live account, by the
+    // words ("You have no credits remaining"): out of credit is `Quota`, not `RateLimited`.
+    let said = format!("{code} {}", upstream.to_ascii_lowercase());
+    let out_of_credit = [
+        "quota",
+        "billing",
+        "credit",
+        "insufficient_funds",
+        "balance",
+    ]
+    .iter()
+    .any(|w| said.contains(w));
     let kind = match status {
         401 | 403 => ErrorKind::Auth,
         402 => ErrorKind::Quota,
-        429 if code.contains("quota") || code.contains("billing") => ErrorKind::Quota,
+        429 if out_of_credit => ErrorKind::Quota,
         429 => ErrorKind::RateLimited,
         400 | 404 | 405 | 413 | 415 | 422 => ErrorKind::InvalidRequest,
         _ => ErrorKind::Provider,
@@ -317,6 +330,28 @@ mod tests {
         assert_eq!(
             k(429, &body("pay up", "insufficient_quota")),
             ErrorKind::Quota
+        );
+        // As a live account with no credit answered: no code worth matching, only the words.
+        assert_eq!(
+            k(
+                429,
+                &body(
+                    "You have no credits remaining. Add credits to continue using the API.",
+                    "some_new_code"
+                )
+            ),
+            ErrorKind::Quota
+        );
+        // A real rate limit that happens to mention tokens is still a rate limit.
+        assert_eq!(
+            k(
+                429,
+                &body(
+                    "Rate limit reached for gpt-4o on tokens per min. Please try again in 6s.",
+                    "rate_limit_exceeded"
+                )
+            ),
+            ErrorKind::RateLimited
         );
         assert_eq!(k(400, ""), ErrorKind::InvalidRequest);
         assert_eq!(k(404, ""), ErrorKind::InvalidRequest);
