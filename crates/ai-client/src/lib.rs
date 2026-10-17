@@ -50,6 +50,7 @@ mod local;
 mod manage;
 mod picker;
 mod picker_groups;
+mod picker_presets;
 mod popup;
 mod runner;
 mod tools;
@@ -61,7 +62,10 @@ pub use manage::{
     Confirmed, ConnectionManager, ConnectionView, KeyState, MAX_DECLARED, ModelChoice, ProbeReport,
     ProbedModel, Removed, SaveError, Saved, TestReport, Unconfirmed, declare_models,
 };
-pub use picker::{CurrentChoice, GroupState, PickerGroup, PickerModel, PickerView, SetupLink};
+pub use picker::{
+    CurrentChoice, GroupState, PickerGroup, PickerModel, PickerPreset, PickerView, SetupLink,
+};
+pub use picker_presets::pick_label;
 pub use popup::MissingModel;
 pub use runner::{TestRunner, TestTarget};
 pub use tools::{Accepted, SampleReport, Skipped, TestStart, ToolDesk, ToolView};

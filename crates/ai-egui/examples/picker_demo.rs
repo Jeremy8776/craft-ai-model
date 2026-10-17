@@ -296,6 +296,7 @@ fn main() -> eframe::Result {
                     tool: craft_ai_core::RoleId::new("select-subject").expect("a literal role id"),
                     title: String::new(),
                     current: None,
+                    presets: Vec::new(),
                     groups: Vec::new(),
                 },
                 note: String::new(),

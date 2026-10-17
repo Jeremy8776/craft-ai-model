@@ -28,6 +28,7 @@ fn popup(groups: Vec<PickerGroup>) -> MissingModel {
             tool: RoleId::new("select-subject").unwrap(),
             title: "Select subject".into(),
             current: None,
+            presets: Vec::new(),
             groups,
         },
     }

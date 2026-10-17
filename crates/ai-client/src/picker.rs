@@ -8,11 +8,12 @@
 //! This holds data only. The widget lives in `craft-ai-egui`; the app acts on what the person
 //! picks (`ToolDesk::choose` for the whole suite, `AiClient::bind` for one app).
 
-use craft_ai_core::{AiError, ConnectionId, Locality, ModelId, Role, RoleId};
+use craft_ai_core::{AiError, ConnectionId, Locality, ModelId, Pick, Role, RoleId};
 use craft_ai_features::SetupOption;
 
 use crate::client::{AiClient, RoleStatus};
 use crate::picker_groups::{binding_for, connection_groups, model_label, unset_groups};
+use crate::picker_presets::reason;
 
 /// Where a provider stands.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
@@ -67,6 +68,16 @@ pub struct PickerGroup {
     pub size_bytes: Option<u64>,
 }
 
+/// A model that earned a preset for the tool, with one line saying why. Listed above the full list
+/// of models. Only a model on a provider that is ready is offered here.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct PickerPreset {
+    pub pick: Pick,
+    /// Why this model earned it: its reported price, its release date, or that it is our pick.
+    pub reason: String,
+    pub model: PickerModel,
+}
+
 /// The choice the app has now, which may no longer work.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct CurrentChoice {
@@ -83,6 +94,9 @@ pub struct PickerView {
     pub tool: RoleId,
     pub title: String,
     pub current: Option<CurrentChoice>,
+    /// The presets that anyone earned, in picker order. Empty when none was (no catalog entry
+    /// matches and no provider reported a price or a date); the full list below still works.
+    pub presets: Vec<PickerPreset>,
     pub groups: Vec<PickerGroup>,
 }
 
@@ -108,11 +122,44 @@ impl AiClient {
                 RoleStatus::Unavailable { reason } => Some(reason),
             },
         });
+        let presets = self.presets_for(role, &groups)?;
         Ok(PickerView {
             tool: role.id.clone(),
             title: role.label.clone(),
             current,
+            presets,
             groups,
         })
+    }
+}
+
+impl AiClient {
+    /// The presets for `role` that point at a model the picker lists as ready, each with its line.
+    fn presets_for(
+        &self,
+        role: &Role,
+        groups: &[PickerGroup],
+    ) -> Result<Vec<PickerPreset>, AiError> {
+        let per_image = ["image", "video"]
+            .iter()
+            .any(|k| role.capability.as_str().starts_with(k));
+        Ok(self
+            .picks(role)?
+            .into_iter()
+            .filter_map(|picked| {
+                let model = groups
+                    .iter()
+                    .filter(|g| g.state == GroupState::Ready)
+                    .flat_map(|g| &g.models)
+                    .find(|m| {
+                        m.connection == picked.choice.connection && m.model == picked.choice.model
+                    })?;
+                Some(PickerPreset {
+                    pick: picked.pick,
+                    reason: reason(&picked, per_image),
+                    model: model.clone(),
+                })
+            })
+            .collect())
     }
 }

@@ -1,9 +1,12 @@
 //! The model picker widget driven like a person would: real layout, real clicks, no window.
 
-use craft_ai_client::{CurrentChoice, GroupState, PickerGroup, PickerModel, PickerView, SetupLink};
-use craft_ai_core::{ConnectionId, Locality, ModelId, RoleId};
+use craft_ai_client::{
+    CurrentChoice, GroupState, PickerGroup, PickerModel, PickerPreset, PickerView, SetupLink,
+};
+use craft_ai_core::{ConnectionId, Locality, ModelId, Pick, RoleId};
 use craft_ai_egui::{
-    ADD_KEY, HEADING, IN_USE, NOTHING, PickerAction, SET_UP, SWITCH_ON, model_picker,
+    ADD_KEY, ALL_MODELS, HEADING, IN_USE, NOTHING, PickerAction, SET_UP, SUGGESTED, SWITCH_ON,
+    model_picker,
 };
 use egui_kittest::Harness;
 use egui_kittest::kittest::Queryable;
@@ -41,6 +44,7 @@ fn view(groups: Vec<PickerGroup>, current: Option<CurrentChoice>) -> PickerView 
         tool: RoleId::new("select-subject").unwrap(),
         title: "Select subject".into(),
         current,
+        presets: Vec::new(),
         groups,
     }
 }
@@ -256,4 +260,61 @@ fn a_suggested_provider_says_so_and_the_others_do_not() {
         h.query_all_by_label("Suggested for this computer").count(),
         1
     );
+}
+
+fn preset(pick: Pick, reason: &str, model: PickerModel) -> PickerPreset {
+    PickerPreset {
+        pick,
+        reason: reason.into(),
+        model,
+    }
+}
+
+#[test]
+fn presets_sit_above_the_full_list_with_their_reason_and_choose_like_any_row() {
+    let beta = row("cloud", "b", "Beta", false);
+    let mut v = view(
+        vec![group(
+            "Cloud",
+            GroupState::Ready,
+            vec![row("cloud", "a", "Alpha", false), beta.clone()],
+        )],
+        None,
+    );
+    v.presets = vec![preset(
+        Pick::LowestCost,
+        "Lowest reported price: $0.04 per image.",
+        beta,
+    )];
+    let mut h = harness(v);
+    h.get_by_label(SUGGESTED);
+    h.get_by_label(ALL_MODELS);
+    h.get_by_label("Lowest cost");
+    h.get_by_label("Lowest reported price: $0.04 per image.");
+    // The model shows twice: once as the preset, once in the full list. Either picks it.
+    let rows: Vec<_> = h.get_all_by_label_contains("About Beta.").collect();
+    assert_eq!(rows.len(), 2);
+    rows[0].click();
+    h.run();
+    assert_eq!(
+        h.state().last,
+        Some(PickerAction::Choose {
+            connection: ConnectionId::new("cloud").unwrap(),
+            model: ModelId::new("b").unwrap(),
+        })
+    );
+}
+
+#[test]
+fn with_no_presets_there_is_no_suggested_section_and_no_extra_heading() {
+    let h = harness(view(
+        vec![group(
+            "Box",
+            GroupState::Ready,
+            vec![row("box", "a", "Alpha", false)],
+        )],
+        None,
+    ));
+    assert!(h.query_by_label(SUGGESTED).is_none());
+    assert!(h.query_by_label(ALL_MODELS).is_none());
 }

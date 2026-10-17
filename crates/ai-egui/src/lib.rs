@@ -43,7 +43,8 @@ pub use history::{
 };
 pub use panel::{ConnectionPanel, PanelEvent};
 pub use picker::{
-    ADD_KEY, HEADING, IN_USE, NOTHING, PickerAction, SET_UP, SWITCH_ON, model_picker,
+    ADD_KEY, ALL_MODELS, HEADING, IN_USE, NOTHING, PickerAction, SET_UP, SUGGESTED, SWITCH_ON,
+    model_picker,
 };
 pub use popup::{
     HEADING_SUFFIX, NOT_NOW, PopupAction, PopupInstallState, missing_model_popup,

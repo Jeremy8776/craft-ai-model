@@ -7,7 +7,9 @@
 //! set-up link). A greyed provider is never hidden and never selectable: its models are shown so a
 //! person can see what setting it up would give them.
 
-use craft_ai_client::{GroupState, PickerGroup, PickerModel, PickerView, SetupLink};
+use craft_ai_client::{
+    GroupState, PickerGroup, PickerModel, PickerPreset, PickerView, SetupLink, pick_label,
+};
 use craft_ai_core::{ConnectionId, ModelId};
 use egui::text::LayoutJob;
 use egui::{Align, FontSelection, Layout, RichText, ScrollArea, TextFormat, Ui};
@@ -24,6 +26,10 @@ pub const ADD_KEY: &str = "Add key";
 pub const SWITCH_ON: &str = "Switch on";
 /// Shown when no model and no provider can do the tool.
 pub const NOTHING: &str = "Nothing here can do this tool yet.";
+/// Heading over the presets, when any model earned one.
+pub const SUGGESTED: &str = "Suggested";
+/// Heading over the full list, when presets are shown above it.
+pub const ALL_MODELS: &str = "All models";
 /// Added to the model the app uses now.
 pub const IN_USE: &str = "in use";
 /// Tallest the list gets before it scrolls. Fixed on purpose: a list that takes the space left
@@ -75,6 +81,16 @@ pub(crate) fn provider_list(ui: &mut Ui, view: &PickerView) -> Option<PickerActi
         .max_height(LIST_HEIGHT)
         .auto_shrink([false, true])
         .show(ui, |ui| {
+            if !view.presets.is_empty() {
+                ui.label(RichText::new(SUGGESTED).strong());
+                for preset in &view.presets {
+                    if let Some(found) = preset_ui(ui, preset) {
+                        action = Some(found);
+                    }
+                }
+                ui.add_space(8.0);
+                ui.label(RichText::new(ALL_MODELS).strong());
+            }
             for group in &view.groups {
                 if let Some(found) = group_ui(ui, group) {
                     action = Some(found);
@@ -83,6 +99,15 @@ pub(crate) fn provider_list(ui: &mut Ui, view: &PickerView) -> Option<PickerActi
             }
         });
     action
+}
+
+/// A preset: its name and why, then the model, which is picked like any other row.
+fn preset_ui(ui: &mut Ui, preset: &PickerPreset) -> Option<PickerAction> {
+    ui.horizontal(|ui| {
+        ui.label(RichText::new(pick_label(preset.pick)).small().strong());
+        ui.label(RichText::new(&preset.reason).small().weak());
+    });
+    model_row(ui, &preset.model)
 }
 
 fn setup_label(group: &PickerGroup) -> Option<&'static str> {
