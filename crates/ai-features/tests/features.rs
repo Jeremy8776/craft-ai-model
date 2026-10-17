@@ -30,7 +30,7 @@ fn bare() -> Inventory {
 #[test]
 fn the_catalogue_is_complete_and_consistent() {
     let all = builtin();
-    assert_eq!(all.len(), 7, "a bad capability id empties the list");
+    assert_eq!(all.len(), 9, "a bad capability id empties the list");
     let ids: HashSet<_> = all.iter().map(|f| f.id.as_str()).collect();
     assert_eq!(ids.len(), all.len());
     let presets: HashSet<_> = PRESETS.iter().map(|p| p.key).collect();
@@ -219,4 +219,55 @@ fn every_tool_has_a_role_that_names_its_inputs() {
         assert_eq!(role.capability, f.capability);
         assert!(!role.inputs.is_empty(), "{}", f.id);
     }
+}
+
+/// What PhotoCraft's six AI tools need from the shared layer: (tool id, capability, inputs sent).
+const PHOTOCRAFT_TOOLS: &[(&str, &str, &[&str])] = &[
+    ("generate-image", "image.generate", &["prompt"]),
+    ("edit-image", "image.edit", &["source", "prompt"]),
+    (
+        "generative-fill",
+        "image.inpaint",
+        &["source", "mask", "prompt"],
+    ),
+    ("remove-object", "image.inpaint", &["source", "mask"]),
+    ("remove-background", "image.matte", &["source"]),
+    ("select-subject", "image.segment", &["source", "prompt"]),
+];
+
+#[test]
+fn each_photocraft_tool_has_one_shared_tool_with_the_right_job_and_inputs() {
+    for (id, capability, inputs) in PHOTOCRAFT_TOOLS {
+        let f = builtin()
+            .into_iter()
+            .find(|f| f.id == *id)
+            .unwrap_or_else(|| panic!("{id} is missing from the catalogue"));
+        assert_eq!(f.capability.as_str(), *capability, "{id}");
+        let sent: Vec<&str> = f.inputs.iter().map(|i| i.as_str()).collect();
+        assert_eq!(&sent, inputs, "{id}");
+        assert!(
+            f.uses.iter().any(|u| u.app == "PhotoCraft"),
+            "{id} names no PhotoCraft tool"
+        );
+    }
+}
+
+#[test]
+fn a_tool_without_a_checked_route_offers_none() {
+    // Remove background has no verified local recipe and no hosted adapter that matts an image.
+    let f = feature("remove-background");
+    assert!(f.local.is_none());
+    assert!(f.cloud.is_empty());
+}
+
+#[test]
+fn only_hosted_routes_that_transport_the_source_image_are_offered_for_editing() {
+    // The OpenAI adapter sends a source image and an instruction. The other hosted adapters here
+    // take a prompt only, so listing them for an edit would promise what they cannot do.
+    let presets: Vec<String> = feature("edit-image")
+        .cloud
+        .iter()
+        .map(|c| c.preset.clone())
+        .collect();
+    assert_eq!(presets, ["openai"]);
 }

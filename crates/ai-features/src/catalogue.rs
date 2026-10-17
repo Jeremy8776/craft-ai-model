@@ -110,6 +110,17 @@ fn try_builtin() -> Option<Vec<Feature>> {
     select.inputs = vec![InputRole::Source, InputRole::Prompt];
     select.local = Some(sam3());
 
+    let mut background = feature(
+        "remove-background",
+        "Remove background",
+        "Cut the subject out and leave the background transparent.",
+        "image.matte",
+    )?;
+    background.inputs = vec![InputRole::Source];
+    background.uses = uses(&[("PhotoCraft", "Remove Background")]);
+    // No local recipe and no hosted route yet: no adapter here matts an image, and no model file
+    // has been checked against its real source. The screen says so instead of offering a guess.
+
     let mut remove = feature(
         "remove-object",
         "Remove objects",
@@ -144,6 +155,22 @@ fn try_builtin() -> Option<Vec<Feature>> {
     )?;
     expand.inputs = vec![InputRole::Source, InputRole::Prompt];
     expand.uses = uses(&[("PhotoCraft", "Generative Expand")]);
+
+    let mut edit = feature(
+        "edit-image",
+        "Change a picture",
+        "Describe a change and the picture is redone to match, keeping what you did not mention.",
+        "image.edit",
+    )?;
+    edit.inputs = vec![InputRole::Source, InputRole::Prompt];
+    edit.uses = uses(&[("PhotoCraft", "Image to Image")]);
+    // Only the OpenAI adapter sends a source image with the instruction. The other hosted adapters
+    // here take a prompt alone, so they are not listed until they transport the source.
+    edit.cloud = vec![cloud(
+        "openai",
+        "OpenAI image editing",
+        "Your own OpenAI key, billed by OpenAI. Built and tested offline only.",
+    )];
 
     let mut extend = feature(
         "extend-sequence",
@@ -217,5 +244,7 @@ fn try_builtin() -> Option<Vec<Feature>> {
         ),
     ];
 
-    Some(vec![select, remove, fill, expand, extend, image, video])
+    Some(vec![
+        select, background, remove, fill, expand, edit, image, extend, video,
+    ])
 }

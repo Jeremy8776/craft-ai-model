@@ -30,7 +30,7 @@ fn user_declared_tool_is_shared_without_changing_builtin_catalogue() {
     desk(&shared).register_tool(tool.clone()).unwrap();
     let second = desk(&SharedStore::new(shared.path()));
     assert_eq!(second.custom_tools().unwrap(), vec![tool]);
-    assert_eq!(craft_ai_features::builtin().len(), 7);
+    assert_eq!(craft_ai_features::builtin().len(), 9);
     assert_eq!(
         shared.load().unwrap().schema_version,
         StoreFile::default().schema_version
