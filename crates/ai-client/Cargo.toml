@@ -8,6 +8,11 @@ rust-version.workspace = true
 repository.workspace = true
 publish = false
 
+[features]
+# Built-in engines. Off by default so an app that does not run models itself stays light. Turning
+# one on is the whole of adopting it: `ProviderFactory::standard()` then knows the engine.
+candle = ["dep:craft-ai-engine-candle"]
+
 [dependencies]
 craft-ai-core.workspace = true
 craft-ai-native = { path = "../ai-native", package = "craft-ai-native" }
@@ -23,11 +28,13 @@ craft-ai-vertex = { path = "../ai-vertex", package = "craft-ai-vertex" }
 craft-ai-sam3 = { path = "../ai-sam3", package = "craft-ai-sam3" }
 craft-ai-declarative = { path = "../ai-declarative", package = "craft-ai-declarative" }
 craft-ai-engine = { path = "../ai-engine", package = "craft-ai-engine" }
+craft-ai-engine-candle = { path = "../ai-engine-candle", package = "craft-ai-engine-candle", optional = true }
 
 [dev-dependencies]
 serde_json.workspace = true
 tempfile = "3"
 url = "2"
+png = "0.17"
 
 [lints]
 workspace = true

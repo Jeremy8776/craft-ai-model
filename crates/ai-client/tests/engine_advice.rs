@@ -45,7 +45,16 @@ impl World {
             self.shared.clone(),
             Arc::new(MemoryStore::new()),
         )
+        .with_factory(without_engines())
     }
+}
+
+/// A client of an app that has not enabled any built-in engine, whatever cargo features are on.
+fn without_engines() -> ProviderFactory {
+    let mut factory = ProviderFactory::standard();
+    factory.unregister("candle");
+    factory.unregister("burn");
+    factory
 }
 
 #[test]

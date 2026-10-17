@@ -183,6 +183,7 @@ impl ProviderFactory {
             comfy_timeouts,
         );
         f.register_declarative();
+        f.register_engines(crate::engines::built_in());
         f
     }
 

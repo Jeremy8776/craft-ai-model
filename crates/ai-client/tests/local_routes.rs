@@ -1,7 +1,7 @@
 //! The suite's one binding selects a concrete local backend and model, not just a Ready light.
 use std::sync::Arc;
 
-use craft_ai_client::{AiClient, RoleStatus, ToolDesk};
+use craft_ai_client::{AiClient, ProviderFactory, RoleStatus, ToolDesk};
 use craft_ai_core::{
     AppId, Auth, Billing, CapabilitySpec, Connection, ConnectionId, Locality, ModelId, ModelInfo,
     Role, StoreFile,
@@ -68,6 +68,7 @@ impl World {
             self.shared.clone(),
             Arc::new(MemoryStore::new()),
         )
+        .with_factory(without_engines())
     }
     fn choose(&self, connection: &str, model: &str) {
         ToolDesk::new(self.client("launcher"), self.shared.clone(), None)
@@ -208,4 +209,12 @@ fn a_remote_choice_is_not_exposed_as_a_local_route() {
         error.message,
         "The model you chose runs online, not on this computer."
     );
+}
+
+/// A client of an app that has not enabled any built-in engine, whatever cargo features are on.
+fn without_engines() -> ProviderFactory {
+    let mut factory = ProviderFactory::standard();
+    factory.unregister("candle");
+    factory.unregister("burn");
+    factory
 }

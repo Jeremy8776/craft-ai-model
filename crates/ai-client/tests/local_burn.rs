@@ -172,7 +172,7 @@ fn the_picker_shows_comfyui_candle_and_burn_as_three_different_choices() {
     titles.dedup();
     assert_eq!(titles.len(), 3, "each must be told apart: {titles:?}");
     assert!(
-        titles.iter().any(|t| t.contains("Nvidia or Apple")),
+        titles.iter().any(|t| t.contains("Apple graphics")),
         "{titles:?}"
     );
     assert!(

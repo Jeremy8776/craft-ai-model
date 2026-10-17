@@ -72,9 +72,9 @@ pub struct NodePack {
     pub folder_names: Vec<String>,
 }
 
-/// The same model run by an app's own built-in runtime instead of ComfyUI, from the same weights
-/// file. The file is found by the launcher (it is the one in the ComfyUI models folder) and
-/// recorded on the connection; the app that owns the runtime reads it from there. A recipe may
+/// The same model run by a built-in runtime instead of ComfyUI. The launcher finds or downloads
+/// the runtime's files (its own, see [`NativeRoute::models`]) and records the weights file on the
+/// connection; the engine reads it from there. A recipe may
 /// list several runtimes (Candle, Burn); each is its own connection and its own choice.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct NativeRoute {
@@ -84,6 +84,28 @@ pub struct NativeRoute {
     pub model: String,
     /// What the person sees next to the ComfyUI route.
     pub label: String,
+    /// The files this runtime reads, when they are not the recipe's own. A runtime ported from
+    /// another framework usually wants that framework's file layout, which is a different file
+    /// from the ComfyUI one. The first `.safetensors` file here is the weights file recorded on
+    /// the connection; the rest sit beside it. Empty means the recipe's own files.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub models: Vec<ModelFile>,
+}
+
+impl NativeRoute {
+    /// The weights file this runtime is given: the first `.safetensors` file of its own files.
+    pub fn weights(&self) -> Option<&ModelFile> {
+        self.models
+            .iter()
+            .find(|m| m.filename.to_ascii_lowercase().ends_with(".safetensors"))
+    }
+
+    /// Bytes to download for this runtime's own files.
+    pub fn total_bytes(&self) -> u64 {
+        self.models
+            .iter()
+            .fold(0u64, |sum, m| sum.saturating_add(m.size_bytes))
+    }
 }
 
 /// Running a feature on this computer through ComfyUI.

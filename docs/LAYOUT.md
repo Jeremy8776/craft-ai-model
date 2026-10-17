@@ -12,7 +12,7 @@ data, consent and jobs. It does not own any app's interface. Each app decides ho
 | Core | `ai-core`, `ai-native`, `ai-client`, `ai-features` | The data model and provider trait (wasm-safe), secret stores, the shared store and its location, history and consent files, the app-facing client and tool desk, the tool catalogue and setup options. |
 | Adapters | `ai-openai`, `ai-bfl`, `ai-vertex`, `ai-artcraft`, `ai-seedance`, `ai-comfyui`, `ai-sam3` | One crate per provider API shape. Each is registered in `ai-client`'s `ProviderFactory`. |
 | HTTP | `ai-http` | The one TLS setting every adapter and downloader uses (the platform's certificate check), and a test that fails if any crate builds an agent without it. |
-| Engines | `ai-engine` | Models run on this computer: the runner contract, registry and shared provider. A new model or engine never touches an app. |
+| Engines | `ai-engine`, `ai-engine-candle` | Models run on this computer: the runner contract, registry and shared provider (`ai-engine`), and one crate per engine that registers its models (`ai-engine-candle`, behind `ai-client`'s `candle` feature). A new model or engine never touches an app. |
 | Local runtime | `ai-comfy-env`, `ai-media` | Finding an existing ComfyUI, model sources and checksummed downloads, node packs, and durable media transfer. |
 | Widgets | `ai-egui` | Theme-neutral egui widgets (status, consent, progress, connection panel, history, model picker) for apps that have no chrome of their own. |
 

@@ -74,3 +74,12 @@ impl Kept {
         Ok(provider)
     }
 }
+
+/// The engines compiled into this build, by cargo feature. Empty when none is turned on.
+pub(crate) fn built_in() -> EngineRegistry {
+    #[allow(unused_mut)]
+    let mut registry = EngineRegistry::new();
+    #[cfg(feature = "candle")]
+    registry.extend(craft_ai_engine_candle::runners());
+    registry
+}

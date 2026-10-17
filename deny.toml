@@ -6,6 +6,10 @@ all-features = true
 [advisories]
 yanked = "deny"
 ignore = [
+    { id = "RUSTSEC-2026-0367", reason = "candle-core pulls in zip for its PyTorch and npz loaders. This workspace reads safetensors only and never extracts an archive, so the extract() flaw cannot be reached. Remove when candle moves to zip 9 or later." },
+    { id = "RUSTSEC-2026-0368", reason = "candle-core pulls in zip for its PyTorch and npz loaders. This workspace reads safetensors only and never extracts an archive, so the extract() flaw cannot be reached. Remove when candle moves to zip 9 or later." },
+    { id = "RUSTSEC-2026-0369", reason = "candle-core pulls in zip for its PyTorch and npz loaders. This workspace reads safetensors only and never extracts an archive, so the extract() flaw cannot be reached. Remove when candle moves to zip 9 or later." },
+    { id = "RUSTSEC-2024-0436", reason = "paste is unmaintained and arrives through the gemm, pulp and metal crates that candle-core uses. It is a compile-time macro with no known flaw. Remove when candle drops it." },
     { id = "RUSTSEC-2026-0370", reason = "Flagged as unmaintained, not as vulnerable. It arrives only through keyring's Linux secret-service backend (zbus), which this workspace does not control, and no safe upgrade exists yet. Remove when keyring moves to a maintained zbus." },
     { id = "RUSTSEC-2026-0371", reason = "Flagged as unmaintained, not as vulnerable. It arrives only through keyring's Linux secret-service backend (zbus), which this workspace does not control, and no safe upgrade exists yet. Remove when keyring moves to a maintained zbus." },
     { id = "RUSTSEC-2026-0372", reason = "Flagged as unmaintained, not as vulnerable. It arrives only through keyring's Linux secret-service backend (zbus), which this workspace does not control, and no safe upgrade exists yet. Remove when keyring moves to a maintained zbus." },
@@ -33,6 +37,11 @@ allow = [
     # Fonts bundled by egui's epaint.
     "OFL-1.1",
     "Ubuntu-font-1.0",
+]
+# jpeg-encoder is a dev-dependency of craft-ai-engine-candle that makes the JPEGs its tests read. It
+# carries the Independent JPEG Group licence (permissive, attribution) for its quantisation tables.
+exceptions = [
+    { allow = ["IJG"], crate = "jpeg-encoder" },
 ]
 
 [bans]

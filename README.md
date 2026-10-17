@@ -30,7 +30,7 @@ Layout and rules mirror craft-libs: edition 2024, `MIT OR Apache-2.0`, no `unsaf
 | `craft-ai-bfl`, `craft-ai-vertex`, `craft-ai-seedance`, `craft-ai-artcraft` | Black Forest Labs FLUX, Vertex express-mode Gemini images, BytePlus ModelArk Seedance video, and the ArtCraft Omni API-key route. |
 | `craft-ai-declarative` | A provider described by a small data file instead of Rust. Design: `docs/design/declarative-adapter.md`. |
 | `craft-ai-comfyui`, `craft-ai-sam3` | Local ComfyUI workflows with the SAM 3 point and session clients; the older direct SAM 3 detector bridge. |
-| `craft-ai-engine` | Built-in model engines: the runner contract and the one provider that runs any registered model on this computer. Guide: `docs/ADD-AN-ENGINE.md`. |
+| `craft-ai-engine`, `craft-ai-engine-candle` | Built-in model engines: the runner contract and the one provider that runs any registered model on this computer, and SAM 3 on Candle (Apache-2.0 only; see its NOTICE). Guide: `docs/ADD-AN-ENGINE.md`. |
 | `craft-ai-comfy-env` | Finds an existing ComfyUI Desktop install, inventories its model files and node packs, downloads missing model files into it. |
 | `craft-ai-egui` | Theme-neutral egui widgets: status, model picker, consent prompt, job progress, connection panel, history. Needs Rust 1.95. |
 
