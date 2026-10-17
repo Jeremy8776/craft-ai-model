@@ -136,12 +136,25 @@ fn an_app_without_the_adapter_says_so_and_sends_nothing() {
     };
     assert!(reason.contains("can't run the chosen model"), "{reason}");
 
-    let plan = lacks_it.plan(&tool(), photo_request(4)).unwrap();
+    // Planning refuses too, so nobody is asked to agree to a send this app cannot make.
+    let err = lacks_it.plan(&tool(), photo_request(4)).unwrap_err();
+    assert_eq!(err.kind, ErrorKind::Unsupported);
+    assert!(
+        err.message.contains("can't run the chosen model"),
+        "{}",
+        err.message
+    );
+    // And a plan made elsewhere is still refused at start, with the same words.
+    let elsewhere = ships_it.plan(&tool(), photo_request(4)).unwrap();
     let err = lacks_it
-        .start(&plan, &ConsentLedger::default())
+        .start(&elsewhere, &ConsentLedger::default())
         .unwrap_err();
     assert_eq!(err.kind, ErrorKind::Unsupported);
-    assert!(err.message.contains("can't use"), "{}", err.message);
+    assert!(
+        err.message.contains("can't run the chosen model"),
+        "{}",
+        err.message
+    );
     assert!(
         with.requests().is_empty(),
         "the other app's adapter was not used"

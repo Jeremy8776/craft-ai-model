@@ -458,10 +458,43 @@ fn a_provider_this_app_has_no_adapter_for_is_a_clear_unsupported_error() {
         vec![binding("odd", "llama3")],
     );
     let client = world.client();
-    let plan = client.plan(&role(), prompt("x")).unwrap();
-    let err = client.start(&plan, &ConsentLedger::default()).unwrap_err();
+    // Refused at plan, so the person is never asked to agree to a send the app cannot make.
+    let err = client.plan(&role(), prompt("x")).unwrap_err();
     assert_eq!(err.kind, ErrorKind::Unsupported);
-    assert!(err.message.contains("weirdai"));
+    assert!(
+        err.message.contains("can't run the chosen model"),
+        "{}",
+        err.message
+    );
+    assert!(
+        !err.message.contains("weirdai"),
+        "no internal names in what a person reads"
+    );
+}
+
+#[test]
+fn an_app_with_no_adapter_never_fetches_the_key() {
+    let world = remote_world();
+    world.save_key("cloud");
+    let seen = Arc::new(Mutex::new(None));
+    let builds = Arc::new(AtomicUsize::new(0));
+    let capable = world
+        .client()
+        .with_factory(mock_factory(seen.clone(), builds.clone()));
+    let plan = capable.plan(&role(), prompt("x")).unwrap();
+    let mut ledger = ConsentLedger::default();
+    ledger.grant(plan.disclosure());
+
+    // Another app, with no adapter for this service, is handed that plan and agreement.
+    let err = world.client().start(&plan, &ledger).unwrap_err();
+    assert_eq!(err.kind, ErrorKind::Unsupported);
+    assert_eq!(
+        world.secrets.gets.load(Ordering::SeqCst),
+        0,
+        "no keychain read"
+    );
+    assert_eq!(builds.load(Ordering::SeqCst), 0);
+    assert!(seen.lock().unwrap().is_none());
 }
 
 #[test]

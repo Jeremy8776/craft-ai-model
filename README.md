@@ -33,6 +33,8 @@ Layout and rules mirror craft-libs: edition 2024, `MIT OR Apache-2.0`, no `unsaf
 | `craft-ai-comfy-env` | Finds an existing ComfyUI Desktop install, inventories its model files and node packs, downloads missing model files into it. |
 | `craft-ai-egui` | Theme-neutral egui widgets: status, model picker, consent prompt, job progress, connection panel, history. Needs Rust 1.95. |
 
+Building on this layer (add a service, a tool, or use one from an app): [docs/ADOPT-A-TOOL.md](docs/ADOPT-A-TOOL.md).
+
 Which crate owns what, and what stays in each app: [docs/LAYOUT.md](docs/LAYOUT.md). The shared-tool
 contract and its limits: [docs/PLATFORM-CONTRACT.md](docs/PLATFORM-CONTRACT.md). Custom connections,
 model sources and node packs: [docs/custom-connections-and-sources.md](docs/custom-connections-and-sources.md).

@@ -35,6 +35,10 @@ use craft_ai_native::{CatalogFile, HistoryFile};
 use crate::factory::ProviderFactory;
 use crate::history::{self, Recorder};
 
+/// What a person is told when the app has no adapter for the model they chose. One sentence, so
+/// status, plan and start agree and the plain-language test can pin it.
+const NO_ADAPTER: &str = "This app can't run the chosen model yet. Choose another in Set up AI.";
+
 /// Whether a role can run right now.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum RoleStatus {
@@ -317,9 +321,7 @@ impl AiClient {
             Err(e) => return unavailable(e.to_string()),
         };
         if !self.factory.knows(&resolved.connection.provider) {
-            return unavailable(
-                "This app can't run the chosen model yet. Choose another in Set up AI.".to_owned(),
-            );
+            return unavailable(NO_ADAPTER.to_owned());
         }
         if let Err(e) = secret_for(&*self.secrets, resolved.connection) {
             return unavailable(e.message);
@@ -462,6 +464,10 @@ impl AiClient {
             .resolve(&self.app, role)
             .map_err(|e| AiError::unsupported(e.to_string()))?;
         request.validate(resolved.spec, &Limits::default())?;
+        // Refuse here, before anyone is asked to agree to send something this app cannot send.
+        if !self.factory.knows(&resolved.connection.provider) {
+            return Err(AiError::unsupported(NO_ADAPTER));
+        }
         let disclosure = Disclosure::for_request(&self.app, resolved.connection, &request);
         Ok(Plan {
             connection: resolved.connection.clone(),
@@ -513,6 +519,10 @@ impl AiClient {
 
     /// Reads the key and builds the adapter.
     fn prepare(&self, plan: &Plan) -> Result<Arc<dyn Provider>, AiError> {
+        // Without an adapter there is nothing to give the key to, so do not fetch it.
+        if !self.factory.knows(&plan.connection.provider) {
+            return Err(AiError::unsupported(NO_ADAPTER));
+        }
         let secret = secret_for(&*self.secrets, &plan.connection)?;
         self.factory.build(&plan.connection, secret)
     }

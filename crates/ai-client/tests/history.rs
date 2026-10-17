@@ -300,14 +300,26 @@ fn a_provider_that_refuses_the_job_is_logged_as_failed_with_no_provider_id() {
 #[test]
 fn a_missing_key_is_logged_as_a_failed_start() {
     let w = world(Behaviour::default(), |c| c);
+    // Same adapter, but a keychain with no key in it: the key is what is missing.
+    let mut factory = ProviderFactory::standard();
+    factory.register("history-fake", |_, _| {
+        Ok(Arc::new(Fake {
+            how: Behaviour::default(),
+            polls: Mutex::new(0),
+        }))
+    });
     let empty = AiClient::new(
         AppId::new("wordcraft").unwrap(),
         SharedStore::new(w.dir.path().join("connections.json")),
         Arc::new(MemoryStore::new()),
     )
+    .with_factory(factory)
     .with_history(w.log.clone());
     let plan = empty.plan(&role(), request()).unwrap();
-    assert!(empty.start(&plan, &agreed()).is_err());
+    assert_eq!(
+        empty.start(&plan, &agreed()).unwrap_err().kind,
+        ErrorKind::Auth
+    );
     let e = &empty.history().unwrap().entries[0];
     assert!(matches!(e.outcome(), Some(Outcome::Failed { .. })));
 }
