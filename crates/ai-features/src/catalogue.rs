@@ -156,22 +156,6 @@ fn try_builtin() -> Option<Vec<Feature>> {
     expand.inputs = vec![InputRole::Source, InputRole::Prompt];
     expand.uses = uses(&[("PhotoCraft", "Generative Expand")]);
 
-    let mut edit = feature(
-        "edit-image",
-        "Change a picture",
-        "Describe a change and the picture is redone to match, keeping what you did not mention.",
-        "image.edit",
-    )?;
-    edit.inputs = vec![InputRole::Source, InputRole::Prompt];
-    edit.uses = uses(&[("PhotoCraft", "Image to Image")]);
-    // Only the OpenAI adapter sends a source image with the instruction. The other hosted adapters
-    // here take a prompt alone, so they are not listed until they transport the source.
-    edit.cloud = vec![cloud(
-        "openai",
-        "OpenAI image editing",
-        "Your own OpenAI key, billed by OpenAI. Built and tested offline only.",
-    )];
-
     let mut extend = feature(
         "extend-sequence",
         "Extend sequence",
@@ -245,6 +229,6 @@ fn try_builtin() -> Option<Vec<Feature>> {
     ];
 
     Some(vec![
-        select, background, remove, fill, expand, edit, image, extend, video,
+        select, background, remove, fill, expand, extend, image, video,
     ])
 }

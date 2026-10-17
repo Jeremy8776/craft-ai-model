@@ -30,7 +30,7 @@ fn bare() -> Inventory {
 #[test]
 fn the_catalogue_is_complete_and_consistent() {
     let all = builtin();
-    assert_eq!(all.len(), 9, "a bad capability id empties the list");
+    assert_eq!(all.len(), 8, "a bad capability id empties the list");
     let ids: HashSet<_> = all.iter().map(|f| f.id.as_str()).collect();
     assert_eq!(ids.len(), all.len());
     let presets: HashSet<_> = PRESETS.iter().map(|p| p.key).collect();
@@ -221,10 +221,12 @@ fn every_tool_has_a_role_that_names_its_inputs() {
     }
 }
 
-/// What PhotoCraft's six AI tools need from the shared layer: (tool id, capability, inputs sent).
+/// What five of PhotoCraft's six AI tools need from the shared layer: (tool id, capability, inputs
+/// sent). The sixth, Image to Image, is not here on purpose: its entry ("Change a picture",
+/// `image.edit`, hosted through OpenAI) was taken out of the catalogue until the tool is added
+/// properly. It is in the first commit of the PR that added this list, to be put back from there.
 const PHOTOCRAFT_TOOLS: &[(&str, &str, &[&str])] = &[
     ("generate-image", "image.generate", &["prompt"]),
-    ("edit-image", "image.edit", &["source", "prompt"]),
     (
         "generative-fill",
         "image.inpaint",
@@ -258,16 +260,4 @@ fn a_tool_without_a_checked_route_offers_none() {
     let f = feature("remove-background");
     assert!(f.local.is_none());
     assert!(f.cloud.is_empty());
-}
-
-#[test]
-fn only_hosted_routes_that_transport_the_source_image_are_offered_for_editing() {
-    // The OpenAI adapter sends a source image and an instruction. The other hosted adapters here
-    // take a prompt only, so listing them for an edit would promise what they cannot do.
-    let presets: Vec<String> = feature("edit-image")
-        .cloud
-        .iter()
-        .map(|c| c.preset.clone())
-        .collect();
-    assert_eq!(presets, ["openai"]);
 }

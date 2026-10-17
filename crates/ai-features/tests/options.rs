@@ -23,10 +23,7 @@ fn a_service_unlocks_every_tool_that_names_it_once() {
     let features = builtin();
     let options = setup_options(&features);
     let openai = options.iter().find(|o| o.id == "service:openai").unwrap();
-    assert_eq!(
-        openai.unlocks,
-        ["generative-fill", "edit-image", "generate-image"]
-    );
+    assert_eq!(openai.unlocks, ["generative-fill", "generate-image"]);
     assert_eq!(openai.title, "OpenAI");
     assert!(!openai.note.is_empty());
     let bfl = options.iter().find(|o| o.id == "service:bfl").unwrap();
