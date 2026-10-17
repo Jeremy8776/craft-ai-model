@@ -5,6 +5,11 @@ all-features = true
 
 [advisories]
 yanked = "deny"
+ignore = [
+    { id = "RUSTSEC-2026-0370", reason = "Flagged as unmaintained, not as vulnerable. It arrives only through keyring's Linux secret-service backend (zbus), which this workspace does not control, and no safe upgrade exists yet. Remove when keyring moves to a maintained zbus." },
+    { id = "RUSTSEC-2026-0371", reason = "Flagged as unmaintained, not as vulnerable. It arrives only through keyring's Linux secret-service backend (zbus), which this workspace does not control, and no safe upgrade exists yet. Remove when keyring moves to a maintained zbus." },
+    { id = "RUSTSEC-2026-0372", reason = "Flagged as unmaintained, not as vulnerable. It arrives only through keyring's Linux secret-service backend (zbus), which this workspace does not control, and no safe upgrade exists yet. Remove when keyring moves to a maintained zbus." },
+]
 
 [licenses]
 confidence-threshold = 0.93
