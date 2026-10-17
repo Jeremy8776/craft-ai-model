@@ -13,7 +13,7 @@ use craft_ai_features::SetupOption;
 
 use crate::client::{AiClient, RoleStatus};
 use crate::picker_groups::{binding_for, connection_groups, model_label, unset_groups};
-use crate::picker_presets::reason;
+use crate::picker_presets::{price_unit, reason};
 
 /// Where a provider stands.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
@@ -140,9 +140,7 @@ impl AiClient {
         role: &Role,
         groups: &[PickerGroup],
     ) -> Result<Vec<PickerPreset>, AiError> {
-        let per_image = ["image", "video"]
-            .iter()
-            .any(|k| role.capability.as_str().starts_with(k));
+        let unit = price_unit(role.capability.as_str());
         Ok(self
             .picks(role)?
             .into_iter()
@@ -156,7 +154,7 @@ impl AiClient {
                     })?;
                 Some(PickerPreset {
                     pick: picked.pick,
-                    reason: reason(&picked, per_image),
+                    reason: reason(&picked, unit),
                     model: model.clone(),
                 })
             })
