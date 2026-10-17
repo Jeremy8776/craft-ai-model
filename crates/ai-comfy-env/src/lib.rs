@@ -11,7 +11,9 @@
 
 mod detect;
 mod download;
+mod extra_paths;
 mod hardware;
+mod model_folder_scan;
 pub mod portable;
 mod scan;
 pub mod source;
@@ -20,6 +22,10 @@ mod verify;
 
 pub use detect::{ComfyInstall, parse_extra_paths};
 pub use download::{DownloadConfig, Downloader, Phase, Progress};
+pub use extra_paths::render_extra_paths;
 pub use hardware::{free_disk_bytes, parse_nvidia_smi, vram_mb};
+pub use model_folder_scan::{
+    Basis, FolderScan, FoundFile, KnownFile, ScanError, guess_from_header, scan_model_folder,
+};
 pub use scan::scan;
 pub use verify::{hash_file, verify_file};

@@ -165,8 +165,14 @@ pub fn parse_extra_paths(text: &str) -> Vec<(String, PathBuf)> {
 }
 
 fn clean(value: &str) -> String {
+    let value = value.trim();
+    if value.len() >= 2 && value.starts_with('\'') && value.ends_with('\'') {
+        return value[1..value.len() - 1]
+            .replace("''", "'")
+            .trim_end_matches(['/', '\\'])
+            .to_owned();
+    }
     value
-        .trim()
         .trim_matches(['"', '\''])
         .trim_end_matches(['/', '\\'])
         .to_owned()

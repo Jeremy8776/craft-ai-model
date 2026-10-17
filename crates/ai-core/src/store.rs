@@ -46,6 +46,10 @@ pub struct StoreFile {
     /// User-declared tool contracts, shared across the suite. A declaration does not install an adapter.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub custom_tools: Vec<Role>,
+    /// Folders where the person keeps model files, shared across the suite (see
+    /// [`crate::model_folders`]). Older files have none.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub model_folders: Vec<crate::model_folders::ModelFolder>,
 }
 
 /// Why a store file was refused.
@@ -70,6 +74,7 @@ pub enum StoreError {
         connection: ConnectionId,
         why: ConnectionError,
     },
+    Folders(crate::model_folders::FolderError),
 }
 
 impl std::fmt::Display for StoreError {
@@ -91,6 +96,7 @@ impl std::fmt::Display for StoreError {
             Self::TooManyTools(count) => write!(f, "{count} custom tools exceeds the limit of 64"),
             Self::InvalidTool(id) => write!(f, "tool {id} needs a short name and valid inputs"),
             Self::Invalid { connection, why } => write!(f, "connection {connection}: {why}"),
+            Self::Folders(why) => write!(f, "{why}"),
         }
     }
 }
@@ -105,6 +111,7 @@ impl Default for StoreFile {
             defaults: Vec::new(),
             apps: BTreeMap::new(),
             custom_tools: Vec::new(),
+            model_folders: Vec::new(),
         }
     }
 }
@@ -143,6 +150,7 @@ impl StoreFile {
 
     /// Checks every connection and custom tool before anything is written.
     pub fn validate(&self) -> Result<(), StoreError> {
+        crate::model_folders::validate_folders(&self.model_folders).map_err(StoreError::Folders)?;
         if self.custom_tools.len() > 64 {
             return Err(StoreError::TooManyTools(self.custom_tools.len()));
         }

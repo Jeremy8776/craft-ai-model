@@ -725,6 +725,7 @@ version = "0.1.0"
 dependencies = [
  "craft-ai-artcraft",
  "craft-ai-bfl",
+ "craft-ai-comfy-env",
  "craft-ai-comfyui",
  "craft-ai-core",
  "craft-ai-declarative",

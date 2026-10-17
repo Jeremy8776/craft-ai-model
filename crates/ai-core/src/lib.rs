@@ -50,6 +50,7 @@ pub mod ids;
 pub mod job;
 pub mod mock;
 pub mod model;
+pub mod model_folders;
 pub mod payload;
 pub mod picks;
 pub mod provider;
@@ -69,6 +70,7 @@ pub use history::{EndRecord, HistoryEntry, HistoryLog, HistoryRecord, Outcome, S
 pub use ids::{AppId, ConnectionId, JobId, ModelId, RoleId, SecretRef};
 pub use job::{CostEstimate, Event, JobSnapshot, JobState, Output, Usage};
 pub use model::{CapabilitySpec, Features, InputRole, ModelInfo, Pricing};
+pub use model_folders::{FolderError, FolderOrigin, ModelFolder};
 pub use payload::{Limits, MediaType, Payload, PayloadHandle, PayloadKind};
 pub use picks::{Catalog, Pick, PickedBy};
 pub use provider::Provider;

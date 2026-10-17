@@ -73,6 +73,23 @@ pub fn specs_dir() -> Option<PathBuf> {
     ai_dir().map(|d| d.join("specs"))
 }
 
+/// The model folder the launcher proposes when a person has none: `models` beside the `ai`
+/// directory (so `%LOCALAPPDATA%\\ArtCraft\\models` on Windows). It is only a suggestion; the person
+/// can choose any folder instead, and nothing is created until they accept it.
+pub fn suggested_models_dir() -> Option<PathBuf> {
+    pick_models(
+        std::env::var_os(DIR_ENV).map(PathBuf::from),
+        dirs::config_local_dir(),
+    )
+}
+
+fn pick_models(over: Option<PathBuf>, base: Option<PathBuf>) -> Option<PathBuf> {
+    match over {
+        Some(p) if !p.as_os_str().is_empty() => Some(p.join("models")),
+        _ => base.map(|b| b.join("ArtCraft").join("models")),
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -89,5 +106,23 @@ mod tests {
             Some(PathBuf::from("/cfg").join("ArtCraft").join("ai"))
         );
         assert_eq!(pick_dir(None, None), None);
+    }
+
+    #[test]
+    fn the_suggested_models_folder_sits_beside_the_ai_folder() {
+        assert_eq!(
+            pick_models(None, Some(PathBuf::from("/cfg"))),
+            Some(PathBuf::from("/cfg").join("ArtCraft").join("models"))
+        );
+        assert_eq!(
+            pick_models(Some(PathBuf::from("/x")), Some(PathBuf::from("/cfg"))),
+            Some(PathBuf::from("/x").join("models")),
+            "a test or portable run keeps its models with its other files"
+        );
+        assert_eq!(
+            pick_models(Some(PathBuf::new()), Some(PathBuf::from("/cfg"))),
+            Some(PathBuf::from("/cfg").join("ArtCraft").join("models"))
+        );
+        assert_eq!(pick_models(None, None), None);
     }
 }

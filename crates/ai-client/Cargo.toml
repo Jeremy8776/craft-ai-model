@@ -17,6 +17,7 @@ craft-ai-bfl = { path = "../ai-bfl", package = "craft-ai-bfl" }
 craft-ai-features = { path = "../ai-features", package = "craft-ai-features" }
 craft-ai-media = { path = "../ai-media", package = "craft-ai-media" }
 craft-ai-comfyui = { path = "../ai-comfyui", package = "craft-ai-comfyui" }
+craft-ai-comfy-env = { path = "../ai-comfy-env", package = "craft-ai-comfy-env" }
 craft-ai-seedance = { path = "../ai-seedance", package = "craft-ai-seedance" }
 craft-ai-vertex = { path = "../ai-vertex", package = "craft-ai-vertex" }
 craft-ai-sam3 = { path = "../ai-sam3", package = "craft-ai-sam3" }
