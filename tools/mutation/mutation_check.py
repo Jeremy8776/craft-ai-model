@@ -50,6 +50,7 @@ API = C + 'ai-comfy-env/src/source/resolve/api.rs'
 RESOLVE = C + 'ai-comfy-env/src/source/resolve/mod.rs'
 REGISTRY = C + 'ai-comfy-env/src/source/registry.rs'
 INSTALL = C + 'ai-comfy-env/src/source/install.rs'
+LICENCES = C + 'ai-comfy-env/src/source/registry/licences.rs'
 
 M = 'craft-ai-core'
 O = 'craft-ai-openai'
@@ -141,12 +142,12 @@ U3 = [
     ('civitai-name-unchecked', CIV, '.filter(|n| plain_name(n))', '.filter(|_| true)', E, 'source_resolve', 'pickle_file_is_flagged'),
     ('unsupported-type-resolved', RESOLVE, '&& Format::from_name(name) == Format::Unknown\n        {\n            return Err(unsupported(name));', '&& false\n        {\n            return Err(unsupported(name));', E, 'source_resolve', 'unsupported_file_type'),
     ('directory-taken-as-local-file', RESOLVE, 'if !meta.is_file() {', 'if false {', E, 'source_resolve', 'this_computer_is_described'),
-    ('licence-record-ignores-version', REGISTRY, '&& e.pin == candidate.pin\n', '\n', E, 'source_install', 'licence_is_accepted_once'),
-    ('licence-record-ignores-link', REGISTRY, '&& e.licence.url == candidate.licence.url\n', '\n', E, 'source_install', 'licence_is_accepted_once'),
-    ('licence-record-ignores-kind', REGISTRY, 'e.licence_accepted.is_some()\n                    && e.kind == candidate.kind', 'e.licence_accepted.is_some()\n                    && true', E, 'source_install', 'licence_is_accepted_once'),
-    ('local-files-share-a-licence', REGISTRY, '&& (candidate.kind != SourceKind::Local || e.filename == candidate.filename)', '', E, 'source_install', 'copied_and_the_original'),
+    ('licence-record-ignores-version', LICENCES, '&& self.pin == c.pin\n', '\n', E, 'source_install', 'licence_is_accepted_once'),
+    ('licence-record-ignores-link', LICENCES, '&& self.url == c.licence.url\n', '\n', E, 'source_install', 'licence_is_accepted_once'),
+    ('licence-record-ignores-kind', LICENCES, 'self.kind == c.kind\n', 'true\n', E, 'source_install', 'licence_is_accepted_once'),
+    ('local-files-share-a-licence', LICENCES, '&& (c.kind != SourceKind::Local || self.filename.as_deref() == Some(&c.filename))', '', E, 'source_install', 'copied_and_the_original'),
     ('pickle-consent-ignored', INSTALL, 'if needs.pickle && !consents.pickle {', 'if false {', E, 'source_install', 'pickle_formats_are_refused'),
-    ('licence-consent-ignored', INSTALL, 'if needs.licence && !consents.licence && !self.registry.licence_on_record(candidate) {', 'if false {', E, 'source_install', 'licence_is_accepted_once'),
+    ('licence-consent-ignored', INSTALL, 'if needs.licence\n', 'if false\n', E, 'source_install', 'licence_is_accepted_once'),
     ('unverified-consent-ignored', INSTALL, 'if needs.unverified && !consents.unverified {', 'if false {', E, 'source_install', 'no_published_checksum'),
     ('gated-without-token-allowed', INSTALL, 'if needs.token && !has_token {', 'if false {', E, 'source_install', 'gated_file_needs'),
     ('existing-file-overwritten', INSTALL, 'if std::fs::symlink_metadata(target_dir.join(&candidate.filename)).is_ok() {', 'if false {', E, 'source_install', 'never_overwritten'),
