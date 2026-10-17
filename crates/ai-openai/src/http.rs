@@ -222,16 +222,24 @@ pub(crate) fn map_status(
     // OpenAI answers an account with no credit with a 429, the same status as "slow down". Waiting
     // does not help there, so tell the two apart by the code or, as seen on a live account, by the
     // words ("You have no credits remaining"): out of credit is `Quota`, not `RateLimited`.
-    let said = format!("{code} {}", upstream.to_ascii_lowercase());
-    let out_of_credit = [
-        "quota",
-        "billing",
-        "credit",
-        "insufficient_funds",
-        "balance",
-    ]
-    .iter()
-    .any(|w| said.contains(w));
+    // A code that says rate limit wins over any words: a plain per-minute limit on a new account
+    // can mention billing (it suggests adding a payment method), and that must still be retried.
+    // Single words such as "billing" or "balance" are not evidence on their own; only phrases are.
+    const OUT_OF_CREDIT: [&str; 7] = [
+        "no credits",
+        "out of credits",
+        "insufficient funds",
+        "insufficient credit",
+        "exceeded your current quota",
+        "credit balance is too low",
+        "billing hard limit",
+    ];
+    let words = upstream.to_ascii_lowercase();
+    let out_of_credit = !code.contains("rate_limit")
+        && (code.contains("quota")
+            || code.contains("billing")
+            || code.contains("insufficient_funds")
+            || OUT_OF_CREDIT.iter().any(|w| words.contains(w)));
     let kind = match status {
         401 | 403 => ErrorKind::Auth,
         402 => ErrorKind::Quota,
@@ -352,6 +360,30 @@ mod tests {
                 )
             ),
             ErrorKind::RateLimited
+        );
+        // A new account's per-minute limit that points at the billing page is still only a limit,
+        // whether or not the code is one we know.
+        let billing_hint = "Rate limit reached for gpt-4o on requests per min (RPM): Limit 3, Used 3. \
+             Please try again in 20s. Add a payment method at https://platform.openai.com/account/billing \
+             to increase your rate limit.";
+        assert_eq!(
+            k(429, &body(billing_hint, "rate_limit_exceeded")),
+            ErrorKind::RateLimited
+        );
+        assert_eq!(
+            k(429, &body(billing_hint, "some_new_code")),
+            ErrorKind::RateLimited
+        );
+        // The classic out-of-credit answer says quota in both places.
+        assert_eq!(
+            k(
+                429,
+                &body(
+                    "You exceeded your current quota, please check your plan and billing details.",
+                    "insufficient_quota"
+                )
+            ),
+            ErrorKind::Quota
         );
         assert_eq!(k(400, ""), ErrorKind::InvalidRequest);
         assert_eq!(k(404, ""), ErrorKind::InvalidRequest);
