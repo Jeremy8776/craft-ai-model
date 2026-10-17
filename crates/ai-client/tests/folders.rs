@@ -229,7 +229,8 @@ fn a_very_long_folder_name_is_still_accepted_with_a_shortened_label() {
     assert_eq!(added.folder.label.chars().count(), 120);
 }
 
-#[cfg(unix)]
+// macOS refuses a file name that is not valid text, so the test cannot even make its folder there.
+#[cfg(all(unix, not(target_os = "macos")))]
 #[test]
 fn a_path_that_is_not_valid_text_is_refused_not_stored_as_another_folder() {
     use std::os::unix::ffi::OsStrExt;
@@ -241,4 +242,22 @@ fn a_path_that_is_not_valid_text_is_refused_not_stored_as_another_folder() {
     std::fs::create_dir_all(&odd).unwrap();
     assert!(desk(&w).add(&odd, None).is_err());
     assert!(desk(&w).list().unwrap().is_empty());
+}
+
+#[test]
+fn removing_the_last_folder_leaves_none_not_the_old_list() {
+    let w = world();
+    let d = desk(&w);
+    let id = d.add(w.models.path(), None).unwrap().folder.id;
+    assert_eq!(d.list().unwrap().len(), 1);
+    d.remove(&id).unwrap();
+    assert!(d.list().unwrap().is_empty());
+    // A second reader of the same file sees the same.
+    assert!(
+        SharedStore::new(w.shared.path())
+            .load()
+            .unwrap()
+            .model_folders
+            .is_empty()
+    );
 }

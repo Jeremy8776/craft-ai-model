@@ -196,13 +196,21 @@ fn scan(path: &Path) -> Result<FolderScan, AiError> {
         .map_err(|e| AiError::new(ErrorKind::InvalidRequest, e.to_string()))
 }
 
-/// Two spellings of one place compare equal: resolved when the folder exists, else lower-cased.
+/// Two spellings of one place compare equal: resolved when the folder exists. Case is ignored only
+/// where the file system ignores it (Windows, macOS); on Linux `/Models` and `/models` are two
+/// different folders.
 fn same_place_key(path: &Path) -> String {
-    std::fs::canonicalize(path)
-        .unwrap_or_else(|_| path.to_owned())
-        .to_string_lossy()
-        .trim_end_matches(['/', '\\'])
-        .to_lowercase()
+    let resolved = std::fs::canonicalize(path).unwrap_or_else(|_| path.to_owned());
+    let text = resolved.to_string_lossy();
+    // Windows resolves a folder that exists to the `\\?\C:\...` form and one that does not to the
+    // plain form; drop the prefix so the two spellings still meet.
+    let text = text.strip_prefix(r"\\?\").unwrap_or(&text);
+    let text = text.trim_end_matches(['/', '\\']);
+    if cfg!(any(windows, target_os = "macos")) {
+        text.to_lowercase()
+    } else {
+        text.to_owned()
+    }
 }
 
 /// A label the store will accept: control characters dropped, at most 120 characters.
@@ -242,6 +250,18 @@ fn unique_id(name: &str, taken: &[ModelFolder]) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn case_matters_only_where_the_file_system_says_so() {
+        let upper = same_place_key(Path::new("/No/Such/Models"));
+        let lower = same_place_key(Path::new("/no/such/models/"));
+        assert_eq!(upper == lower, cfg!(any(windows, target_os = "macos")));
+        assert_eq!(
+            same_place_key(Path::new("/no/such/models")),
+            lower,
+            "a trailing separator never makes a different place"
+        );
+    }
 
     #[test]
     fn a_label_is_made_acceptable_not_refused() {
