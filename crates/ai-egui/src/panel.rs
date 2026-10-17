@@ -39,7 +39,9 @@ pub struct ConnectionPanel {
     manager: ConnectionManager,
     runner: TestRunner,
     form: ConnectionFormState,
-    testing: bool,
+    /// The address the running test was started against, so an answer arriving after the address
+    /// changed can be told from one that still describes it. `None` while no test is running.
+    testing: Option<String>,
 }
 
 impl ConnectionPanel {
@@ -53,42 +55,48 @@ impl ConnectionPanel {
             runner: TestRunner::new(manager.clone()),
             manager,
             form,
-            testing: false,
+            testing: None,
         }
     }
 
     /// Draws the panel and handles what was pressed.
     pub fn show(&mut self, ui: &mut Ui) -> Option<PanelEvent> {
-        if self.testing
+        if self.testing.is_some()
             && let Some(answer) = self.runner.poll()
+            && let Some(tested) = self.testing.take()
         {
-            self.testing = false;
-            match answer {
-                Ok(report) => {
-                    self.form.test = TestLine::Passed {
-                        models: report.models.len(),
-                        millis: u64::try_from(report.elapsed.as_millis()).unwrap_or(u64::MAX),
-                    };
-                    self.form.draft.set_models(report.models);
+            // The address stays editable while a test runs, so this answer may describe an
+            // address the form no longer holds. Editing already cleared the models and the
+            // result line, leaving the form as untested; taking the answer now would put one
+            // endpoint's models under another, so it is dropped instead.
+            if tested.trim() == self.form.draft.endpoint.trim() {
+                match answer {
+                    Ok(report) => {
+                        self.form.test = TestLine::Passed {
+                            models: report.models.len(),
+                            millis: u64::try_from(report.elapsed.as_millis()).unwrap_or(u64::MAX),
+                        };
+                        self.form.draft.set_models(report.models);
+                    }
+                    Err(e)
+                        if e.kind == ErrorKind::Unsupported
+                            && self.form.draft.provider == "vertex-express" =>
+                    {
+                        self.form.test = TestLine::Unverified(e.message);
+                    }
+                    Err(e) => self.form.test = TestLine::Failed(e.message),
                 }
-                Err(e)
-                    if e.kind == ErrorKind::Unsupported
-                        && self.form.draft.provider == "vertex-express" =>
-                {
-                    self.form.test = TestLine::Unverified(e.message);
-                }
-                Err(e) => self.form.test = TestLine::Failed(e.message),
             }
         }
-        if self.testing {
+        if self.testing.is_some() {
             ui.ctx().request_repaint_after(Duration::from_millis(100));
         }
-        match connection_form(ui, &mut self.form, self.testing)? {
+        match connection_form(ui, &mut self.form, self.testing.is_some())? {
             FormEvent::Cancel => Some(PanelEvent::Closed),
             FormEvent::Test => {
                 self.form.test = TestLine::Running;
                 self.form.error = None;
-                self.testing = true;
+                self.testing = Some(self.form.draft.endpoint.trim().to_owned());
                 self.runner
                     .start(TestTarget::Draft(self.form.draft.clone()));
                 None
